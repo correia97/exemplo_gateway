@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "read": {
+      "D:/projetos/opencodeDeepseek/.opencode/get-shit-done/*": "allow"
+    },
+    "external_directory": {
+      "D:/projetos/opencodeDeepseek/.opencode/get-shit-done/*": "allow"
+    }
+  }
+}
