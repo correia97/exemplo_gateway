@@ -103,17 +103,17 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 05-01: Configure APISIX container in Aspire with etcd and route definitions
-- [ ] 05-02: Define routes for Dragon Ball and Music API upstreams
-- [ ] 05-03: Configure dual auth model (GET no-auth, POST/PUT/DELETE OIDC) and CORS plugin
-- [ ] 05-04: Configure request-id plugin for correlation ID generation
+- [x] 05-01: Configure APISIX container in Aspire with etcd and route definitions
+- [x] 05-02: Create upstreams and GET routes with init-routes.sh
+- [x] 05-03: Configure dual auth model (GET no-auth, POST/PUT/DELETE OIDC) and CORS plugin
+- [x] 05-04: Configure request-id global rule and create phase verification document
 
 ### Phase 6: OpenTelemetry & Observability
-**Goal**: End-to-end distributed tracing from browser through APISIX to .NET API to PostgreSQL, correlation ID propagation through all services, and Aspire Dashboard showing complete traces
+**Goal**: End-to-end distributed tracing from browser through APISIX to .NET API to PostgreSQL, correlation ID propagation through all services, and Jaeger UI showing complete traces
 **Depends on**: Phase 5 (APISIX must be routing to configure OTel plugin), Phase 1 (OTel SDK in ServiceDefaults)
 **Requirements**: OTEL-02, OTEL-03, OTEL-04, OTEL-05, OTEL-06, OTEL-07
 **Success Criteria** (what must be TRUE):
-  1. Aspire Dashboard shows distributed traces with spans from APISIX, .NET API, and Npgsql (PostgreSQL) for a single request
+  1. Jaeger UI at `http://localhost:16686` shows distributed traces with spans from APISIX, .NET API, and Npgsql (PostgreSQL) for a single request
   2. W3C `traceparent` header propagates from APISIX request through .NET API to the PostgreSQL database query
   3. Correlation ID (`X-Correlation-ID`) appears in HTTP request/response headers and in .NET structured logs
   4. A single API request generates a complete trace chain: APISIX span → .NET API span → Npgsql database span
@@ -122,9 +122,9 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 06-01: Configure APISIX OpenTelemetry plugin with OTLP collector endpoint
-- [ ] 06-02: Wire Npgsql instrumentation, correlation ID middleware, and structured logging
-- [ ] 06-03: Verify end-to-end distributed traces in Aspire Dashboard
+- [ ] 06-01: APISIX OTel plugin + Jaeger collector + OTLP endpoint wiring
+- [ ] 06-02: Npgsql instrumentation + Correlation ID ILogger scope
+- [ ] 06-03: End-to-end verification scenarios (06-VERIFICATION.md)
 
 ### Phase 7: React Frontend
 **Goal**: React 19 + Vite SPA consuming both APIs exclusively through APISIX, with OIDC login via Keycloak (Authorization Code + PKCE), role-aware CRUD UI, and correlation ID error display
@@ -140,10 +140,10 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 07-01: Scaffold React 19 + Vite SPA with OIDC login via oidc-client-ts
-- [ ] 07-02: Implement Dragon Ball character browsing (public) and CRUD forms (authenticated)
-- [ ] 07-03: Implement Music catalog browsing (public) and CRUD forms (authenticated)
-- [ ] 07-04: Add role-aware UI guards, error handling with correlation ID display
+- [x] 07-01: Scaffold React 19 + Vite SPA with OIDC login via oidc-client-ts
+- [x] 07-02: Implement Dragon Ball character browsing (public) and CRUD forms (authenticated)
+- [x] 07-03: Implement Music catalog browsing (public) and CRUD forms (authenticated)
+- [x] 07-04: Add role-aware UI guards, error handling with correlation ID display
 
 ### Phase 8: Docker Compose & Production Deployment
 **Goal**: Standalone Docker Compose configuration that deploys all services without Aspire, with health checks, pinned image tags, and proper environment configuration for workspace/production-like use
@@ -172,7 +172,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 2. Database & Models | 0/4 | Not started | - |
 | 3. API Endpoints | 0/4 | Planned | - |
 | 4. Keycloak Auth | 0/4 | Not started | - |
-| 5. APISIX Gateway | 0/4 | Not started | - |
+| 5. APISIX Gateway | 0/4 | Planned | - |
 | 6. OpenTelemetry & Observability | 0/3 | Not started | - |
-| 7. React Frontend | 0/4 | Not started | - |
+| 7. React Frontend | 4/4 | Planned | - |
 | 8. Docker Compose & Production Deployment | 0/3 | Not started | - |
