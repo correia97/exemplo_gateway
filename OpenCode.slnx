@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OpenCode.AppHost/OpenCode.AppHost.csproj" />
+    <Project Path="src/OpenCode.Domain/OpenCode.Domain.csproj" />
+    <Project Path="src/OpenCode.DragonBall.Api/OpenCode.DragonBall.Api.csproj" />
+    <Project Path="src/OpenCode.Music.Api/OpenCode.Music.Api.csproj" />
+    <Project Path="src/OpenCode.ServiceDefaults/OpenCode.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/OpenCode.Domain.Tests/OpenCode.Domain.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,6 @@
+@OpenCode.DragonBall.Api_HostAddress = http://localhost:5160
+
+GET {{OpenCode.DragonBall.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -58,19 +58,19 @@ Plans:
 **Depends on**: Phase 2
 **Requirements**: DBALL-05, DBALL-06, DBALL-07, DBALL-08, DBALL-09, DBALL-10, DBALL-11, MUSIC-09, MUSIC-10, MUSIC-11, MUSIC-12, MUSIC-13, MUSIC-14, MUSIC-15, MUSIC-16
 **Success Criteria** (what must be TRUE):
-  1. User can send GET/POST/PUT/DELETE requests to Dragon Ball character endpoints and receive correct HTTP responses with valid data
-  2. User can send GET/POST/PUT/DELETE requests to Music endpoints (Genre, Artist, Album, Track) and nested endpoints (artists/{id}/albums, albums/{id}/tracks)
-  3. User can paginate through lists with `?page=1&pageSize=10` and receive `totalCount` and `totalPages` in the response envelope
-  4. User can filter Dragon Ball characters by name and introductionPhase, and Music items by name, genre, and release date
-  5. User can access Scalar UI at `/scalar` and see interactive OpenAPI documentation with server URL pointing through APISIX
-  6. Invalid input returns FluentValidation errors wrapped in ProblemDetails (RFC 7807) format
+   1. User can send GET/POST/PUT/DELETE requests to Dragon Ball character endpoints and receive correct HTTP responses with valid data
+   2. User can send GET/POST/PUT/DELETE requests to Music endpoints (Genre, Artist, Album, Track) and nested endpoints (artists/{id}/albums, albums/{id}/tracks)
+   3. User can paginate through lists with `?page=1&pageSize=10` and receive `totalCount` and `totalPages` in the response envelope
+   4. User can filter Dragon Ball characters by name and introductionPhase, and Music items by name, genre, and release date
+   5. User can access Scalar UI at `/scalar` and see interactive OpenAPI documentation with server URL pointing through APISIX
+   6. Invalid input returns FluentValidation errors wrapped in ProblemDetails (RFC 7807) format
 **Plans**: 4 plans
 
 Plans:
-- [ ] 03-01: Implement Dragon Ball CRUD endpoints with REPR pattern
-- [ ] 03-02: Implement Music CRUD endpoints (Genre, Artist, Album, Track) with nested routes
-- [ ] 03-03: Add pagination, filtering, FluentValidation, and ProblemDetails error responses
-- [ ] 03-04: Configure Scalar UI with OpenAPI server URL override for APISIX proxy
+- [ ] 03-01: Foundation infrastructure — Repository<T>, FluentValidation, ProblemDetails, DI wiring, NuGet
+- [ ] 03-02: Dragon Ball Character CRUD — repository, DTOs, endpoints, validators, Program.cs wiring
+- [ ] 03-03: Music CRUD (Genre, Artist, Album, Track) — repositories, DTOs, endpoints, validators, nested routes
+- [ ] 03-04: Scalar UI + OpenAPI server URL override for APISIX proxy
 
 ### Phase 4: Keycloak Authentication & Authorization
 **Goal**: Keycloak 26+ instance with dedicated PostgreSQL schema, realm `opencode`, OIDC clients, roles, test users, and JWT validation in .NET APIs
@@ -170,7 +170,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 |-------|----------------|--------|-----------|
 | 1. Foundation & Solution Scaffolding | 0/4 | Not started | - |
 | 2. Database & Models | 0/4 | Not started | - |
-| 3. API Endpoints | 0/4 | Not started | - |
+| 3. API Endpoints | 0/4 | Planned | - |
 | 4. Keycloak Auth | 0/4 | Not started | - |
 | 5. APISIX Gateway | 0/4 | Not started | - |
 | 6. OpenTelemetry & Observability | 0/3 | Not started | - |

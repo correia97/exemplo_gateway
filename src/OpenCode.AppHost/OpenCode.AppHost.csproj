@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>OpenCode.AppHost</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenCode.DragonBall.Api\OpenCode.DragonBall.Api.csproj" IsAspireProjectResource="true" />
+    <ProjectReference Include="..\OpenCode.Music.Api\OpenCode.Music.Api.csproj" IsAspireProjectResource="true" />
+  </ItemGroup>
+
+</Project>
