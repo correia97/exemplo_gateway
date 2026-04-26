@@ -78,7 +78,12 @@ app.MapScalarApiReference(options =>
 {
     options.WithTitle("Dragon Ball API");
     options.WithTheme(ScalarTheme.Purple);
+    options.Authentication = new ScalarAuthenticationOptions
+    {
+        PreferredSecuritySchemes = new List<string> { "BearerAuth" }
+    };
     options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+    
 });
 
 app.UseHttpsRedirection();

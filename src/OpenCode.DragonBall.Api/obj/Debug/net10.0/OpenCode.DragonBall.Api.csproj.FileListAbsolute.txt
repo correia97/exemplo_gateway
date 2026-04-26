@@ -146,3 +146,4 @@ D:\projetos\opencodeDeepseek\src\OpenCode.DragonBall.Api\obj\Debug\net10.0\refin
 D:\projetos\opencodeDeepseek\src\OpenCode.DragonBall.Api\obj\Debug\net10.0\OpenCode.DragonBall.Api.pdb
 D:\projetos\opencodeDeepseek\src\OpenCode.DragonBall.Api\obj\Debug\net10.0\OpenCode.DragonBall.Api.genruntimeconfig.cache
 D:\projetos\opencodeDeepseek\src\OpenCode.DragonBall.Api\obj\Debug\net10.0\ref\OpenCode.DragonBall.Api.dll
+D:\projetos\opencodeDeepseek\src\OpenCode.DragonBall.Api\obj\Debug\net10.0\OpenCode.DragonBall.Api.sourcelink.json

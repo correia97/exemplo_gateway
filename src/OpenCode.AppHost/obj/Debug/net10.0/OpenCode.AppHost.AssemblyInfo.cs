@@ -23,7 +23,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OpenCode.AppHost")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+42804e2e5cd4b5211492813a1ea8c2bc8ddf4519")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64a1bc33decee102c82232e38d278e6dd9346b3e")]
 [assembly: System.Reflection.AssemblyProductAttribute("OpenCode.AppHost")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OpenCode.AppHost")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

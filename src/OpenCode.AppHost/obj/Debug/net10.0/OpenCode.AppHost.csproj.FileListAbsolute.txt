@@ -103,3 +103,4 @@ D:\projetos\opencodeDeepseek\src\OpenCode.AppHost\obj\Debug\net10.0\refint\OpenC
 D:\projetos\opencodeDeepseek\src\OpenCode.AppHost\obj\Debug\net10.0\OpenCode.AppHost.pdb
 D:\projetos\opencodeDeepseek\src\OpenCode.AppHost\obj\Debug\net10.0\OpenCode.AppHost.genruntimeconfig.cache
 D:\projetos\opencodeDeepseek\src\OpenCode.AppHost\obj\Debug\net10.0\ref\OpenCode.AppHost.dll
+D:\projetos\opencodeDeepseek\src\OpenCode.AppHost\obj\Debug\net10.0\OpenCode.AppHost.sourcelink.json

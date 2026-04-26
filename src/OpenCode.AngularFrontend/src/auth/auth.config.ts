@@ -1,8 +1,9 @@
 import { PassedInitialConfig } from 'angular-auth-oidc-client';
+import { KEYCLOAK_URL, DRAGONBALL_API_URL, MUSIC_API_URL } from '../api/env';
 
 export const authConfig: PassedInitialConfig = {
   config: {
-    authority: 'http://localhost:8080/realms/opencode',
+    authority: `${KEYCLOAK_URL}/realms/opencode`,
     redirectUrl: window.location.origin + '/callback',
     postLogoutRedirectUri: window.location.origin,
     clientId: 'frontend',
@@ -11,6 +12,6 @@ export const authConfig: PassedInitialConfig = {
     silentRenew: true,
     useRefreshToken: true,
     renewTimeBeforeTokenExpiresInSeconds: 30,
-    secureRoutes: ['http://localhost:9080/api/'],
+    secureRoutes: [DRAGONBALL_API_URL + '/', MUSIC_API_URL + '/'],
   },
 };

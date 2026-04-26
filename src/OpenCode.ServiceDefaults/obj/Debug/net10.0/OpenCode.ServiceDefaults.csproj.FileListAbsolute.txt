@@ -10,3 +10,4 @@ D:\projetos\opencodeDeepseek\src\OpenCode.ServiceDefaults\obj\Debug\net10.0\Open
 D:\projetos\opencodeDeepseek\src\OpenCode.ServiceDefaults\obj\Debug\net10.0\refint\OpenCode.ServiceDefaults.dll
 D:\projetos\opencodeDeepseek\src\OpenCode.ServiceDefaults\obj\Debug\net10.0\OpenCode.ServiceDefaults.pdb
 D:\projetos\opencodeDeepseek\src\OpenCode.ServiceDefaults\obj\Debug\net10.0\ref\OpenCode.ServiceDefaults.dll
+D:\projetos\opencodeDeepseek\src\OpenCode.ServiceDefaults\obj\Debug\net10.0\OpenCode.ServiceDefaults.sourcelink.json

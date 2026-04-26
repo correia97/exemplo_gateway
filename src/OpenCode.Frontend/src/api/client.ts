@@ -1,7 +1,5 @@
 import { getAccessToken } from '../auth/config'
 
-const BASE_URL = 'http://localhost:9080/api'
-
 class ApiClientError extends Error {
   correlationId?: string
   statusCode: number
@@ -14,8 +12,22 @@ class ApiClientError extends Error {
   }
 }
 
+const env = (window as any).__ENV__ || {}
+
+export const DRAGONBALL_API_URL = import.meta.env.VITE_DRAGONBALL_API_URL as string | undefined
+  ?? env.DRAGONBALL_API_URL
+  ?? 'http://localhost:5000'
+
+export const MUSIC_API_URL = import.meta.env.VITE_MUSIC_API_URL as string | undefined
+  ?? env.MUSIC_API_URL
+  ?? 'http://localhost:5002'
+
+export const KEYCLOAK_URL = import.meta.env.VITE_KEYCLOAK_URL as string | undefined
+  ?? env.KEYCLOAK_URL
+  ?? 'http://localhost:8080'
+
 async function apiFetch<T>(
-  path: string,
+  url: string,
   options: RequestInit = {}
 ): Promise<T> {
   const token = await getAccessToken()
@@ -25,7 +37,7 @@ async function apiFetch<T>(
   }
   if (token) headers['Authorization'] = `Bearer ${token}`
 
-  const response = await fetch(`${BASE_URL}${path}`, { ...options, headers })
+  const response = await fetch(url, { ...options, headers })
   const correlationId = response.headers.get('X-Correlation-Id') ?? undefined
 
   if (!response.ok) {

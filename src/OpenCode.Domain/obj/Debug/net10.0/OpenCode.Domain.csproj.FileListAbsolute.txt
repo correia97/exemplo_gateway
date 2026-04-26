@@ -12,3 +12,4 @@ D:\projetos\opencodeDeepseek\src\OpenCode.Domain\obj\Debug\net10.0\refint\OpenCo
 D:\projetos\opencodeDeepseek\src\OpenCode.Domain\obj\Debug\net10.0\OpenCode.Domain.pdb
 D:\projetos\opencodeDeepseek\src\OpenCode.Domain\obj\Debug\net10.0\OpenCode.Domain.genruntimeconfig.cache
 D:\projetos\opencodeDeepseek\src\OpenCode.Domain\obj\Debug\net10.0\ref\OpenCode.Domain.dll
+D:\projetos\opencodeDeepseek\src\OpenCode.Domain\obj\Debug\net10.0\OpenCode.Domain.sourcelink.json

@@ -1,13 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { API_BASE_URL } from './client.service';
+import { DRAGONBALL_API_URL } from './env';
 import type { PaginatedResponse, Character, CharacterFilters, CharacterCreatePayload } from './types';
 
 @Injectable({ providedIn: 'root' })
 export class DragonballService {
   private http = inject(HttpClient);
-  private baseUrl = `${API_BASE_URL}dragonball`;
 
   getCharacters(filters: CharacterFilters = {}): Observable<PaginatedResponse<Character>> {
     let params = new HttpParams();
@@ -17,22 +16,22 @@ export class DragonballService {
     if (filters.race) params = params.set('race', filters.race);
     if (filters.minKi !== undefined) params = params.set('minKi', filters.minKi);
     if (filters.maxKi !== undefined) params = params.set('maxKi', filters.maxKi);
-    return this.http.get<PaginatedResponse<Character>>(`${this.baseUrl}/characters`, { params });
+    return this.http.get<PaginatedResponse<Character>>(`${DRAGONBALL_API_URL}/api/characters`, { params });
   }
 
   getCharacter(id: number): Observable<Character> {
-    return this.http.get<Character>(`${this.baseUrl}/characters/${id}`);
+    return this.http.get<Character>(`${DRAGONBALL_API_URL}/api/characters/${id}`);
   }
 
   createCharacter(data: CharacterCreatePayload): Observable<Character> {
-    return this.http.post<Character>(`${this.baseUrl}/characters`, data);
+    return this.http.post<Character>(`${DRAGONBALL_API_URL}/api/characters`, data);
   }
 
   updateCharacter(id: number, data: Partial<CharacterCreatePayload>): Observable<Character> {
-    return this.http.put<Character>(`${this.baseUrl}/characters/${id}`, data);
+    return this.http.put<Character>(`${DRAGONBALL_API_URL}/api/characters/${id}`, data);
   }
 
   deleteCharacter(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/characters/${id}`);
+    return this.http.delete<void>(`${DRAGONBALL_API_URL}/api/characters/${id}`);
   }
 }

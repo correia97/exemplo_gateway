@@ -92,16 +92,17 @@ var apisix = builder.AddContainer("gateway", "apache/apisix", "3.16.0-ubuntu")
     .WaitFor(etcd);
 
 var frontend = builder.AddExecutable("frontend", "npm", "../OpenCode.Frontend", "run", "dev")
-    .WithEnvironment("VITE_API_URL", "http://localhost:9180")
+    .WithEnvironment("VITE_DRAGONBALL_API_URL", "http://localhost:5000")
+    .WithEnvironment("VITE_MUSIC_API_URL", "http://localhost:5002")
     .WithEnvironment("VITE_KEYCLOAK_URL", "http://localhost:8080")
     .WithEndpoint(port: 5173, targetPort: 5173, scheme: "http", name: "http", isProxied: false)
-    .WithExternalHttpEndpoints()
-    .WaitFor(apisix);
+    .WithExternalHttpEndpoints();
 
 var angularFrontend = builder.AddExecutable("angular-frontend", "npm", "../OpenCode.AngularFrontend", "run", "start")
-    .WithEnvironment("API_BASE_URL", "http://localhost:9180")
+    .WithEnvironment("DRAGONBALL_API_URL", "http://localhost:5000")
+    .WithEnvironment("MUSIC_API_URL", "http://localhost:5002")
+    .WithEnvironment("KEYCLOAK_URL", "http://localhost:8080")
     .WithEndpoint(port: 4200, targetPort: 4200, scheme: "http", name: "http", isProxied: false)
-    .WithExternalHttpEndpoints()
-    .WaitFor(apisix);
+    .WithExternalHttpEndpoints();
 
 builder.Build().Run();

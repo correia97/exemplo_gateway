@@ -8,8 +8,9 @@ import {
 } from '@angular/common/http';
 import { Observable, switchMap, throwError, catchError } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { DRAGONBALL_API_URL, MUSIC_API_URL } from './env';
 
-export const API_BASE_URL = 'http://localhost9080/api/';
+const API_BASES = [DRAGONBALL_API_URL, MUSIC_API_URL];
 
 @Injectable()
 export class ApiClientInterceptor implements HttpInterceptor {
@@ -19,7 +20,8 @@ export class ApiClientInterceptor implements HttpInterceptor {
     req: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    if (!req.url.startsWith(API_BASE_URL)) {
+    const matches = API_BASES.some(base => req.url.startsWith(base));
+    if (!matches) {
       return next.handle(req);
     }
 

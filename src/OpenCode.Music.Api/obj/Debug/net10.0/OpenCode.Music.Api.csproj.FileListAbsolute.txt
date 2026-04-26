@@ -146,3 +146,4 @@ D:\projetos\opencodeDeepseek\src\OpenCode.Music.Api\obj\Debug\net10.0\refint\Ope
 D:\projetos\opencodeDeepseek\src\OpenCode.Music.Api\obj\Debug\net10.0\OpenCode.Music.Api.pdb
 D:\projetos\opencodeDeepseek\src\OpenCode.Music.Api\obj\Debug\net10.0\OpenCode.Music.Api.genruntimeconfig.cache
 D:\projetos\opencodeDeepseek\src\OpenCode.Music.Api\obj\Debug\net10.0\ref\OpenCode.Music.Api.dll
+D:\projetos\opencodeDeepseek\src\OpenCode.Music.Api\obj\Debug\net10.0\OpenCode.Music.Api.sourcelink.json
