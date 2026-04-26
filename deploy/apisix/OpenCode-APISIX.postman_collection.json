@@ -1,0 +1,458 @@
+{
+  "info": {
+    "name": "OpenCode - APISIX Configuration",
+    "description": "Collection para configurar rotas e upstreams no Apache APISIX",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "admin-api",
+      "value": "http://localhost:9180/apisix/admin",
+      "type": "string"
+    },
+    {
+      "key": "admin-key",
+      "value": "edd1c9f034335f136f87ad84b625c8f1",
+      "type": "string"
+    },
+    {
+      "key": "upstream-dragonball",
+      "value": "http://dragonball-api:8080",
+      "type": "string"
+    },
+    {
+      "key": "upstream-music",
+      "value": "http://music-api:8080",
+      "type": "string"
+    },
+    {
+      "key": "cors-origins",
+      "value": "http://localhost:5173,http://localhost:3000,http://localhost:4200,http://localhost,http://localhost:5003",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Global Rules",
+      "item": [
+        {
+          "name": "Create Correlation ID Rule",
+          "request": {
+            "method": "PUT",
+            "url": "{{admin-api}}/global_rules/correlation-id",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"plugins\": {\n        \"request-id\": {\n            \"header_name\": \"X-Correlation-Id\",\n            \"include_in_response\": true,\n            \"algorithm\": \"uuid\"\n        }\n    }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() {",
+                  "    pm.expect(pm.response.status).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Upstreams",
+      "item": [
+        {
+          "name": "Create DragonBall Upstream",
+          "request": {
+            "method": "PUT",
+            "url": "{{admin-api}}/upstreams/dragonball",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"type\": \"roundrobin\",\n    \"nodes\": {\n        \"{{upstream-dragonball}}\": 1\n    }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() {",
+                  "    pm.expect(pm.response.status).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Music Upstream",
+          "request": {
+            "method": "PUT",
+            "url": "{{admin-api}}/upstreams/music",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"type\": \"roundrobin\",\n    \"nodes\": {\n        \"{{upstream-music}}\": 1\n    }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() {",
+                  "    pm.expect(pm.response.status).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Routes",
+      "item": [
+        {
+          "name": "DragonBall GET",
+          "request": {
+            "method": "PUT",
+            "url": "{{admin-api}}/routes/dragonball-get",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"uri\": \"/api/dragonball/*\",\n    \"methods\": [\"GET\"],\n    \"strip_path\": true,\n    \"upstream_id\": \"dragonball\",\n    \"plugins\": {\n        \"cors\": {\n            \"allow_origins\": \"{{cors-origins}}\",\n            \"allow_methods\": \"GET,POST,PUT,DELETE,OPTIONS\",\n            \"allow_headers\": \"*\",\n            \"expose_headers\": \"X-Correlation-Id\",\n            \"allow_credential\": true,\n            \"max_age\": 86400\n        }\n    }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() {",
+                  "    pm.expect(pm.response.status).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DragonBall POST",
+          "request": {
+            "method": "PUT",
+            "url": "{{admin-api}}/routes/dragonball-post",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"uri\": \"/api/dragonball/*\",\n    \"methods\": [\"POST\"],\n    \"strip_path\": true,\n    \"upstream_id\": \"dragonball\",\n    \"plugins\": {\n        \"cors\": {\n            \"allow_origins\": \"{{cors-origins}}\",\n            \"allow_methods\": \"GET,POST,PUT,DELETE,OPTIONS\",\n            \"allow_headers\": \"*\",\n            \"expose_headers\": \"X-Correlation-Id\",\n            \"allow_credential\": true,\n            \"max_age\": 86400\n        }\n    }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() {",
+                  "    pm.expect(pm.response.status).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DragonBall PUT",
+          "request": {
+            "method": "PUT",
+            "url": "{{admin-api}}/routes/dragonball-put",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"uri\": \"/api/dragonball/*\",\n    \"methods\": [\"PUT\"],\n    \"strip_path\": true,\n    \"upstream_id\": \"dragonball\",\n    \"plugins\": {\n        \"cors\": {\n            \"allow_origins\": \"{{cors-origins}}\",\n            \"allow_methods\": \"GET,POST,PUT,DELETE,OPTIONS\",\n            \"allow_headers\": \"*\",\n            \"expose_headers\": \"X-Correlation-Id\",\n            \"allow_credential\": true,\n            \"max_age\": 86400\n        }\n    }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() {",
+                  "    pm.expect(pm.response.status).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DragonBall DELETE",
+          "request": {
+            "method": "PUT",
+            "url": "{{admin-api}}/routes/dragonball-delete",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"uri\": \"/api/dragonball/*\",\n    \"methods\": [\"DELETE\"],\n    \"strip_path\": true,\n    \"upstream_id\": \"dragonball\",\n    \"plugins\": {\n        \"cors\": {\n            \"allow_origins\": \"{{cors-origins}}\",\n            \"allow_methods\": \"GET,POST,PUT,DELETE,OPTIONS\",\n            \"allow_headers\": \"*\",\n            \"expose_headers\": \"X-Correlation-Id\",\n            \"allow_credential\": true,\n            \"max_age\": 86400\n        }\n    }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() {",
+                  "    pm.expect(pm.response.status).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Music GET",
+          "request": {
+            "method": "PUT",
+            "url": "{{admin-api}}/routes/music-get",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"uri\": \"/api/music/*\",\n    \"methods\": [\"GET\"],\n    \"strip_path\": true,\n    \"upstream_id\": \"music\",\n    \"plugins\": {\n        \"cors\": {\n            \"allow_origins\": \"{{cors-origins}}\",\n            \"allow_methods\": \"GET,POST,PUT,DELETE,OPTIONS\",\n            \"allow_headers\": \"*\",\n            \"expose_headers\": \"X-Correlation-Id\",\n            \"allow_credential\": true,\n            \"max_age\": 86400\n        }\n    }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() {",
+                  "    pm.expect(pm.response.status).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Music POST",
+          "request": {
+            "method": "PUT",
+            "url": "{{admin-api}}/routes/music-post",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"uri\": \"/api/music/*\",\n    \"methods\": [\"POST\"],\n    \"strip_path\": true,\n    \"upstream_id\": \"music\",\n    \"plugins\": {\n        \"cors\": {\n            \"allow_origins\": \"{{cors-origins}}\",\n            \"allow_methods\": \"GET,POST,PUT,DELETE,OPTIONS\",\n            \"allow_headers\": \"*\",\n            \"expose_headers\": \"X-Correlation-Id\",\n            \"allow_credential\": true,\n            \"max_age\": 86400\n        }\n    }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() {",
+                  "    pm.expect(pm.response.status).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Music PUT",
+          "request": {
+            "method": "PUT",
+            "url": "{{admin-api}}/routes/music-put",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"uri\": \"/api/music/*\",\n    \"methods\": [\"PUT\"],\n    \"strip_path\": true,\n    \"upstream_id\": \"music\",\n    \"plugins\": {\n        \"cors\": {\n            \"allow_origins\": \"{{cors-origins}}\",\n            \"allow_methods\": \"GET,POST,PUT,DELETE,OPTIONS\",\n            \"allow_headers\": \"*\",\n            \"expose_headers\": \"X-Correlation-Id\",\n            \"allow_credential\": true,\n            \"max_age\": 86400\n        }\n    }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() {",
+                  "    pm.expect(pm.response.status).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Music DELETE",
+          "request": {
+            "method": "PUT",
+            "url": "{{admin-api}}/routes/music-delete",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"uri\": \"/api/music/*\",\n    \"methods\": [\"DELETE\"],\n    \"strip_path\": true,\n    \"upstream_id\": \"music\",\n    \"plugins\": {\n        \"cors\": {\n            \"allow_origins\": \"{{cors-origins}}\",\n            \"allow_methods\": \"GET,POST,PUT,DELETE,OPTIONS\",\n            \"allow_headers\": \"*\",\n            \"expose_headers\": \"X-Correlation-Id\",\n            \"allow_credential\": true,\n            \"max_age\": 86400\n        }\n    }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() {",
+                  "    pm.expect(pm.response.status).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "List All Routes",
+          "request": {
+            "method": "GET",
+            "url": "{{admin-api}}/routes",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "List All Upstreams",
+          "request": {
+            "method": "GET",
+            "url": "{{admin-api}}/upstreams",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "List Global Rules",
+          "request": {
+            "method": "GET",
+            "url": "{{admin-api}}/global_rules",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "{{admin-key}}"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

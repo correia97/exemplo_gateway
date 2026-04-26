@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using OpenCode.DragonBall.Api.Dtos;
-using OpenCode.DragonBall.Api.Repositories;
 using OpenCode.Domain.Entities;
 using OpenCode.Domain.Interfaces;
 using OpenCode.Domain.Pagination;
@@ -11,8 +10,8 @@ public static class Characters
 {
     public static RouteGroupBuilder MapCharacterEndpoints(this RouteGroupBuilder group)
     {
-        group.MapGet("/", GetAllAsync);
-        group.MapGet("/{id:int}", GetByIdAsync);
+        group.MapGet("/", GetAllAsync).AllowAnonymous();
+        group.MapGet("/{id:int}", GetByIdAsync).AllowAnonymous();
         group.MapPost("/", CreateAsync);
         group.MapPut("/{id:int}", UpdateAsync);
         group.MapDelete("/{id:int}", DeleteAsync);
@@ -24,7 +23,7 @@ public static class Characters
         [AsParameters] GetAllRequest request)
     {
         var result = await repository.GetAllAsync(
-            request.Name, request.IntroductionPhase,
+            request.Name, request.Race, request.MinKi, request.MaxKi, request.PlanetId,
             request.Page, request.PageSize);
 
         var response = new PagedResult<CharacterResponse>
@@ -55,13 +54,17 @@ public static class Characters
         var character = new Character
         {
             Name = request.Name,
-            IsEarthling = request.IsEarthling,
-            IntroductionPhase = request.IntroductionPhase,
-            PictureUrl = request.PictureUrl
+            Race = request.Race,
+            Ki = request.Ki,
+            MaxKi = request.MaxKi,
+            Description = request.Description,
+            PictureUrl = request.PictureUrl,
+            PlanetId = request.PlanetId
         };
 
         var created = await repository.AddAsync(character);
-        return TypedResults.Created($"/api/characters/{created.Id}", created.ToResponse());
+        var full = await repository.GetByIdAsync(created.Id);
+        return TypedResults.Created($"/api/characters/{created.Id}", full!.ToResponse());
     }
 
     private static async Task<Results<Ok<CharacterResponse>, NotFound, BadRequest>> UpdateAsync(
@@ -74,12 +77,16 @@ public static class Characters
             return TypedResults.NotFound();
 
         existing.Name = request.Name;
-        existing.IsEarthling = request.IsEarthling;
-        existing.IntroductionPhase = request.IntroductionPhase;
+        existing.Race = request.Race;
+        existing.Ki = request.Ki;
+        existing.MaxKi = request.MaxKi;
+        existing.Description = request.Description;
         existing.PictureUrl = request.PictureUrl;
+        existing.PlanetId = request.PlanetId;
 
         await repository.UpdateAsync(existing);
-        return TypedResults.Ok(existing.ToResponse());
+        var full = await repository.GetByIdAsync(id);
+        return TypedResults.Ok(full!.ToResponse());
     }
 
     private static async Task<Results<NoContent, NotFound>> DeleteAsync(
@@ -97,7 +104,10 @@ public static class Characters
 
 internal record GetAllRequest(
     string? Name,
-    string? IntroductionPhase,
+    string? Race,
+    string? MinKi,
+    string? MaxKi,
+    int? PlanetId,
     int Page = 1,
     int PageSize = 10
 );

@@ -318,6 +318,39 @@
           }
         }
       },
+      "Npgsql/10.0.2": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "10.0.0"
+        },
+        "compile": {
+          "lib/net10.0/Npgsql.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net10.0/Npgsql.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Npgsql.OpenTelemetry/10.0.2": {
+        "type": "package",
+        "dependencies": {
+          "Npgsql": "10.0.2",
+          "OpenTelemetry.API": "1.14.0"
+        },
+        "compile": {
+          "lib/net8.0/Npgsql.OpenTelemetry.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Npgsql.OpenTelemetry.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "OpenTelemetry/1.15.3": {
         "type": "package",
         "dependencies": {
@@ -974,6 +1007,40 @@
         "microsoft.openapi.nuspec"
       ]
     },
+    "Npgsql/10.0.2": {
+      "sha512": "q5RfBI+wywJSFUNDE1L4ZbHEHCFTblo8Uf6A6oe4feOUFYiUQXyAf9GBh5qEZpvJaHiEbpBPkQumjEhXCJxdrg==",
+      "type": "package",
+      "path": "npgsql/10.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net10.0/Npgsql.dll",
+        "lib/net10.0/Npgsql.xml",
+        "lib/net8.0/Npgsql.dll",
+        "lib/net8.0/Npgsql.xml",
+        "lib/net9.0/Npgsql.dll",
+        "lib/net9.0/Npgsql.xml",
+        "npgsql.10.0.2.nupkg.sha512",
+        "npgsql.nuspec",
+        "postgresql.png"
+      ]
+    },
+    "Npgsql.OpenTelemetry/10.0.2": {
+      "sha512": "kjc+3DzqjaFk0L3cmR92emyJd7GAgwSiiyuzvumHFEp0EVp6GbrtdIe0jD8NANdPVqYM8prH9ND8GQsQAFXCKA==",
+      "type": "package",
+      "path": "npgsql.opentelemetry/10.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net8.0/Npgsql.OpenTelemetry.dll",
+        "lib/net8.0/Npgsql.OpenTelemetry.xml",
+        "npgsql.opentelemetry.10.0.2.nupkg.sha512",
+        "npgsql.opentelemetry.nuspec",
+        "postgresql.png"
+      ]
+    },
     "OpenTelemetry/1.15.3": {
       "sha512": "N0i6WjPoHPbZyms1ugbDIFAJFuGlpeExJMU/+XSL0lQRUkg/D0utFkDoLXf8Z1km5B+xVZ2GyMXXiX8qdeNmPg==",
       "type": "package",
@@ -1198,6 +1265,7 @@
   "projectFileDependencyGroups": {
     "net10.0": [
       "Microsoft.AspNetCore.OpenApi >= 10.0.7",
+      "Npgsql.OpenTelemetry >= 10.0.2",
       "OpenTelemetry.Exporter.OpenTelemetryProtocol >= 1.15.3",
       "OpenTelemetry.Extensions.Hosting >= 1.15.3",
       "OpenTelemetry.Instrumentation.AspNetCore >= 1.15.2",
@@ -1237,6 +1305,7 @@
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {}
         }
@@ -1255,11 +1324,17 @@
     },
     "frameworks": {
       "net10.0": {
+        "framework": "net10.0",
         "targetAlias": "net10.0",
         "dependencies": {
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
             "version": "[10.0.7, )",
+            "versionCentrallyManaged": true
+          },
+          "Npgsql.OpenTelemetry": {
+            "target": "Package",
+            "version": "[10.0.2, )",
             "versionCentrallyManaged": true
           },
           "OpenTelemetry.Exporter.OpenTelemetryProtocol": {
@@ -1289,10 +1364,11 @@
           }
         },
         "centralPackageVersions": {
-          "Aspire.Hosting.AppHost": "13.2.3",
+          "Aspire.Hosting.PostgreSQL": "13.2.4",
           "coverlet.collector": "6.0.4",
           "FluentValidation.AspNetCore": "11.3.1",
           "FluentValidation.DependencyInjectionExtensions": "11.11.0",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "10.0.7",
           "Microsoft.AspNetCore.OpenApi": "10.0.7",
           "Microsoft.EntityFrameworkCore": "10.0.7",
           "Microsoft.EntityFrameworkCore.Abstractions": "10.0.7",
@@ -1302,6 +1378,7 @@
           "Microsoft.NET.Test.Sdk": "17.14.1",
           "Microsoft.OpenApi": "2.0.0",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.1",
+          "Npgsql.OpenTelemetry": "10.0.2",
           "OpenTelemetry.Exporter.OpenTelemetryProtocol": "1.15.3",
           "OpenTelemetry.Extensions.Hosting": "1.15.3",
           "OpenTelemetry.Instrumentation.AspNetCore": "1.15.2",
@@ -1327,7 +1404,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

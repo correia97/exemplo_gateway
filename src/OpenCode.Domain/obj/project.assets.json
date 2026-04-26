@@ -2682,6 +2682,7 @@
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {}
         }
@@ -2700,6 +2701,7 @@
     },
     "frameworks": {
       "net10.0": {
+        "framework": "net10.0",
         "targetAlias": "net10.0",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": {
@@ -2726,10 +2728,11 @@
           }
         },
         "centralPackageVersions": {
-          "Aspire.Hosting.AppHost": "13.2.3",
+          "Aspire.Hosting.PostgreSQL": "13.2.4",
           "coverlet.collector": "6.0.4",
           "FluentValidation.AspNetCore": "11.3.1",
           "FluentValidation.DependencyInjectionExtensions": "11.11.0",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "10.0.7",
           "Microsoft.AspNetCore.OpenApi": "10.0.7",
           "Microsoft.EntityFrameworkCore": "10.0.7",
           "Microsoft.EntityFrameworkCore.Abstractions": "10.0.7",
@@ -2739,6 +2742,7 @@
           "Microsoft.NET.Test.Sdk": "17.14.1",
           "Microsoft.OpenApi": "2.0.0",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.1",
+          "Npgsql.OpenTelemetry": "10.0.2",
           "OpenTelemetry.Exporter.OpenTelemetryProtocol": "1.15.3",
           "OpenTelemetry.Extensions.Hosting": "1.15.3",
           "OpenTelemetry.Instrumentation.AspNetCore": "1.15.2",
@@ -2764,7 +2768,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

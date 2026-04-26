@@ -1,0 +1,41 @@
+<div>
+  <h1 class="text-2xl font-bold mb-4">Dragon Ball Characters</h1>
+
+  <app-error-display />
+
+  @switch (view) {
+    @case ('list') {
+      <app-character-list
+        (selectCharacter)="showDetail($event)"
+        (createCharacter)="showCreate()"
+      />
+    }
+    @case ('detail') {
+      @if (selectedCharacter) {
+        <app-character-detail
+          [character]="selectedCharacter"
+          (edit)="showEdit()"
+          (delete)="handleDelete()"
+          (back)="showList()"
+        />
+      }
+    }
+    @case ('create') {
+      <app-character-form
+        [mode]="'create'"
+        (save)="handleCreate($event)"
+        (cancel)="showList()"
+      />
+    }
+    @case ('edit') {
+      @if (selectedCharacter) {
+        <app-character-form
+          [mode]="'edit'"
+          [initial]="selectedCharacter"
+          (save)="handleUpdate($event)"
+          (cancel)="showList()"
+        />
+      }
+    }
+  }
+</div>

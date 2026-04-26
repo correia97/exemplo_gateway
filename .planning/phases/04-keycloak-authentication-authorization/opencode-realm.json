@@ -1,0 +1,118 @@
+{
+  "realm": "opencode",
+  "enabled": true,
+  "displayName": "OpenCode",
+  "accessTokenLifespan": 300,
+  "ssoSessionMaxLifespan": 36000,
+  "offlineSessionMaxLifespan": 518400,
+  "refreshTokensEnabled": true,
+  "refreshTokenMaxReuse": 0,
+  "bruteForceProtected": true,
+  "sslRequired": "external",
+  "roles": {
+    "realm": [
+      {
+        "name": "viewer",
+        "description": "Read-only access to API resources",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {}
+      },
+      {
+        "name": "editor",
+        "description": "Full CRUD access to API resources",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {}
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "viewer1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Viewer",
+      "lastName": "One",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "viewer1",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["viewer"],
+      "groups": []
+    },
+    {
+      "username": "editor1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Editor",
+      "lastName": "One",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "editor1",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["viewer", "editor"],
+      "groups": []
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "dragonball-api",
+      "enabled": true,
+      "name": "Dragon Ball API",
+      "description": "Dragon Ball API client for JWT authentication",
+      "secret": "dragonball-secret",
+      "publicClient": false,
+      "serviceAccountsEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "protocol": "openid-connect",
+      "bearerOnly": false,
+      "consentRequired": false,
+      "fullScopeAllowed": true,
+      "defaultRoles": []
+    },
+    {
+      "clientId": "music-api",
+      "enabled": true,
+      "name": "Music API",
+      "description": "Music API client for JWT authentication",
+      "secret": "music-secret",
+      "publicClient": false,
+      "serviceAccountsEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "protocol": "openid-connect",
+      "bearerOnly": false,
+      "consentRequired": false,
+      "fullScopeAllowed": true,
+      "defaultRoles": []
+    },
+    {
+      "clientId": "frontend",
+      "enabled": true,
+      "name": "Frontend",
+      "description": "React SPA frontend",
+      "publicClient": true,
+      "serviceAccountsEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "protocol": "openid-connect",
+      "bearerOnly": false,
+      "consentRequired": false,
+      "fullScopeAllowed": true,
+      "redirectUris": ["http://localhost:5173/*"],
+      "webOrigins": ["http://localhost:5173"],
+      "defaultRoles": []
+    }
+  ]
+}

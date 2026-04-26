@@ -1,0 +1,29 @@
+@if (isLoading) {
+  <div class="p-8 text-center text-gray-400">Loading...</div>
+} @else {
+  <table class="w-full border-collapse">
+    <thead>
+      <tr class="bg-gray-100 text-left">
+        @for (col of columns; track col.key) {
+          <th class="p-3 border-b-2 border-gray-300 text-sm font-semibold">{{ col.label }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of data; track keyExtractor(item)) {
+        <tr
+          [class.cursor-pointer]="rowClickable"
+          [class.hover:bg-gray-50]="rowClickable"
+          class="border-b border-gray-200"
+          (click)="rowClickable && rowClick.emit(item)"
+        >
+          @for (col of columns; track col.key) {
+            <td class="p-2.5 px-3 text-sm">
+              {{ col.render ? col.render(item) : item[col.key] ?? '' }}
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+}

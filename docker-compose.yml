@@ -1,0 +1,213 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: opencode-postgres
+    environment:
+      POSTGRES_DB: opencode
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./src/OpenCode.Domain/Data/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - opencode-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d opencode"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: opencode-keycloak
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/opencode
+      KC_DB_SCHEMA: keycloak
+      KC_DB_USERNAME: keycloak_user
+      KC_DB_PASSWORD: keycloak_pass
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: localhost
+    command:
+      - "start-dev"
+      - "--import-realm"
+    volumes:
+      - ./.planning/phases/04-keycloak-authentication-authorization/opencode-realm.json:/opt/keycloak/data/import/opencode-realm.json:ro
+    ports:
+      - "8080:8080"
+    networks:
+      - opencode-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080 && echo -e 'GET / HTTP/1.1\r\nhost: localhost\r\n\r\n' >&3 && head -1 <&3 | grep -q 200"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  etcd:
+    image: quay.io/coreos/etcd:v3.5
+    container_name: opencode-etcd
+    environment:
+      ALLOW_NONE_AUTHENTICATION: "yes"
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+      ETCD_ADVERTISE_CLIENT_URLS: http://etcd:2379
+    ports:
+      - "2379:2379"
+    networks:
+      - opencode-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "etcdctl endpoint health 2>&1 | grep -q 'healthy'"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  apisix:
+    image: apache/apisix:3.9.1-alpine
+    container_name: opencode-apisix
+    depends_on:
+      etcd:
+        condition: service_started
+    ports:
+      - "9080:9080"
+      - "9180:9180"
+    volumes:
+      - ./deploy/apisix/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+      - ./deploy/apisix/init-routes.sh:/scripts/init-routes.sh:ro
+    environment:
+      UPSTREAM_DRAGONBALL_API: http://dragonball-api:8080
+      UPSTREAM_MUSIC_API: http://music-api:8080
+      CLIENT_SECRET_DRAGONBALL: dragonball-secret
+      CLIENT_SECRET_MUSIC: music-secret
+      ADMIN_KEY: edd1c9f034335f136f87ad84b625c8f1
+    entrypoint:
+      - "/bin/sh"
+      - "-c"
+      - "chmod +x /scripts/init-routes.sh && apisix start && sleep 3 && /scripts/init-routes.sh && apisix stop && exec /usr/local/openresty/bin/openresty -p /usr/local/apisix -g 'daemon off;'"
+    networks:
+      - opencode-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "http://127.0.0.1:9180/apisix/admin/routes"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  dragonball-api:
+    build:
+      context: .
+      dockerfile: src/OpenCode.DragonBall.Api/Dockerfile
+    container_name: opencode-dragonball-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__dragonball: Host=postgres;Port=5432;Database=opencode;Username=dragonball_user;Password=dragonball_pass
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
+    networks:
+      - opencode-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "http://localhost:8080/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  music-api:
+    build:
+      context: .
+      dockerfile: src/OpenCode.Music.Api/Dockerfile
+    container_name: opencode-music-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__music: Host=postgres;Port=5432;Database=opencode;Username=music_user;Password=music_pass
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
+    networks:
+      - opencode-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "http://localhost:8080/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: opencode-jaeger
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "4318:4318"
+      - "16686:16686"
+    networks:
+      - opencode-net
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: src/OpenCode.Frontend
+      dockerfile: Dockerfile
+    container_name: opencode-frontend
+    depends_on:
+      - apisix
+    ports:
+      - "3000:80"
+    environment:
+      VITE_API_URL: http://localhost:9080
+      VITE_KEYCLOAK_URL: http://localhost:8080
+    networks:
+      - opencode-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "http://localhost:80/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  angular-frontend:
+    build:
+      context: src/OpenCode.AngularFrontend
+      dockerfile: Dockerfile
+    container_name: opencode-angular-frontend
+    depends_on:
+      - apisix
+    ports:
+      - "4200:80"
+    environment:
+      API_BASE_URL: http://localhost:9080
+    networks:
+      - opencode-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "http://localhost:80/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+networks:
+  opencode-net:
+    driver: bridge
+
+volumes:
+  postgres-data:

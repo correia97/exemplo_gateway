@@ -12,13 +12,20 @@ public class EntityPropertyTests
             .Select(p => (p.Name, p.PropertyType))
             .ToDictionary(p => p.Name, p => p.PropertyType);
 
-        Assert.Equal(7, properties.Count);
+        Assert.Equal(14, properties.Count);
 
         Assert.Equal(typeof(int), properties["Id"]);
         Assert.Equal(typeof(string), properties["Name"]);
+        Assert.Equal(typeof(string), properties["Race"]);
+        Assert.Equal(typeof(string), properties["Ki"]);
+        Assert.Equal(typeof(string), properties["MaxKi"]);
         Assert.Equal(typeof(bool), properties["IsEarthling"]);
         Assert.Equal(typeof(string), properties["IntroductionPhase"]);
+        Assert.Equal(typeof(string), properties["Description"]);
         Assert.Equal(typeof(string), properties["PictureUrl"]);
+        Assert.Equal(typeof(int?), properties["PlanetId"]);
+        Assert.Equal(typeof(Planet), properties["Planet"]);
+        Assert.Equal(typeof(ICollection<Transformation>), properties["Transformations"]);
         Assert.Equal(typeof(DateTime), properties["CreatedAt"]);
         Assert.Equal(typeof(DateTime), properties["UpdatedAt"]);
     }

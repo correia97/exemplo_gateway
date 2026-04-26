@@ -2,14 +2,20 @@ namespace OpenCode.DragonBall.Api.Dtos;
 
 public record CreateCharacterRequest(
     string Name,
-    bool IsEarthling,
-    string? IntroductionPhase,
-    string? PictureUrl
+    string Race,
+    string Ki,
+    string? MaxKi,
+    string? Description,
+    string? PictureUrl,
+    int? PlanetId
 );
 
 public record UpdateCharacterRequest(
     string Name,
-    bool IsEarthling,
-    string? IntroductionPhase,
-    string? PictureUrl
+    string Race,
+    string Ki,
+    string? MaxKi,
+    string? Description,
+    string? PictureUrl,
+    int? PlanetId
 );

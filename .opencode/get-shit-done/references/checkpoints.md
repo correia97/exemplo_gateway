@@ -447,7 +447,7 @@ I'll verify: vercel whoami returns your account
 | Vite | `npm run dev` | "ready in" | http://localhost:5173 |
 | Convex | `npx convex dev` | "Convex functions ready" | N/A (backend only) |
 | Express | `npm start` | "listening on port" | http://localhost:3000 |
-| Django | `python manage.py runserver` | "Starting development server" | http://localhost:8000 |
+| Django | `python manage.py runserver` | "Starting development server" | http://localhost9080 |
 
 **Server lifecycle:**
 ```bash

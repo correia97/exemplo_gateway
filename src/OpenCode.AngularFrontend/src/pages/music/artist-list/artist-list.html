@@ -1,0 +1,16 @@
+<div>
+  <div class="flex items-center gap-4 mb-4">
+    <input type="text" placeholder="Search artists..." [(ngModel)]="search" (ngModelChange)="onSearchChange()"
+      class="flex-1 min-w-[200px] px-3 py-2 border border-gray-300 rounded text-sm" />
+    <span class="text-xs text-gray-500">{{ totalCount }} artists</span>
+    <button *appHasRole="'editor'" (click)="createArtist.emit()"
+      class="ml-auto px-4 py-2 bg-indigo-600 text-white rounded text-sm cursor-pointer border-none">+ New Artist</button>
+  </div>
+  @if (artists.length === 0 && !isLoading) {
+    <app-empty-state message="No artists found" />
+  } @else {
+    <app-data-table [columns]="columns" [data]="artists" [keyExtractor]="keyExtractor"
+      [isLoading]="isLoading" [rowClickable]="true" (rowClick)="selectArtist.emit($event.id)" />
+    <app-pagination [page]="page" [totalPages]="totalPages" (pageChange)="onPageChange($event)" />
+  }
+</div>

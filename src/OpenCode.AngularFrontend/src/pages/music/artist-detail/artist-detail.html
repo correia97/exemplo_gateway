@@ -1,0 +1,38 @@
+<div>
+  <button (click)="back.emit()"
+    class="mb-4 px-3 py-1.5 cursor-pointer border border-gray-300 rounded text-sm bg-white hover:bg-gray-50">&larr; Back to artists</button>
+  <div class="flex gap-8 flex-wrap">
+    <div class="flex-1 min-w-[280px]">
+      <h2 class="text-xl font-bold">{{ artist.name }}</h2>
+      <dl class="mt-4 leading-8">
+        @if (artist.genre) { <dt class="font-bold text-gray-600">Genre</dt><dd>{{ artist.genre }}</dd> }
+        @if (artist.biography) { <dt class="font-bold text-gray-600">Biography</dt><dd>{{ artist.biography }}</dd> }
+      </dl>
+      <div class="flex gap-2 mt-6" *appHasRole="'editor'">
+        <button (click)="edit.emit()" class="px-4 py-2 bg-indigo-600 text-white rounded cursor-pointer border-none">Edit</button>
+        <button (click)="delete.emit()" class="px-4 py-2 bg-red-600 text-white rounded cursor-pointer border-none">Delete</button>
+      </div>
+    </div>
+    <div class="flex-[2] min-w-[300px]">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-lg font-semibold">Albums ({{ artist.albums.length }})</h3>
+        <button *appHasRole="'editor'" (click)="createAlbum.emit()" class="px-3 py-1.5 bg-indigo-600 text-white rounded text-sm cursor-pointer border-none">+ Add Album</button>
+      </div>
+      @if (artist.albums.length > 0) {
+        <div class="flex flex-col gap-2">
+          @for (album of artist.albums; track album.id) {
+            <div (click)="selectAlbum.emit(album.id)"
+              class="p-3 border border-gray-300 rounded-lg cursor-pointer bg-white hover:border-indigo-600 transition-colors">
+              <strong>{{ album.title }}</strong>
+              <span class="ml-4 text-xs text-gray-500">
+                {{ album.releaseYear }}{{ album.genre ? ' · ' + album.genre : '' }} · {{ album.tracks.length }} tracks
+              </span>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="text-gray-400">No albums yet</p>
+      }
+    </div>
+  </div>
+</div>

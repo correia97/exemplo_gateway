@@ -11,12 +11,12 @@ public static class Albums
 {
     public static RouteGroupBuilder MapAlbumEndpoints(this RouteGroupBuilder group)
     {
-        group.MapGet("/", GetAllAsync);
-        group.MapGet("/{id:int}", GetByIdAsync);
+        group.MapGet("/", GetAllAsync).AllowAnonymous();
+        group.MapGet("/{id:int}", GetByIdAsync).AllowAnonymous();
         group.MapPost("/", CreateAsync);
         group.MapPut("/{id:int}", UpdateAsync);
         group.MapDelete("/{id:int}", DeleteAsync);
-        group.MapGet("/{albumId:int}/tracks", GetTracksByAlbumAsync);
+        group.MapGet("/{albumId:int}/tracks", GetTracksByAlbumAsync).AllowAnonymous();
         return group;
     }
 

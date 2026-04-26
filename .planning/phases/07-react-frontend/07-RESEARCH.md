@@ -98,7 +98,7 @@ src/OpenCode.Frontend/
 
 ### Data Flow
 ```
-Browser ──GET/POST/PUT/DELETE──→ APISIX (:8000) ──→ .NET API ──→ PostgreSQL
+Browser ──GET/POST/PUT/DELETE──→ APISIX (9080) ──→ .NET API ──→ PostgreSQL
                 │                       ↑
                 │                  (strips prefix,
                 │                   adds CORS,
@@ -144,7 +144,7 @@ const settings: OidcClientSettings = {
 
 ### API Client Pattern
 ```typescript
-const API_BASE = "http://localhost:8000";
+const API_BASE = "http://localhost9080";
 
 async function fetchWithAuth<T>(path: string, options?: RequestInit): Promise<T> {
   const user = await getUser(); // from OIDC user manager
@@ -190,7 +190,7 @@ From Phase 4 analysis:
 ## APISIX Integration Points
 
 From Phase 5 analysis:
-- APISIX proxy at `http://localhost:8000`
+- APISIX proxy at `http://localhost9080`
 - Routes: `/api/dragonball/*` → DragonBall API, `/api/music/*` → Music API
 - CORS already configured for `http://localhost:5173`
 - `request-id` plugin adds `X-Correlation-Id` header to all responses

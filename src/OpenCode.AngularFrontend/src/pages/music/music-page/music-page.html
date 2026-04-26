@@ -1,0 +1,61 @@
+<div>
+  <h1 class="text-2xl font-bold mb-4">Music Catalog</h1>
+
+  <app-error-display />
+
+  @switch (view) {
+    @case ('artist-list') {
+      <app-artist-list
+        (selectArtist)="showArtistDetail($event)"
+        (createArtist)="view = 'create-artist'"
+      />
+    }
+    @case ('artist-detail') {
+      @if (selectedArtist) {
+        <app-artist-detail
+          [artist]="selectedArtist"
+          (selectAlbum)="showAlbumDetail($event)"
+          (createAlbum)="view = 'create-album'"
+          (edit)="view = 'edit-artist'"
+          (delete)="handleDeleteArtist(selectedArtist.id)"
+          (back)="showArtistList()"
+        />
+      }
+    }
+    @case ('album-detail') {
+      @if (selectedAlbum) {
+        <app-album-detail
+          [album]="selectedAlbum"
+          (createTrack)="view = 'create-track'"
+          (edit)="view = 'edit-album'"
+          (delete)="handleDeleteAlbum(selectedAlbum.id)"
+          (back)="goBack()"
+        />
+      }
+    }
+    @case ('create-artist') {
+      <app-music-form [mode]="'create-artist'" (save)="handleCreateArtist($any($event))" (cancel)="showArtistList()" />
+    }
+    @case ('edit-artist') {
+      @if (selectedArtist) {
+        <app-music-form [mode]="'edit-artist'" [initial]="selectedArtist" (save)="handleUpdateArtist(selectedArtist.id, $any($event))" (cancel)="goBack()" />
+      }
+    }
+    @case ('create-album') {
+      <app-music-form [mode]="'create-album'" [initial]="{ artistId: selectedArtist?.id }" (save)="handleCreateAlbum($any($event))" (cancel)="goBack()" />
+    }
+    @case ('edit-album') {
+      @if (selectedAlbum) {
+        <app-music-form [mode]="'edit-album'" [initial]="selectedAlbum" (save)="handleUpdateAlbum(selectedAlbum.id, $any($event))" (cancel)="goBack()" />
+      }
+    }
+    @case ('create-track') {
+      <app-music-form [mode]="'create-track'" [initial]="{ albumId: selectedAlbum?.id }" (save)="handleCreateTrack($any($event))" (cancel)="goBack()" />
+    }
+    @case ('edit-track') {
+      @if (selectedAlbum) {
+        <app-music-form [mode]="'edit-track'" [initial]="selectedAlbum.tracks[0]" (save)="handleUpdateTrack(selectedAlbum.tracks[0].id, $any($event))" (cancel)="goBack()" />
+      }
+    }
+  }
+</div>

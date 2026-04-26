@@ -1,0 +1,13 @@
+@if (totalPages > 1) {
+  <div class="flex gap-2 justify-center p-4 items-center">
+    <button (click)="previous()" [disabled]="!hasPrevious"
+      class="px-3 py-1.5 border border-gray-300 rounded bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 text-sm">
+      Previous
+    </button>
+    <span class="text-sm text-gray-600">Page {{ page }} of {{ totalPages }}</span>
+    <button (click)="next()" [disabled]="!hasNext"
+      class="px-3 py-1.5 border border-gray-300 rounded bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 text-sm">
+      Next
+    </button>
+  </div>
+}

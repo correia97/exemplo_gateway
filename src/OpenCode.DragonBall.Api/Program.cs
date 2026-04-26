@@ -1,11 +1,16 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi;
-using OpenCode.Domain.Data;
-using OpenCode.Domain.Interfaces;
-using OpenCode.Domain.Implementations;
-using OpenCode.DragonBall.Api.Repositories;
+using OpenCode.DragonBall.Api.Auth;
 using OpenCode.DragonBall.Api.Endpoints;
+using OpenCode.DragonBall.Api.Repositories;
+using OpenCode.DragonBall.Api.Services;
+using OpenCode.Domain.Data;
+using OpenCode.Domain.Implementations;
+using OpenCode.Domain.Interfaces;
 using Scalar.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,28 +41,52 @@ builder.Services.AddDbContextPool<DragonBallContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("dragonball")));
 
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
+builder.Services.AddScoped<DragonBallSeedService>();
+builder.Services.AddHostedService<DragonBallDbInitializer>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddFluentValidationAutoValidation();
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = "http://localhost:8080/realms/opencode";
+        options.Audience = "dragonball-api";
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters.ValidateAudience = false;
+        options.TokenValidationParameters.ValidateIssuer = false;
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .RequireRole("editor")
+        .Build();
+});
+
+builder.Services.AddTransient<IClaimsTransformation, KeycloakRolesClaimsTransformation>();
+
 var app = builder.Build();
 
 app.UseCorrelationId();
+app.UseAuthentication();
+app.UseAuthorization();
 
-if (app.Environment.IsDevelopment())
+app.MapOpenApi();
+app.MapScalarApiReference(options =>
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference(options =>
-    {
-        options.WithTitle("Dragon Ball API");
-        options.WithTheme(ScalarTheme.Purple);
-        options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
-    });
-}
+    options.WithTitle("Dragon Ball API");
+    options.WithTheme(ScalarTheme.Purple);
+    options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+});
 
 app.UseHttpsRedirection();
 
 app.MapGroup("/api/characters")
    .MapCharacterEndpoints();
+
+app.MapGroup("/api")
+   .MapSeedEndpoints();
 
 app.Run();

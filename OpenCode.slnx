@@ -6,6 +6,7 @@
     <Project Path="src/OpenCode.Music.Api/OpenCode.Music.Api.csproj" />
     <Project Path="src/OpenCode.ServiceDefaults/OpenCode.ServiceDefaults.csproj" />
   </Folder>
+  <Folder Name="/frontend/" />
   <Folder Name="/tests/">
     <Project Path="tests/OpenCode.Domain.Tests/OpenCode.Domain.Tests.csproj" />
   </Folder>

@@ -10,8 +10,8 @@ public static class Tracks
 {
     public static RouteGroupBuilder MapTrackEndpoints(this RouteGroupBuilder group)
     {
-        group.MapGet("/", GetAllAsync);
-        group.MapGet("/{id:int}", GetByIdAsync);
+        group.MapGet("/", GetAllAsync).AllowAnonymous();
+        group.MapGet("/{id:int}", GetByIdAsync).AllowAnonymous();
         group.MapPost("/", CreateAsync);
         group.MapPut("/{id:int}", UpdateAsync);
         group.MapDelete("/{id:int}", DeleteAsync);

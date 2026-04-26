@@ -1,0 +1,43 @@
+@if (toasts.length > 0) {
+  <div class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+    @for (toast of toasts; track toast.id) {
+      <div
+        class="pointer-events-auto bg-gray-800 text-white rounded-lg shadow-lg p-4 border-l-4"
+        [class.border-red-500]="toast.type === 'error'"
+        [class.border-green-500]="toast.type === 'success'"
+        [class.border-blue-500]="toast.type === 'info'"
+      >
+        <div class="flex justify-between items-start gap-2">
+          <div class="flex-1 min-w-0">
+            <strong class="text-sm"
+              [class.text-red-400]="toast.type === 'error'"
+              [class.text-green-400]="toast.type === 'success'"
+              [class.text-blue-400]="toast.type === 'info'"
+            >
+              {{ toast.type === 'error' ? 'Error' : toast.type === 'success' ? 'Success' : 'Info' }}:
+            </strong>
+            <p class="text-sm mt-1 break-words">{{ toast.message }}</p>
+            @if (toast.correlationId) {
+              <button
+                (click)="copyCorrelationId(toast.id, toast.correlationId!)"
+                class="text-xs text-gray-400 mt-1 hover:text-gray-200 transition-colors cursor-pointer bg-transparent border-none p-0 text-left block"
+              >
+                X-Correlation-Id:
+                <code class="bg-red-900/30 px-1 rounded">{{ toast.correlationId }}</code>
+                @if (copiedId === toast.id) {
+                  <span class="text-green-400 ml-1">copied!</span>
+                }
+              </button>
+            }
+          </div>
+          <button
+            (click)="dismiss(toast.id)"
+            class="text-gray-400 hover:text-white text-lg leading-none cursor-pointer bg-transparent border-none shrink-0"
+          >
+            &times;
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+}

@@ -1,0 +1,37 @@
+<div>
+  <div class="flex gap-4 mb-4 items-center flex-wrap">
+    <input
+      type="text"
+      placeholder="Search by name..."
+      [(ngModel)]="search"
+      (ngModelChange)="onSearchChange()"
+      class="px-3 py-1.5 border border-gray-300 rounded flex-1 min-w-[200px] text-sm"
+    />
+    <select [(ngModel)]="raceFilter" (ngModelChange)="onRaceChange()"
+      class="px-3 py-1.5 border border-gray-300 rounded text-sm">
+      <option value="">All Races</option>
+      @for (race of races; track race) {
+        <option [value]="race">{{ race }}</option>
+      }
+    </select>
+    <span class="text-sm text-gray-500">{{ totalCount }} characters</span>
+    <button *appHasRole="'editor'" (click)="createCharacter.emit()"
+      class="px-4 py-1.5 bg-blue-600 text-white rounded cursor-pointer ml-auto hover:bg-blue-700 text-sm border-none">
+      + New Character
+    </button>
+  </div>
+
+  @if (characters.length === 0 && !isLoading) {
+    <app-empty-state message="No characters found" />
+  } @else {
+    <app-data-table
+      [columns]="columns"
+      [data]="characters"
+      [keyExtractor]="keyExtractor"
+      [isLoading]="isLoading"
+      [rowClickable]="true"
+      (rowClick)="onSelect($event)"
+    />
+    <app-pagination [page]="page" [totalPages]="totalPages" (pageChange)="onPageChange($event)" />
+  }
+</div>

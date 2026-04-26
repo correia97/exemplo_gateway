@@ -36,12 +36,25 @@ namespace OpenCode.Domain.Migrations.DragonBall
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
                     b.Property<string>("IntroductionPhase")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
                     b.Property<bool>("IsEarthling")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Ki")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("MaxKi")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -52,6 +65,14 @@ namespace OpenCode.Domain.Migrations.DragonBall
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<int?>("PlanetId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Race")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -59,7 +80,94 @@ namespace OpenCode.Domain.Migrations.DragonBall
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PlanetId");
+
                     b.ToTable("Characters", "dragonball");
+                });
+
+            modelBuilder.Entity("OpenCode.Domain.Entities.Planet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Planets", "dragonball");
+                });
+
+            modelBuilder.Entity("OpenCode.Domain.Entities.Transformation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CharacterId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Ki")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.ToTable("Transformations", "dragonball");
+                });
+
+            modelBuilder.Entity("OpenCode.Domain.Entities.Character", b =>
+                {
+                    b.HasOne("OpenCode.Domain.Entities.Planet", "Planet")
+                        .WithMany("Characters")
+                        .HasForeignKey("PlanetId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Planet");
+                });
+
+            modelBuilder.Entity("OpenCode.Domain.Entities.Transformation", b =>
+                {
+                    b.HasOne("OpenCode.Domain.Entities.Character", "Character")
+                        .WithMany("Transformations")
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Character");
+                });
+
+            modelBuilder.Entity("OpenCode.Domain.Entities.Character", b =>
+                {
+                    b.Navigation("Transformations");
+                });
+
+            modelBuilder.Entity("OpenCode.Domain.Entities.Planet", b =>
+                {
+                    b.Navigation("Characters");
                 });
 #pragma warning restore 612, 618
         }

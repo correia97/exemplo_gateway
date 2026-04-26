@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Npgsql;
 
 public static class Extensions
 {
@@ -18,6 +19,8 @@ public static class Extensions
 
     public static TBuilder ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
+        AppContext.SetSwitch("Npgsql.EnableTelemetry", true);
+
         builder.Logging.AddOpenTelemetry(logging =>
         {
             logging.IncludeFormattedMessage = true;
@@ -29,7 +32,8 @@ public static class Extensions
             {
                 metrics.AddAspNetCoreInstrumentation()
                        .AddHttpClientInstrumentation()
-                       .AddRuntimeInstrumentation();
+                       .AddRuntimeInstrumentation()
+                       .AddNpgsqlInstrumentation();
             })
             .WithTracing(tracing =>
             {
@@ -56,11 +60,13 @@ public static class Extensions
 internal class CorrelationIdMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger<CorrelationIdMiddleware> _logger;
     private const string CorrelationIdHeader = "X-Correlation-Id";
 
-    public CorrelationIdMiddleware(RequestDelegate next)
+    public CorrelationIdMiddleware(RequestDelegate next, ILogger<CorrelationIdMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -75,6 +81,13 @@ internal class CorrelationIdMiddleware
         });
 
         context.TraceIdentifier = correlationId;
-        await _next(context);
+
+        using (_logger.BeginScope(new Dictionary<string, object>
+        {
+            [CorrelationIdHeader] = correlationId
+        }))
+        {
+            await _next(context);
+        }
     }
 }

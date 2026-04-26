@@ -1,0 +1,38 @@
+<form (ngSubmit)="onSubmit()" class="max-w-[500px]">
+  <h2 class="text-xl font-bold mb-4">{{ mode === 'create' ? 'New Character' : 'Edit Character' }}</h2>
+
+  <label class="block font-semibold mt-3 mb-1 text-sm">Name *</label>
+  <input [(ngModel)]="name" name="name" required
+    class="w-full p-2 border border-gray-300 rounded text-sm" />
+
+  <label class="block font-semibold mt-3 mb-1 text-sm">Race *</label>
+  <input [(ngModel)]="race" name="race" required
+    class="w-full p-2 border border-gray-300 rounded text-sm" />
+
+  <label class="block font-semibold mt-3 mb-1 text-sm">Ki *</label>
+  <input [(ngModel)]="ki" name="ki" required
+    class="w-full p-2 border border-gray-300 rounded text-sm" />
+
+  <label class="block font-semibold mt-3 mb-1 text-sm">Max Ki</label>
+  <input [(ngModel)]="maxKi" name="maxKi"
+    class="w-full p-2 border border-gray-300 rounded text-sm" />
+
+  <label class="block font-semibold mt-3 mb-1 text-sm">Description</label>
+  <textarea [(ngModel)]="description" name="description"
+    class="w-full p-2 border border-gray-300 rounded text-sm min-h-[80px]"></textarea>
+
+  <label class="block font-semibold mt-3 mb-1 text-sm">Planet ID</label>
+  <input type="number" [(ngModel)]="planetId" name="planetId"
+    class="w-full p-2 border border-gray-300 rounded text-sm" />
+
+  <div class="flex gap-2 mt-6">
+    <button type="submit" [disabled]="submitting"
+      class="px-6 py-2 bg-blue-600 text-white rounded disabled:opacity-50 hover:bg-blue-700 border-none cursor-pointer">
+      {{ submitting ? 'Saving...' : (mode === 'create' ? 'Create' : 'Save Changes') }}
+    </button>
+    <button type="button" (click)="cancel.emit()"
+      class="px-6 py-2 border border-gray-300 rounded cursor-pointer bg-white hover:bg-gray-50 text-sm">
+      Cancel
+    </button>
+  </div>
+</form>

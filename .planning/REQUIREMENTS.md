@@ -59,7 +59,7 @@
 
 ### API Gateway
 
-- [ ] **GATE-01**: Apache APISIX 3.x as single entry point on port 8000
+- [ ] **GATE-01**: Apache APISIX 3.x as single entry point on port 9080
 - [ ] **GATE-02**: Route `/api/dragonball/*` to Dragon Ball API upstream
 - [ ] **GATE-03**: Route `/api/music/*` to Music API upstream
 - [ ] **GATE-04**: Dual auth model: GET routes pass without auth, POST/PUT/DELETE routes require OIDC

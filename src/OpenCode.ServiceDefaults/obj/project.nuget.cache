@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Dj/MB2gQ8PU=",
+  "dgSpecHash": "98a4ko4dNIY=",
   "success": true,
   "projectFilePath": "D:\\projetos\\opencodeDeepseek\\src\\OpenCode.ServiceDefaults\\OpenCode.ServiceDefaults.csproj",
   "expectedPackageFiles": [
@@ -20,6 +20,8 @@
     "C:\\Users\\pedua\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\10.0.0\\microsoft.extensions.options.configurationextensions.10.0.0.nupkg.sha512",
     "C:\\Users\\pedua\\.nuget\\packages\\microsoft.extensions.primitives\\10.0.0\\microsoft.extensions.primitives.10.0.0.nupkg.sha512",
     "C:\\Users\\pedua\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512",
+    "C:\\Users\\pedua\\.nuget\\packages\\npgsql\\10.0.2\\npgsql.10.0.2.nupkg.sha512",
+    "C:\\Users\\pedua\\.nuget\\packages\\npgsql.opentelemetry\\10.0.2\\npgsql.opentelemetry.10.0.2.nupkg.sha512",
     "C:\\Users\\pedua\\.nuget\\packages\\opentelemetry\\1.15.3\\opentelemetry.1.15.3.nupkg.sha512",
     "C:\\Users\\pedua\\.nuget\\packages\\opentelemetry.api\\1.15.3\\opentelemetry.api.1.15.3.nupkg.sha512",
     "C:\\Users\\pedua\\.nuget\\packages\\opentelemetry.api.providerbuilderextensions\\1.15.3\\opentelemetry.api.providerbuilderextensions.1.15.3.nupkg.sha512",

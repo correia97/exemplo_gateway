@@ -1,0 +1,76 @@
+nginx_config:
+  error_log_level: warn
+
+apisix:
+  node_listen: 9000 # APISIX listening port
+  enable_ipv6: false
+  enable_admin: true           # Admin API
+  enable_dev_mode: false       # If true, set nginx `worker_processes` to 1.
+
+  enable_control: true
+  control:
+    ip: "0.0.0.0"
+    port: 9092
+  plugins:
+    - openid-connect
+    - cors
+    - request-id
+    - prometheus
+    - opentelemetry
+
+deployment:
+  role: traditional            # Set deployment mode: traditional, control_plane, or data_plane.
+  role_traditional:
+    config_provider: etcd      # Set the configuration center.
+
+  admin:
+    # Enable embedded APISIX Dashboard
+    enable_admin_ui: true
+    allow_admin:
+      - 0.0.0.0/0  
+    
+    admin_listen:                 # Set the Admin API listening addresses.
+      ip: 0.0.0.0                 # Set listening IP.
+      port: 9180                  # Set listening port. Beware of port conflict with node_listen.
+    
+    admin_key:
+      -
+        name: admin
+        role: admin
+        # Using a simple Admin API Key poses security risks. Please update it when deploying to production
+        key: edd1c9f034335f136f87ad84b625c8f1
+
+      - name: "viewer"
+        key: 4054f7cf07e344346cd3f287985e76a2
+        role: viewer
+
+  etcd:
+    host: # it's possible to define multiple etcd hosts addresses of the same etcd cluster.
+      - "http://etcd:2379" # multiple etcd address
+    prefix: "/apisix" # apisix configurations prefix
+    timeout: 30 # 30 seconds
+    startup_retry: 3
+
+
+plugin_attr:          # Plugin attributes
+  opentelemetry:      # Plugin: opentelemetry
+    trace_id_source: x-request-id   # Specify the source of the trace ID for OpenTelemetry traces.
+    resource:
+      service.name: APISIX          # Set the service name for OpenTelemetry traces.
+    collector:
+      address: 127.0.0.1:4318       # Set the address of the OpenTelemetry collector to send traces to.
+      request_timeout: 3            # Set the timeout for requests to the OpenTelemetry collector in seconds.
+      request_headers:              # Set the headers to include in requests to the OpenTelemetry collector.
+        Authorization: token        # Set the authorization header to include an access token.
+    batch_span_processor:
+      drop_on_queue_full: false     # Drop spans when the export queue is full.
+      max_queue_size: 1024          # Set the maximum size of the span export queue.
+      batch_timeout: 2              # Set the timeout for span batches to wait in the export queue before
+                                    # being sent.
+      inactive_timeout: 1           # Set the timeout for spans to wait in the export queue before being sent,
+                                    # if the queue is not full.
+      max_export_batch_size: 16     # Set the maximum number of spans to include in each batch sent to the
+                                    # OpenTelemetry collector.
+    set_ngx_var: false              # Export opentelemetry variables to NGINX variables.
+  
+    
