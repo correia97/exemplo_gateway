@@ -20,7 +20,6 @@ Scaffolded the .NET 10 solution skeleton — solution file, 4 project directorie
 
 ### Key Decisions
 - `IsAspireHost=true` NOT set (triggers deprecated workload check in .NET 10 SDK) — `IsAspireProjectResource=true` on ProjectReferences sufficient for codegen
-- `Microsoft.AspNetCore.OpenApi` pinned to 10.0.7 (latest stable, aligned across all projects)
 - AppHost uses `Projects.OpenCode_DragonBall_Api` / `Projects.OpenCode_Music_Api` auto-generated types
 
 ### Verification

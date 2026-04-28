@@ -1,0 +1,574 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-0000-4000-8000-opencode-apis",
+    "name": "OpenCode APIs – DragonBall & Music",
+    "description": "Collection gerada a partir dos arquivos OpenAPI v3.\nAs requisições apontam para o Apache APISIX via variáveis de ambiente.\n\nVariáveis necessárias (configure em um Environment):\n- gateway_url   → URL base do APISIX (ex: http://localhost:9080)\n- dragonball_character_id  → ID de um personagem (ex: 1)\n- music_genre_id           → ID de um gênero (ex: 1)\n- music_artist_id          → ID de um artista (ex: 1)\n- music_album_id           → ID de um álbum (ex: 1)\n- music_track_id           → ID de uma faixa (ex: 1)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "gateway_url",               "value": "http://localhost:9080" },
+    { "key": "dragonball_character_id",   "value": "1" },
+    { "key": "music_genre_id",            "value": "1" },
+    { "key": "music_artist_id",           "value": "1" },
+    { "key": "music_album_id",            "value": "1" },
+    { "key": "music_track_id",            "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "DragonBall API",
+      "description": "OpenCode.DragonBall.Api | v1\nRota base no APISIX: /dragonball",
+      "item": [
+        {
+          "name": "Characters",
+          "item": [
+            {
+              "name": "List Characters",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/dragonball/api/characters?Page=1&PageSize=10",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["dragonball", "api", "characters"],
+                  "query": [
+                    { "key": "Name",     "value": "",   "disabled": true, "description": "Filtro por nome" },
+                    { "key": "Race",     "value": "",   "disabled": true, "description": "Filtro por raça" },
+                    { "key": "MinKi",    "value": "",   "disabled": true },
+                    { "key": "MaxKi",    "value": "",   "disabled": true },
+                    { "key": "PlanetId", "value": "",   "disabled": true },
+                    { "key": "Page",     "value": "1"  },
+                    { "key": "PageSize", "value": "10" }
+                  ]
+                },
+                "description": "Retorna lista paginada de personagens com filtros opcionais."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Character by ID",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/dragonball/api/characters/{{dragonball_character_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["dragonball", "api", "characters", "{{dragonball_character_id}}"]
+                },
+                "description": "Busca um personagem pelo ID."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Character",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept",       "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Goku\",\n  \"race\": \"Saiyan\",\n  \"ki\": \"60,000,000\",\n  \"maxKi\": \"90 Septillion\",\n  \"description\": \"O maior guerreiro do universo.\",\n  \"pictureUrl\": \"https://example.com/goku.jpg\",\n  \"planetId\": 1\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{gateway_url}}/dragonball/api/characters",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["dragonball", "api", "characters"]
+                },
+                "description": "Cria um novo personagem."
+              },
+              "response": []
+            },
+            {
+              "name": "Update Character",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept",       "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Goku Super Saiyan\",\n  \"race\": \"Saiyan\",\n  \"ki\": \"150,000,000\",\n  \"maxKi\": \"90 Septillion\",\n  \"description\": \"Forma evoluída do guerreiro.\",\n  \"pictureUrl\": \"https://example.com/goku-ssj.jpg\",\n  \"planetId\": 1\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{gateway_url}}/dragonball/api/characters/{{dragonball_character_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["dragonball", "api", "characters", "{{dragonball_character_id}}"]
+                },
+                "description": "Atualiza um personagem existente."
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Character",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{gateway_url}}/dragonball/api/characters/{{dragonball_character_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["dragonball", "api", "characters", "{{dragonball_character_id}}"]
+                },
+                "description": "Remove um personagem pelo ID."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Seed",
+          "item": [
+            {
+              "name": "Seed DragonBall Data",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/dragonball/api/seed",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["dragonball", "api", "seed"]
+                },
+                "description": "Popula o banco com dados iniciais."
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Music API",
+      "description": "OpenCode.Music.Api | v1\nRota base no APISIX: /music",
+      "item": [
+        {
+          "name": "Genres",
+          "item": [
+            {
+              "name": "List Genres",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/genres?Page=1&PageSize=10",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "genres"],
+                  "query": [
+                    { "key": "Name",     "value": "", "disabled": true, "description": "Filtro por nome" },
+                    { "key": "Page",     "value": "1"  },
+                    { "key": "PageSize", "value": "10" }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Genre by ID",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/genres/{{music_genre_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "genres", "{{music_genre_id}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Genre",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept",       "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Rock\",\n  \"description\": \"Gênero musical com influências de blues e jazz.\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/genres",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "genres"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Genre",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept",       "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Rock Clássico\",\n  \"description\": \"Vertente clássica do rock, anos 60-80.\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/genres/{{music_genre_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "genres", "{{music_genre_id}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Genre",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/genres/{{music_genre_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "genres", "{{music_genre_id}}"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Artists",
+          "item": [
+            {
+              "name": "List Artists",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/artists?Page=1&PageSize=10",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "artists"],
+                  "query": [
+                    { "key": "Name",    "value": "", "disabled": true },
+                    { "key": "GenreId", "value": "", "disabled": true },
+                    { "key": "Page",     "value": "1"  },
+                    { "key": "PageSize", "value": "10" }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Artist by ID",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/artists/{{music_artist_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "artists", "{{music_artist_id}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Artist Albums",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/artists/{{music_artist_id}}/albums?page=1&pageSize=10",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "artists", "{{music_artist_id}}", "albums"],
+                  "query": [
+                    { "key": "page",     "value": "1"  },
+                    { "key": "pageSize", "value": "10" }
+                  ]
+                },
+                "description": "Lista todos os álbuns de um artista específico."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Artist",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept",       "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Led Zeppelin\",\n  \"biography\": \"Banda britânica de rock formada em 1968.\",\n  \"genreIds\": [1]\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/artists",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "artists"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Artist",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept",       "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Led Zeppelin\",\n  \"biography\": \"Banda britânica de hard rock e heavy metal, 1968-1980.\",\n  \"genreIds\": [1, 2]\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/artists/{{music_artist_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "artists", "{{music_artist_id}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Artist",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/artists/{{music_artist_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "artists", "{{music_artist_id}}"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Albums",
+          "item": [
+            {
+              "name": "List Albums",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/albums?Page=1&PageSize=10",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "albums"],
+                  "query": [
+                    { "key": "Title",           "value": "",           "disabled": true },
+                    { "key": "ArtistId",        "value": "",           "disabled": true },
+                    { "key": "GenreId",         "value": "",           "disabled": true },
+                    { "key": "ReleaseDateFrom", "value": "2000-01-01", "disabled": true },
+                    { "key": "ReleaseDateTo",   "value": "2024-12-31", "disabled": true },
+                    { "key": "Page",     "value": "1"  },
+                    { "key": "PageSize", "value": "10" }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Album by ID",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/albums/{{music_album_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "albums", "{{music_album_id}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Album Tracks",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/albums/{{music_album_id}}/tracks?page=1&pageSize=10",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "albums", "{{music_album_id}}", "tracks"],
+                  "query": [
+                    { "key": "page",     "value": "1"  },
+                    { "key": "pageSize", "value": "10" }
+                  ]
+                },
+                "description": "Lista todas as faixas de um álbum."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Album",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept",       "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Led Zeppelin IV\",\n  \"releaseDate\": \"1971-11-08\",\n  \"coverUrl\": \"https://example.com/lz4.jpg\",\n  \"artistId\": 1\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/albums",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "albums"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Album",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept",       "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Led Zeppelin IV (Remaster)\",\n  \"releaseDate\": \"1971-11-08\",\n  \"coverUrl\": \"https://example.com/lz4-remaster.jpg\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/albums/{{music_album_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "albums", "{{music_album_id}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Album",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/albums/{{music_album_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "albums", "{{music_album_id}}"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Tracks",
+          "item": [
+            {
+              "name": "List Tracks",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/tracks?Page=1&PageSize=10",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "tracks"],
+                  "query": [
+                    { "key": "Name",    "value": "", "disabled": true },
+                    { "key": "AlbumId", "value": "", "disabled": true },
+                    { "key": "Page",     "value": "1"  },
+                    { "key": "PageSize", "value": "10" }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Track by ID",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/tracks/{{music_track_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "tracks", "{{music_track_id}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Track",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept",       "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Stairway to Heaven\",\n  \"trackNumber\": 4,\n  \"duration\": \"00:08:02\",\n  \"lyrics\": \"There's a lady who's sure all that glitters is gold...\",\n  \"albumId\": 1,\n  \"isStandalone\": false\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/tracks",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "tracks"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Track",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept",       "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Stairway to Heaven (2014 Remaster)\",\n  \"trackNumber\": 4,\n  \"duration\": \"00:08:02\",\n  \"lyrics\": null,\n  \"albumId\": 1,\n  \"isStandalone\": false\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/tracks/{{music_track_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "tracks", "{{music_track_id}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Track",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/tracks/{{music_track_id}}",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "tracks", "{{music_track_id}}"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Seed",
+          "item": [
+            {
+              "name": "Seed Music Data",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{gateway_url}}/music/api/seed",
+                  "host": ["{{gateway_url}}"],
+                  "path": ["music", "api", "seed"]
+                },
+                "description": "Popula o banco com dados iniciais."
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

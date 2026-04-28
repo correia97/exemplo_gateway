@@ -32,7 +32,7 @@ export default function CharacterList({ onSelect, onCreate }: Props) {
 
     getCharacters(filters).then(result => {
       if (id !== fetchId.current) return
-      setCharacters(result.items)
+      setCharacters(result.data)
       setTotalPages(result.totalPages)
       setTotalCount(result.totalCount)
       setIsLoading(false)

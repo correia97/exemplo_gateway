@@ -48,7 +48,7 @@ export class CharacterListComponent implements OnInit {
 
     this.dbService.getCharacters(filters).subscribe({
       next: (result) => {
-        this.characters = result.items;
+        this.characters = result.data;
         this.totalPages = result.totalPages;
         this.totalCount = result.totalCount;
         this.isLoading = false;

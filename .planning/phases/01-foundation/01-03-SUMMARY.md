@@ -14,7 +14,6 @@ Centralized and pinned all NuGet package versions in a single `Directory.Package
 ### Changes
 - Created `Directory.Packages.props` with `ManagePackageVersionsCentrally=true` and 7 pinned packages:
   - Aspire.Hosting.AppHost 13.2.3
-  - Microsoft.AspNetCore.OpenApi 10.0.7
   - 5 OpenTelemetry packages (1.15.x)
 - Stripped `Version` attributes from all 4 csproj files
 

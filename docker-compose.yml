@@ -53,56 +53,65 @@ services:
       retries: 10
       start_period: 60s
 
-  etcd:
-    image: quay.io/coreos/etcd:v3.5
-    container_name: opencode-etcd
+  kong-init-routes:
+    image: kong/kong:3.9.1-ubuntu
+    container_name: opencode-kong-init
+    entrypoint: 
+      - kong
+    command: 
+      - migrations bootstrap --v
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - opencode-net
+    restart: "no"
+
+  gateway:
+    image: kong/kong:3.9.1-ubuntu
+    container_name: opencode-kong
+    depends_on:
+      kong-init-routes:
+        condition: service_completed_successfully
     environment:
-      ALLOW_NONE_AUTHENTICATION: "yes"
-      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
-      ETCD_ADVERTISE_CLIENT_URLS: http://etcd:2379
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: postgres
+      KONG_PG_PORT: 5432
+      KONG_PG_DATABASE: opencode
+      KONG_PG_USER: kong_user
+      KONG_PG_PASSWORD: kong_pass
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: "0.0.0.0:8001"
+    volumes:
+      - ./deploy/kong/init-routes.sh:/init-routes.sh:ro
     ports:
-      - "2379:2379"
+      - "8000:8000"
+      - "8001:8001"
     networks:
       - opencode-net
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "etcdctl endpoint health 2>&1 | grep -q 'healthy'"]
+      test: ["CMD", "kong", "health"]
       interval: 15s
       timeout: 5s
-      retries: 3
-      start_period: 10s
-
-  apisix:
-    image: apache/apisix:3.9.1-alpine
-    container_name: opencode-apisix
+      retries: 10
+      start_period: 60s
+ 
+  busybox:
+    image: rootpublic/curl:bookworm-slim_rootio
+    container_name: busybox
+    entrypoint: ["/bin/sh"]
+    command: ["/init-routes.sh"]
     depends_on:
-      etcd:
-        condition: service_started
-    ports:
-      - "9080:9080"
-      - "9180:9180"
+      gateway:
+        condition: service_completed_successfully
     volumes:
-      - ./deploy/apisix/config.yaml:/usr/local/apisix/conf/config.yaml:ro
-      - ./deploy/apisix/init-routes.sh:/scripts/init-routes.sh:ro
-    environment:
-      UPSTREAM_DRAGONBALL_API: http://dragonball-api:8080
-      UPSTREAM_MUSIC_API: http://music-api:8080
-      CLIENT_SECRET_DRAGONBALL: dragonball-secret
-      CLIENT_SECRET_MUSIC: music-secret
-      ADMIN_KEY: edd1c9f034335f136f87ad84b625c8f1
-    entrypoint:
-      - "/bin/sh"
-      - "-c"
-      - "chmod +x /scripts/init-routes.sh && apisix start && sleep 3 && /scripts/init-routes.sh && apisix stop && exec /usr/local/openresty/bin/openresty -p /usr/local/apisix -g 'daemon off;'"
+      - ./deploy/kong/init-routes.sh:/init-routes.sh:ro
     networks:
-      - opencode-net
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "http://127.0.0.1:9180/apisix/admin/routes"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
+      - opencode-net    
 
   dragonball-api:
     build:
@@ -172,7 +181,7 @@ services:
       dockerfile: Dockerfile
     container_name: opencode-frontend
     depends_on:
-      - apisix
+      - gateway
     ports:
       - "3000:80"
     environment:
@@ -195,7 +204,7 @@ services:
       dockerfile: Dockerfile
     container_name: opencode-angular-frontend
     depends_on:
-      - apisix
+      - gateway
     ports:
       - "4200:80"
     environment:

@@ -2,27 +2,36 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
+using OpenCode.Domain.Data;
+using OpenCode.Domain.Interfaces;
 using OpenCode.DragonBall.Api.Auth;
 using OpenCode.DragonBall.Api.Endpoints;
 using OpenCode.DragonBall.Api.Repositories;
 using OpenCode.DragonBall.Api.Services;
-using OpenCode.Domain.Data;
-using OpenCode.Domain.Implementations;
-using OpenCode.Domain.Interfaces;
 using Scalar.AspNetCore;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var corsPolicy = "frontCorsPolicy";
 
 builder.AddServiceDefaults();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(corsPolicy, policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddOpenApi(options =>
 {
+    options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
     options.AddDocumentTransformer((document, context, cancellationToken) =>
     {
-        document.Servers = [new OpenApiServer { Url = "/api/dragonball" }];
+        document.Servers = [new OpenApiServer { Url = "/" }];
         return Task.CompletedTask;
     });
 });
@@ -57,13 +66,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters.ValidateIssuer = false;
     });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .RequireRole("editor")
-        .Build();
-});
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("ApiPolicy", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("editor");
+    });
 
 builder.Services.AddTransient<IClaimsTransformation, KeycloakRolesClaimsTransformation>();
 
@@ -72,6 +81,7 @@ var app = builder.Build();
 app.UseCorrelationId();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors(corsPolicy);
 
 app.MapOpenApi();
 app.MapScalarApiReference(options =>

@@ -41,7 +41,7 @@ export class ArtistListComponent implements OnInit {
   fetchArtists(): void {
     this.isLoading = true;
     this.musicService.getArtists({ page: this.page, pageSize: this.pageSize, name: this.search || undefined }).subscribe({
-      next: (r) => { this.artists = r.items; this.totalPages = r.totalPages; this.totalCount = r.totalCount; this.isLoading = false; },
+      next: (r) => { this.artists = r.data; this.totalPages = r.totalPages; this.totalCount = r.totalCount; this.isLoading = false; },
       error: () => { this.artists = []; this.isLoading = false; },
     });
   }

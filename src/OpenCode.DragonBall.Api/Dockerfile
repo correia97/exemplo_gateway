@@ -19,11 +19,7 @@ RUN dotnet publish src/OpenCode.DragonBall.Api/OpenCode.DragonBall.Api.csproj \
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
-RUN addgroup --system --gid 1000 appgroup \
-    && adduser --system --uid 1000 --gid 1000 appuser
-
 COPY --from=build /app .
-USER appuser
 
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080

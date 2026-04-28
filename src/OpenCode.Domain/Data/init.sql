@@ -34,6 +34,9 @@ BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'keycloak_user') THEN
         CREATE USER keycloak_user WITH PASSWORD 'keycloak_pass';
     END IF;
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'kong_user') THEN
+        CREATE USER kong_user WITH PASSWORD 'kong_pass';
+    END IF;
 END
 $$;
 
@@ -73,3 +76,15 @@ GRANT ALL PRIVILEGES ON SCHEMA keycloak TO keycloak_user;
 GRANT CONNECT ON DATABASE opencode TO dragonball_user;
 GRANT CONNECT ON DATABASE opencode TO music_user;
 GRANT CONNECT ON DATABASE opencode TO keycloak_user;
+GRANT CONNECT ON DATABASE opencode TO kong_user;
+
+-- ============================================================
+-- GRANTS -- Kong (uses public schema)
+-- ============================================================
+
+GRANT USAGE ON SCHEMA public TO kong_user;
+GRANT CREATE ON SCHEMA public TO kong_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO kong_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO kong_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO kong_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO kong_user;

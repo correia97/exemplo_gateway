@@ -1,0 +1,104 @@
+{
+  "info": {
+    "name": "OpenCode - Kong Gateway",
+    "description": "Collection para verificar o Kong Gateway (DB-less mode)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "proxy-url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "admin-url",
+      "value": "http://localhost:8001",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Kong Status",
+          "request": {
+            "method": "GET",
+            "url": "{{admin-url}}/status"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function() {",
+                  "    pm.expect(pm.response.status).to.equal(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Routes",
+          "request": {
+            "method": "GET",
+            "url": "{{admin-url}}/routes"
+          }
+        },
+        {
+          "name": "List Services",
+          "request": {
+            "method": "GET",
+            "url": "{{admin-url}}/services"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dragon Ball API via Kong",
+      "item": [
+        {
+          "name": "GET Characters",
+          "request": {
+            "method": "GET",
+            "url": "{{proxy-url}}/api/dragonball/characters?page=1&pageSize=10"
+          }
+        },
+        {
+          "name": "GET Character by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{proxy-url}}/api/dragonball/characters/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Music API via Kong",
+      "item": [
+        {
+          "name": "GET Artists",
+          "request": {
+            "method": "GET",
+            "url": "{{proxy-url}}/api/music/artists?page=1&pageSize=10"
+          }
+        },
+        {
+          "name": "GET Albums",
+          "request": {
+            "method": "GET",
+            "url": "{{proxy-url}}/api/music/albums?page=1&pageSize=10"
+          }
+        },
+        {
+          "name": "GET Tracks",
+          "request": {
+            "method": "GET",
+            "url": "{{proxy-url}}/api/music/tracks?page=1&pageSize=10"
+          }
+        }
+      ]
+    }
+  ]
+}

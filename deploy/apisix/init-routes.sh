@@ -4,8 +4,8 @@ set -e
 ADMIN_API="http://127.0.0.1:9180/apisix/admin"
 ADMIN_KEY="${ADMIN_KEY:-edd1c9f034335f136f87ad84b625c8f1}"
 
-UPSTREAM_DRAGONBALL="${UPSTREAM_DRAGONBALL_API:-http://dragonball-api:8080}"
-UPSTREAM_MUSIC="${UPSTREAM_MUSIC_API:-http://music-api:8080}"
+UPSTREAM_DRAGONBALL="${UPSTREAM_DRAGONBALL_API:-http://192.168.3.4:8080}"
+UPSTREAM_MUSIC="${UPSTREAM_MUSIC_API:-http://192.168.3.4:8080}"
 
 CORS_ORIGINS="${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000,http://localhost:4200,http://localhost,http://localhost:5003}"
 

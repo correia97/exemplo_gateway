@@ -24,7 +24,7 @@ export default function ArtistList({ onSelect, onCreate }: Props) {
 
     getArtists({ page, pageSize, name: search || undefined }).then(result => {
       if (id !== fetchId.current) return
-      setArtists(result.items)
+      setArtists(result.data)
       setTotalPages(result.totalPages)
       setTotalCount(result.totalCount)
       setIsLoading(false)

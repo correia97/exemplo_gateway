@@ -106,10 +106,10 @@ D:\projetos\opencodeDeepseek\tests\OpenCode.Domain.Tests\obj\Debug\net10.0\OpenC
 D:\projetos\opencodeDeepseek\tests\OpenCode.Domain.Tests\obj\Debug\net10.0\OpenCode.Domain.Tests.AssemblyInfoInputs.cache
 D:\projetos\opencodeDeepseek\tests\OpenCode.Domain.Tests\obj\Debug\net10.0\OpenCode.Domain.Tests.AssemblyInfo.cs
 D:\projetos\opencodeDeepseek\tests\OpenCode.Domain.Tests\obj\Debug\net10.0\OpenCode.Domain.Tests.csproj.CoreCompileInputs.cache
+D:\projetos\opencodeDeepseek\tests\OpenCode.Domain.Tests\obj\Debug\net10.0\OpenCode.Domain.Tests.sourcelink.json
 D:\projetos\opencodeDeepseek\tests\OpenCode.Domain.Tests\obj\Debug\net10.0\OpenCode.B9F0EF1C.Up2Date
 D:\projetos\opencodeDeepseek\tests\OpenCode.Domain.Tests\obj\Debug\net10.0\OpenCode.Domain.Tests.dll
 D:\projetos\opencodeDeepseek\tests\OpenCode.Domain.Tests\obj\Debug\net10.0\refint\OpenCode.Domain.Tests.dll
 D:\projetos\opencodeDeepseek\tests\OpenCode.Domain.Tests\obj\Debug\net10.0\OpenCode.Domain.Tests.pdb
 D:\projetos\opencodeDeepseek\tests\OpenCode.Domain.Tests\obj\Debug\net10.0\OpenCode.Domain.Tests.genruntimeconfig.cache
 D:\projetos\opencodeDeepseek\tests\OpenCode.Domain.Tests\obj\Debug\net10.0\ref\OpenCode.Domain.Tests.dll
-D:\projetos\opencodeDeepseek\tests\OpenCode.Domain.Tests\obj\Debug\net10.0\OpenCode.Domain.Tests.sourcelink.json

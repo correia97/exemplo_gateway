@@ -29,7 +29,7 @@
 | OpenTelemetry.Instrumentation.Npgsql | 1.11.x | PostgreSQL query tracing | Recommended — captures SQL query spans |
 | OpenTelemetry.Exporter.OpenTelemetryProtocol | 1.11.x | OTLP exporter for OTel collector | Required — sends traces to OTel collector |
 | Microsoft.EntityFrameworkCore.Design | 10.0.x | EF Core migrations CLI tools | Development dependency — needed for `dotnet ef migrations add` |
-| Swashbuckle.AspNetCore | 7.x | OpenAPI/Swagger generation | Development — API documentation. Optional if using .NET 10's built-in OpenAPI support (Microsoft.AspNetCore.OpenApi) |
+| Swashbuckle.AspNetCore | 7.x | OpenAPI/Swagger generation | Development — API documentation. Optional if using .NET 10's built-in OpenAPI support (Microsoft.OpenApi) |
 | AutoMapper | 14.x | Object-object mapping | When APIs need DTO projection. Alternative: use `.Select()` projections directly in EF Core queries |
 | FluentValidation | 11.x | Request validation | For complex input validation beyond data annotations. Alternative: Minimal API endpoint filters |
 | Serilog.AspNetCore | 9.x | Structured logging | When you need more than `ILogger<T>` supports. Alternative: built-in ASP.NET Core logging is often sufficient |

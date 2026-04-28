@@ -54,44 +54,44 @@ var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak:lates
     .WithReference(postgres)
     .WaitFor(postgres);
 
-var etcd = builder.AddContainer("etcd", "dhi.io/etcd", "3.6")
-    .WithVolume("etcd_data", "/etcd-data")
-    .WithArgs(
-        "/usr/local/bin/etcd",
-        "--name", "node1",
-        "--listen-client-urls", "http://0.0.0.0:2379",
-        "--advertise-client-urls", "http://localhost:2379",
-        "--listen-peer-urls", "http://0.0.0.0:2380",
-        "--initial-advertise-peer-urls", "http://localhost:2380")
-    .WithHttpEndpoint(port: 2379, targetPort: 2379, name: "client")
-    .WithEndpoint(port: 2380, targetPort: 2380, name: "peer", scheme: "tcp")
-    .WithEnvironment("ALLOW_NONE_AUTHENTICATION", "yes");
+var kongInit = builder.AddContainer("gateway-init", "kong/kong", "3.9.1-ubuntu")
+    .WithEnvironment("KONG_PG_HOST", "postgres")
+    .WithEnvironment("KONG_PG_PORT", "5432")
+    .WithEnvironment("KONG_DATABASE", "postgres")
+    .WithEnvironment("KONG_PG_DATABASE", "opencode")
+    .WithEnvironment("KONG_PG_USER", "kong_user")
+    .WithEnvironment("KONG_PG_PASSWORD", "kong_pass")
+    .WithEntrypoint("kong")
+    .WithArgs("migrations","bootstrap","--v")
+    .WithReference(postgres)
+    .WaitFor(postgres);
 
-var apisixConfigPath = Path.Combine(
-    Directory.GetParent(typeof(Program).Assembly.Location)!.Parent!.Parent!.Parent!.Parent!.FullName,
-    "..", ".planning", "phases", "05-apisix-gateway");
+var kong = builder.AddContainer("gateway", "kong/kong", "3.9.1-ubuntu")
+    .WithEnvironment("KONG_PG_HOST", "postgres")
+    .WithEnvironment("KONG_PG_PORT", "5432")
+    .WithEnvironment("KONG_DATABASE", "postgres")
+    .WithEnvironment("KONG_PG_DATABASE", "opencode")
+    .WithEnvironment("KONG_PG_USER", "kong_user")
+    .WithEnvironment("KONG_PG_PASSWORD", "kong_pass")
+    .WithEnvironment("KONG_PROXY_ACCESS_LOG", "/dev/stdout")
+    .WithEnvironment("KONG_ADMIN_ACCESS_LOG", "/dev/stdout")
+    .WithEnvironment("KONG_PROXY_ERROR_LOG", "/dev/stderr")
+    .WithEnvironment("KONG_ADMIN_ERROR_LOG", "/dev/stderr")
+    .WithEnvironment("KONG_ADMIN_LISTEN", "0.0.0.0:8001")
+    .WithEndpoint(port: 8000, targetPort: 8000, name: "proxy", scheme: "http")
+    .WithEndpoint(port: 8001, targetPort: 8001, name: "admin", scheme: "http")
+    .WithEndpoint(port: 8002, targetPort: 8002, name: "gui", scheme: "http")
+    .WithReference(postgres);
 
-var apisix = builder.AddContainer("gateway", "apache/apisix", "3.16.0-ubuntu")
-    .WithEnvironment("UPSTREAM_DRAGONBALL_API", "http://host.docker.internal:5000")
-    .WithEnvironment("UPSTREAM_MUSIC_API", "http://host.docker.internal:5002")
-    .WithEnvironment("KEYCLOAK_URL", "http://host.docker.internal:8080")
-    .WithEnvironment("CLIENT_SECRET_DRAGONBALL", "dragonball-secret")
-    .WithEnvironment("CLIENT_SECRET_MUSIC", "music-secret")
-    .WithEnvironment("ADMIN_KEY", "edd1c9f034335f136f87ad84b625c8f1")
-    .WithEnvironment("JAEGER_ENDPOINT", "http://jaeger:4318")
-    .WithBindMount("../../.planning/phases/05-apisix-gateway/", "/scripts", isReadOnly:false)
-    .WithBindMount("../../.planning/phases/05-apisix-gateway/config.yaml", "/usr/local/apisix/conf/config.yaml", isReadOnly: false)
-    .WithEndpoint(port: 9180, targetPort: 9180, name: "admin", scheme: "http")
-    .WithEndpoint(port: 9080, targetPort: 9080, name: "http", scheme: "http")
-    .WithEndpoint(port: 9091, targetPort: 9091, name: "metrics", scheme: "http")
-    .WithEndpoint(port: 9443, targetPort: 9443, name: "https", scheme: "https")
-    .WithEndpoint(port: 9092, targetPort: 9092, name: "stream", scheme: "tcp")
-    .WithEndpoint(port: 9000, targetPort: 9000, name: "extra", scheme: "http")
+var busybox = builder.AddContainer("busybox", "rootpublic/curl", "bookworm-slim_rootio")
+    .WithBindMount("../../deploy/kong/init-routes.sh", "/init-routes.sh")
     .WithEntrypoint("/bin/sh")
-    .WithArgs("-c", "/scripts/init-routes.sh && /scripts/init-routes-otel.sh && exec /usr/local/openresty/bin/openresty -p /usr/local/apisix -g 'daemon off;'")
-    .WaitFor(etcd);
+    .WithArgs("/init-routes.sh")
+    .WaitFor(keycloak);
 
 var frontend = builder.AddExecutable("frontend", "npm", "../OpenCode.Frontend", "run", "dev")
+    .WithReference(dragonballApi)
+    .WithReference(musicApi)
     .WithEnvironment("VITE_DRAGONBALL_API_URL", "http://localhost:5000")
     .WithEnvironment("VITE_MUSIC_API_URL", "http://localhost:5002")
     .WithEnvironment("VITE_KEYCLOAK_URL", "http://localhost:8080")
@@ -99,6 +99,9 @@ var frontend = builder.AddExecutable("frontend", "npm", "../OpenCode.Frontend", 
     .WithExternalHttpEndpoints();
 
 var angularFrontend = builder.AddExecutable("angular-frontend", "npm", "../OpenCode.AngularFrontend", "run", "start")
+    
+    .WithReference(dragonballApi)
+    .WithReference(musicApi)
     .WithEnvironment("DRAGONBALL_API_URL", "http://localhost:5000")
     .WithEnvironment("MUSIC_API_URL", "http://localhost:5002")
     .WithEnvironment("KEYCLOAK_URL", "http://localhost:8080")
