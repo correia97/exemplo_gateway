@@ -1,5 +1,4 @@
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -26,15 +25,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddOpenApi(options =>
-{
-    options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
-    options.AddDocumentTransformer((document, context, cancellationToken) =>
-    {
-        document.Servers = [new OpenApiServer { Url = "/" }];
-        return Task.CompletedTask;
-    });
-});
+builder.Services.AddOpenApi();
 
 builder.Services.AddProblemDetails(options =>
 {
@@ -57,7 +48,6 @@ builder.Services.AddScoped<MusicSeedService>();
 builder.Services.AddHostedService<MusicDbInitializer>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
