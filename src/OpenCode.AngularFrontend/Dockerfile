@@ -14,10 +14,7 @@ COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 COPY --from=build /app/dist/OpenCode.AngularFrontend/browser /usr/share/nginx/html
 
-RUN chown -R nginx:nginx /usr/share/nginx/html /docker-entrypoint.sh \
- && chmod +x /docker-entrypoint.sh
-
-USER nginx
+RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 80
 

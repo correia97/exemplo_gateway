@@ -6,7 +6,7 @@
    - `Microsoft.AspNetCore.Authentication.JwtBearer`
 
 2. **JWT Bearer configuration** in both `Program.cs` (DragonBall.Api, Music.Api):
-   - Authority: `http://keycloak:8080/realms/opencode`
+   - Authority: `http://keycloak:8080/realms/OpenCode`
    - Audience: `account`
    - RequireHttpsMetadata: `false` (development)
    - Token validation: Issuer, Audience, Lifetime, IssuerSigningKey

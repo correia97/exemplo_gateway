@@ -48,7 +48,7 @@ start http://localhost:16686
 
 ### Scenario 2: Trace generated on GET request
 ```powershell
-$token = curl -s -X POST "http://localhost:8080/realms/opencode/protocol/openid-connect/token" `
+$token = curl -s -X POST "http://localhost:8080/realms/OpenCode/protocol/openid-connect/token" `
   -H "Content-Type: application/x-www-form-urlencoded" `
   -d "client_id=dragonball-api&client_secret=dragonball-secret&grant_type=client_credentials" | ConvertFrom-Json | Select -ExpandProperty access_token
 

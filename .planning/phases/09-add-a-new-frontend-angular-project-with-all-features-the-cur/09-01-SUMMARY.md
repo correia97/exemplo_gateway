@@ -40,5 +40,5 @@
 
 - `ng build --configuration development` — zero errors, zero warnings
 - `dotnet build src/OpenCode.AppHost` — passes
-- OIDC config points to `http://localhost:8080/realms/opencode`
+- OIDC config points to `http://localhost:8080/realms/OpenCode`
 - API base URL points to `http://localhost9080/api/`

@@ -8,7 +8,10 @@ export default function Callback() {
 
   useEffect(() => {
     userManager.signinRedirectCallback()
-      .then(() => navigate('/', { replace: true }))
+      .then((user) => {
+        
+        console.log(user);
+        navigate('/', { replace: true })})
       .catch(err => setError(err.message || 'Authentication failed'))
   }, [navigate])
 

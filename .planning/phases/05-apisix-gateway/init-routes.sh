@@ -133,7 +133,7 @@ curl -s -X PUT "$ADMIN_API/routes/dragonball-write" \
         "openid-connect": {
             "client_id": "dragonball-api",
             "client_secret": "$CLIENT_SECRET_DRAGONBALL",
-            "discovery": "http://keycloak:8080/realms/opencode/.well-known/openid-configuration",
+            "discovery": "http://keycloak:8080/realms/OpenCode/.well-known/openid-configuration",
             "bearer_only": true,
             "ssl_verify": false,
             "realm": "opencode"
@@ -165,7 +165,7 @@ curl -s -X PUT "$ADMIN_API/routes/music-write" \
         "openid-connect": {
             "client_id": "music-api",
             "client_secret": "$CLIENT_SECRET_MUSIC",
-            "discovery": "http://keycloak:8080/realms/opencode/.well-known/openid-configuration",
+            "discovery": "http://keycloak:8080/realms/OpenCode/.well-known/openid-configuration",
             "bearer_only": true,
             "ssl_verify": false,
             "realm": "opencode"

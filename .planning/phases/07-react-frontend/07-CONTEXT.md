@@ -21,7 +21,7 @@ A React 19 + Vite SPA that consumes both APIs exclusively through APISIX, with O
 ## Auth Flow
 
 1. Unauthenticated user lands on page → can browse GET data
-2. Click "Login" → redirect to Keycloak `/realms/opencode/protocol/openid-connect/auth` with PKCE
+2. Click "Login" → redirect to Keycloak `/realms/OpenCode/protocol/openid-connect/auth` with PKCE
 3. Keycloak redirects back to SPA with authorization code
 4. oidc-client-ts exchanges code + PKCE for tokens (access + refresh + id)
 5. Access token used in `Authorization: Bearer` header for writes

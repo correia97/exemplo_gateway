@@ -9,7 +9,7 @@
 
 2. **Keycloak OIDC plugin** (alternative approach):
    - `openid-connect` plugin configured on auth routes
-   - Discovery endpoint: `http://keycloak:8080/realms/opencode/.well-known/openid-configuration`
+   - Discovery endpoint: `http://keycloak:8080/realms/OpenCode/.well-known/openid-configuration`
    - Client ID and secret for frontend public client
 
 3. **Public routes**:

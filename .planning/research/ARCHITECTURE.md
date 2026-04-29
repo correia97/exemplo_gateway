@@ -352,7 +352,7 @@ public static class CreateCharacterEndpoint
     openid-connect:
       client_id: dragonball-api
       client_secret: ${OIDC_CLIENT_SECRET}
-      discovery: http://keycloak:8080/realms/opencode/.well-known/openid-configuration
+      discovery: http://keycloak:8080/realms/OpenCode/.well-known/openid-configuration
       bearer_only: false
       session_secret: ${SESSION_SECRET}
 ```
@@ -557,7 +557,7 @@ Browser                             APISIX                               Keycloa
 | Service | Integration Pattern | Notes |
 |---------|---------------------|-------|
 | **PostgreSQL** | Direct TCP connection via Npgsql | Connection string injected via Aspire's `WithReference(postgres)`. Search path set per API. SSL disabled in dev, required in production |
-| **Keycloak** | OIDC discovery URL read by APISIX openid-connect plugin | Internal Docker network URL: `http://keycloak:8080/realms/opencode/.well-known/openid-configuration`. Admin API only accessible from AppHost |
+| **Keycloak** | OIDC discovery URL read by APISIX openid-connect plugin | Internal Docker network URL: `http://keycloak:8080/realms/OpenCode/.well-known/openid-configuration`. Admin API only accessible from AppHost |
 | **APISIX Admin API** | HTTP REST API at port 9180 | Used by CI/CD to push route configs. Must be secured with admin key + IP whitelist. Not exposed to host in production |
 | **OTLP Collector** | gRPC/HTTP export from APISIX + .NET SDK | Aspire provides the collector endpoint. APISIX configured with `collector.address` in OTel plugin |
 | **APISIX etcd** | gRPC internal (APISIX ↔ etcd) | Both are internal containers. No external access needed |

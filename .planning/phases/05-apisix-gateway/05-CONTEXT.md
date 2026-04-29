@@ -30,7 +30,7 @@
 ## OIDC Plugin Configuration
 
 - Bearer-only mode (no redirect to Keycloak)
-- OIDC discovery URL: `http://keycloak:8080/realms/opencode/.well-known/openid-configuration`
+- OIDC discovery URL: `http://keycloak:8080/realms/OpenCode/.well-known/openid-configuration`
 - JWKS URI: fetched from discovery document
 - `ssl_verify: false` (development)
 - Client ID: `dragonball-api` or `music-api` (matching the upstream API)

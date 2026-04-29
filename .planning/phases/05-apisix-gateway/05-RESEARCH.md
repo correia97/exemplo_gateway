@@ -169,7 +169,7 @@ X-API-KEY: edd1c9f034335f136f87ad84b625c8f1
     "openid-connect": {
         "client_id": "dragonball-api",
         "client_secret": "dragonball-secret",
-        "discovery": "http://keycloak:8080/realms/opencode/.well-known/openid-configuration",
+        "discovery": "http://keycloak:8080/realms/OpenCode/.well-known/openid-configuration",
         "bearer_only": true,
         "ssl_verify": false,
         "realm": "opencode"

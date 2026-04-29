@@ -169,13 +169,13 @@ Expected: Response includes `X-Correlation-Id: <uuid>` header. Run twice — IDs
 
 ### 6a: Keycloak is reachable
 ```bash
-curl -s -o /dev/null -w "%{http_code}" "http://localhost:8080/realms/opencode/.well-known/openid-configuration"
+curl -s -o /dev/null -w "%{http_code}" "http://localhost:8080/realms/OpenCode/.well-known/openid-configuration"
 ```
 Expected: `200`.
 
 ### 6b: Get editor token
 ```bash
-$EDITOR_TOKEN = curl -s -X POST "http://localhost:8080/realms/opencode/protocol/openid-connect/token" `
+$EDITOR_TOKEN = curl -s -X POST "http://localhost:8080/realms/OpenCode/protocol/openid-connect/token" `
   -H "Content-Type: application/x-www-form-urlencoded" `
   -d "username=editor1&password=password&grant_type=password&client_id=dragonball-api&client_secret=dragonball-secret" | `
   python -c "import sys,json; print(json.load(sys.stdin).get('access_token',''))"

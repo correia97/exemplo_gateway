@@ -1,17 +1,17 @@
 import { UserManager, WebStorageStateStore, type UserManagerSettings } from 'oidc-client-ts'
 import { KEYCLOAK_URL } from '../api/client'
 
-const env = (window as any).__ENV__ || {}
+//const env = (window as any).__ENV__ || {}
 const keycloakUrl = KEYCLOAK_URL
 const origin = window.location.origin
 
 const settings: UserManagerSettings = {
-  authority: `${keycloakUrl}/realms/opencode`,
+  authority: `${keycloakUrl}/realms/OpenCode`,
   client_id: 'frontend',
   redirect_uri: `${origin}/callback`,
   post_logout_redirect_uri: origin,
   response_type: 'code',
-  scope: 'openid profile email roles realm_roles',
+  scope: 'openid profile email roles',
   loadUserInfo: true,
   automaticSilentRenew: true,
   silent_redirect_uri: `${origin}/callback`,

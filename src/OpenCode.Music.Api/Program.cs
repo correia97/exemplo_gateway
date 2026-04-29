@@ -52,7 +52,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = "http://localhost:8080/realms/opencode";
+        options.Authority = "http://localhost:8080/realms/OpenCode";
         options.Audience = "music-api";
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters.ValidateAudience = false;

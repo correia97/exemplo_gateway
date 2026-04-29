@@ -124,7 +124,7 @@ Browser ──GET/POST/PUT/DELETE──→ APISIX (9080) ──→ .NET API ─�
 ### OIDC Configuration
 ```typescript
 const settings: OidcClientSettings = {
-  authority: "http://localhost:8080/realms/opencode",
+  authority: "http://localhost:8080/realms/OpenCode",
   client_id: "frontend",
   redirect_uri: "http://localhost:5173/callback",
   post_logout_redirect_uri: "http://localhost:5173",
