@@ -1,6 +1,6 @@
-# Dragon Ball & Music APIs - Prova de Conceito com API Gateway
+# Dragon Ball & Music APIs - Prova de Conceito com API Gateway Kong
 
-Uma arquitetura de microserviços completa com duas APIs CRUD (.NET 10), API Gateway (Kong/APISIX), autenticação centralizada (Keycloak) e frontends moderno (Angular e React + Vite).
+Uma arquitetura de microserviços completa com duas APIs CRUD (.NET 10), API Gateway Kong, autenticação centralizada (Keycloak) e frontends moderno (Angular e React + Vite).
 
 **Status do Projeto:** ✅ Pronto para execução com Docker Compose ou .NET Aspire
 
@@ -11,7 +11,7 @@ Uma arquitetura de microserviços completa com duas APIs CRUD (.NET 10), API Gat
 Este é um **proof of concept** que demonstra uma arquitetura profissional com:
 
 - **2 APIs CRUD** independentes em **.NET 10** (personagens Dragon Ball + catálogo de músicas)
-- **API Gateway** para roteamento, autenticação e observabilidade centralizada
+- **Kong API Gateway** para roteamento, autenticação e observabilidade centralizada
 - **Keycloak** para autenticação OAuth2/OIDC e autorização
 - **PostgreSQL** compartilhado com schemas isolados por serviço
 - **2 Frontends** (Angular e React + Vite) com integração Keycloak
@@ -25,10 +25,10 @@ Este é um **proof of concept** que demonstra uma arquitetura profissional com:
 ### Backend
 - **.NET 10** + **ASP.NET Core** + **EF Core** + **Npgsql**
 - **PostgreSQL 17** (schemas: `dragonball`, `music`)
-- **Kong/Apache APISIX 3.x** (gateway: roteamento, CORS, OIDC, correlação)
+- **Kong 3.x** (API Gateway: roteamento, CORS, OIDC, autenticação)
 - **Keycloak 26+** (autenticação OIDC/OAuth2, `bearer_only` em operações de escrita)
 - **OpenTelemetry + Jaeger** (traças distribuídas, métricas)
-- **.NET Aspire 13.x** (orquestração local alternativa)
+- **.NET Aspire 13.x** (orquestração e gerenciamento de infraestrutura)
 
 ### Frontend
 - **React 19** + **Vite** + **TypeScript**
@@ -56,9 +56,11 @@ docker compose down
 Serviços disponíveis:
 - **PostgreSQL**: `localhost:5432`
 - **Keycloak**: `http://localhost:8080`
-- **Kong/APISIX Gateway**: `http://localhost:9080`
-- **APISIX Admin**: `http://localhost:9180`
+- **Kong Gateway**: `http://localhost:8000`
+- **Kong Admin**: `http://localhost:8001`
 - **Jaeger UI**: `http://localhost:16686`
+- **Dragon Ball API**: `http://localhost:5000`
+- **Music API**: `http://localhost:5002`
 - **Frontend React**: `http://localhost:5173`
 - **Frontend Angular**: `http://localhost:4200`
 
@@ -68,35 +70,32 @@ Serviços disponíveis:
 
 **Pré-requisitos:**
 - .NET 10 SDK
-- Docker Desktop (para serviços de infraestrutura)
 - Node.js 22+ (para frontends)
+- Docker Desktop (Aspire gerencia os containers automaticamente)
 
-**Passo 1:** Inicie a infraestrutura com Docker Compose
-
-```bash
-docker compose up -d postgres keycloak
-```
-
-**Passo 2:** Execute o AppHost (Aspire Orchestrator)
+**Executar:**
 
 ```bash
 dotnet run --project src/OpenCode.AppHost
 ```
 
-O dashboard do Aspire abre automaticamente em `https://localhost:17000`.
+O dashboard do Aspire abre automaticamente em `https://localhost:17000` e gerencia toda a infraestrutura (PostgreSQL, Keycloak, Kong, Jaeger, etc).
 
-**Serviços disponíveis (Aspire):**
+**Serviços disponíveis (gerenciados pelo Aspire):**
 
 | Serviço | Porta | URL |
 |---------|-------|-----|
 | Dragon Ball API | 5000 | `http://localhost:5000` |
 | Music API | 5002 | `http://localhost:5002` |
-| APISIX (proxy) | 9080 | `http://localhost:9080` |
-| APISIX (admin) | 9180 | `http://localhost:9180` |
+| Kong Gateway | 8000 | `http://localhost:8000` |
+| Kong Admin API | 8001 | `http://localhost:8001` |
 | Keycloak | 8080 | `http://localhost:8080` |
-| Jaeger (UI) | 16686 | `http://localhost:16686` |
+| PostgreSQL | 5432 | `localhost:5432` |
+| Jaeger UI | 16686 | `http://localhost:16686` |
 | Frontend React | 5173 | `http://localhost:5173` |
 | Frontend Angular | 4200 | `http://localhost:4200` |
+
+> ℹ️ Com o Aspire, você não precisa iniciar Docker Compose manualmente. O Aspire orquestra toda a infraestrutura através do AppHost.
 
 ---
 
@@ -110,6 +109,13 @@ Com o ambiente rodando, acesse a documentação interativa:
 - **Music API**: `http://localhost:5002/scalar`
 
 > ℹ️ Disponível apenas em modo `Development`
+
+### Acessando via Kong Gateway
+
+As APIs também estão disponíveis através do Kong Gateway:
+
+- **Dragon Ball**: `http://localhost:8000/dragonball/api/characters`
+- **Music**: `http://localhost:8000/music/api/songs`
 
 ### Rotas Principais
 
@@ -146,6 +152,8 @@ Com o ambiente rodando, acesse a documentação interativa:
 exemplo_gateway/
 ├── src/
 │   ├── OpenCode.AppHost/              # Orquestrador .NET Aspire
+│   │   └── Program.cs                 # Configuração da infraestrutura
+│   │
 │   ├── OpenCode.Domain/               # Entidades, DbContext, Migrations, Repositórios
 │   │   ├── Entities/
 │   │   │   ├── Character.cs
@@ -185,8 +193,7 @@ exemplo_gateway/
 ├── tests/
 │   └── OpenCode.Domain.Tests/         # Testes unitários (xUnit)
 │
-├── docker-compose.yml                 # Orquestração Docker
-├── dockerfile                         # Build das APIs
+├── docker-compose.yml                 # Orquestração Docker (alternativa)
 └── README.md
 ```
 
@@ -212,11 +219,12 @@ Cliente (Frontend/cURL)
         ↓
    Keycloak (Login/Token)
         ↓
-   API Gateway (APISIX)
+   Kong API Gateway
+   ├── Roteamento de serviços
    ├── Validação de Token
    ├── CORS
-   ├── Correlation ID
-   └── Roteamento
+   ├── Rate Limiting
+   └── Correlation ID
         ↓
    API específica (Dragon Ball / Music)
         ↓
@@ -230,10 +238,11 @@ Cliente (Frontend/cURL)
 | **Leitura** | Pública (sem autenticação) |
 | **Escrita** | Protegida (requer JWT com role `editor`) |
 | **Isolamento** | `DbContext` separados apontando para schemas distintos |
+| **Gateway** | Kong com autenticação OIDC e validação de JWT |
 | **Correlation ID** | Header `X-Correlation-Id` propagado em todas requisições |
 | **Padrões** | Repository Pattern + REPR Pattern |
 | **Paginação** | `PagedResult<T>` nos endpoints de listagem |
-| **Observabilidade** | OpenTelemetry + Jaeger |
+| **Observabilidade** | OpenTelemetry + Jaeger com rastreamento distribuído |
 
 ---
 
@@ -267,6 +276,14 @@ ng serve
 dotnet ef database update --project src/OpenCode.Domain --startup-project src/OpenCode.DragonBall.Api
 ```
 
+### Visualizar logs do Aspire
+
+No dashboard do Aspire (`https://localhost:17000`), você pode:
+- Monitorar logs de todos os serviços em tempo real
+- Visualizar métricas e performance
+- Acessar endpoints dos serviços diretamente
+- Gerenciar ciclo de vida dos containers
+
 ---
 
 ## 📊 Observabilidade
@@ -277,10 +294,19 @@ Acesse `http://localhost:16686` para visualizar:
 - Traces distribuídos entre serviços
 - Latências e performance
 - Erros e exceções
+- Dependências entre componentes
 
 ### Logs Estruturados
 
 Todos os serviços utilizam Serilog com estrutura de logs JSON para melhor análise.
+
+### Kong Admin API
+
+Acesse `http://localhost:8001` para:
+- Visualizar rotas configuradas
+- Gerenciar plugins
+- Monitorar upstream services
+- Configurar autenticação
 
 ---
 
@@ -290,6 +316,7 @@ Estrutura pronta para integração com:
 - GitHub Actions
 - GitLab CI/CD
 - Jenkins
+- Docker Registry
 
 ---
 
