@@ -7,7 +7,7 @@ interface WriteGuardProps {
   fallback?: ReactNode
 }
 
-export default function WriteGuard({ children, role = 'write', fallback = null }: WriteGuardProps) {
+export default function WriteGuard({ children, role = 'editor', fallback = null }: WriteGuardProps) {
   const { isAuthenticated, isLoading, hasRole } = useAuth()
 
   if (isLoading) return null
