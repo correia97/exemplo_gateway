@@ -147,7 +147,7 @@ services:
       - opencode-net
     # restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "http://localhost:8080/health"]
+      test: ["CMD-SHELL", "curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/health | grep -q 200"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -174,7 +174,7 @@ services:
       - opencode-net
     # restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "http://localhost:8080/health"]
+      test: ["CMD-SHELL", "curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/health | grep -q 200"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -204,9 +204,9 @@ services:
     ports:
       - "3000:80"
     environment:
-      DRAGONBALL_API_URL: http://localhost:8000/api/dragonball
-      MUSIC_API_URL: http://localhost:8000/api/music
-      KEYCLOAK_URL: http://localhost:8080
+      DRAGONBALL_API_URL: http://gateway:8000/api/dragonball
+      MUSIC_API_URL: http://gateway:8000/api/music
+      KEYCLOAK_URL: http://keycloak:8080
       TZ: America/Sao_Paulo
     networks:
       - opencode-net
@@ -228,9 +228,9 @@ services:
     ports:
       - "4200:80"
     environment:
-      DRAGONBALL_API_URL: http://localhost:8000/api/dragonball
-      MUSIC_API_URL: http://localhost:8000/api/music
-      KEYCLOAK_URL: http://localhost:8080
+      DRAGONBALL_API_URL: http://gateway:8000/api/dragonball
+      MUSIC_API_URL: http://gateway:8000/api/music
+      KEYCLOAK_URL: http://keycloak:8080
       TZ: America/Sao_Paulo
     networks:
       - opencode-net
