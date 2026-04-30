@@ -14,7 +14,7 @@ public class DragonBallDbInitializer : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        Thread.Sleep(TimeSpan.FromSeconds(15)); // Wait for the database to be ready
+        await Task.Delay(TimeSpan.FromSeconds(15), cancellationToken); // Wait for the database to be ready
         using var scope = _serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<DragonBallContext>();
         if (!context.Database.CanConnect())
