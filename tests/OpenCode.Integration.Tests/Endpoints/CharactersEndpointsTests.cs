@@ -28,6 +28,7 @@ public class CharactersEndpointsTests : IntegrationTestBase
             options.UseNpgsql(ConnectionString));
         builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
         var app = builder.Build();
+        app.UseCorrelationId();
         app.MapGroup("/api/characters").MapCharacterEndpoints();
         await app.StartAsync();
         return app;

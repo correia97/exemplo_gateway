@@ -31,6 +31,7 @@ public class MusicEndpointsTests : IntegrationTestBase
         builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
         builder.Services.AddScoped<ITrackRepository, TrackRepository>();
         var app = builder.Build();
+        app.UseCorrelationId();
         app.MapGroup("/api/genres").MapGenreEndpoints();
         app.MapGroup("/api/artists").MapArtistEndpoints();
         app.MapGroup("/api/albums").MapAlbumEndpoints();
