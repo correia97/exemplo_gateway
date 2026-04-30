@@ -38,7 +38,8 @@ public static class Extensions
             .WithTracing(tracing =>
             {
                 tracing.AddAspNetCoreInstrumentation()
-                       .AddHttpClientInstrumentation();
+                       .AddHttpClientInstrumentation()
+                       .AddNpgsql();
             });
 
         return builder;
