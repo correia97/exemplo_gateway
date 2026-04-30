@@ -72,6 +72,7 @@ builder.Services.AddTransient<IClaimsTransformation, KeycloakRolesClaimsTransfor
 var app = builder.Build();
 
 app.UseCorrelationId();
+app.MapDefaultEndpoints();
 app.UseCors(corsPolicy);
 app.UseHttpsRedirection();
 app.UseAuthentication();
