@@ -14,4 +14,6 @@ public interface IAlbumRepository : IRepository<Album>
     Task<PagedResult<Album>> GetByArtistIdAsync(
         int artistId, int page = 1, int pageSize = 10,
         CancellationToken cancellationToken = default);
+
+    Task<Album?> GetByIdWithArtistAsync(int id, CancellationToken cancellationToken = default);
 }

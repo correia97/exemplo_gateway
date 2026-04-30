@@ -3,7 +3,6 @@ using OpenCode.Domain.Entities;
 using OpenCode.Domain.Interfaces;
 using OpenCode.Domain.Pagination;
 using OpenCode.Music.Api.Dtos;
-using OpenCode.Music.Api.Repositories;
 
 namespace OpenCode.Music.Api.Endpoints;
 
@@ -43,8 +42,7 @@ public static class Albums
         IAlbumRepository repository,
         int id)
     {
-        var repo = (AlbumRepository)repository;
-        var album = await repo.GetByIdWithArtistAsync(id);
+        var album = await repository.GetByIdWithArtistAsync(id);
         return album is null
             ? TypedResults.NotFound()
             : TypedResults.Ok(album.ToResponse());
@@ -63,8 +61,7 @@ public static class Albums
         };
         var created = await repository.AddAsync(album);
 
-        var albumRepo = (AlbumRepository)repository;
-        var fullAlbum = await albumRepo.GetByIdWithArtistAsync(created.Id);
+        var fullAlbum = await repository.GetByIdWithArtistAsync(created.Id);
         return TypedResults.Created($"/api/albums/{created.Id}", fullAlbum?.ToResponse() ?? created.ToResponse());
     }
 
@@ -83,8 +80,7 @@ public static class Albums
 
         await repository.UpdateAsync(existing);
 
-        var repo = (AlbumRepository)repository;
-        var updated = await repo.GetByIdWithArtistAsync(id);
+        var updated = await repository.GetByIdWithArtistAsync(id);
         return TypedResults.Ok(updated?.ToResponse() ?? existing.ToResponse());
     }
 
