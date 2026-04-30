@@ -1,0 +1,48 @@
+# Build artifacts
+bin/
+obj/
+*/bin/
+*/obj/
+out/
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test results
+TestResults/
+coverage/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# NuGet
+packages/
+*.nupkg
+
+# Development
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+
+# Git
+.git/
+.gitignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.azure-pipelines/
+
+# Documentation
+*.md
+docs/
