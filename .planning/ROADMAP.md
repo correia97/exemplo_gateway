@@ -2,7 +2,7 @@
 
 ## Overview
 
-A .NET 10 proof-of-concept with two independent CRUD APIs (Dragon Ball characters and Music catalog) sharing a single PostgreSQL database with schema-based isolation, fronted by Apache APISIX and secured via Keycloak. Nine phases build from solution scaffolding through production-grade Docker Compose deployment, following the dependency chain: foundation → data → APIs → auth → gateway → observability → frontend → deployment → angular-frontend.
+A .NET 10 proof-of-concept with two independent CRUD APIs (Dragon Ball characters and Music catalog) sharing a single PostgreSQL database with schema-based isolation, fronted by Apache APISIX and secured via Keycloak. Eleven phases build from solution scaffolding through production-grade Docker Compose deployment, unit tests, and integration tests with TestContainers.
 
 ## Phases
 
@@ -15,6 +15,8 @@ A .NET 10 proof-of-concept with two independent CRUD APIs (Dragon Ball character
 - [ ] **Phase 7: React Frontend** - React SPA with OIDC login, data browsing, role-aware CRUD UI
 - [x] **Phase 8: Docker Compose & Production Deployment** - Production-grade Docker Compose deployment without Aspire
 - [ ] **Phase 9: Angular Frontend** - Angular project with all features matching the existing React frontend
+- [ ] **Phase 10: Unit Tests** - Validator tests, DTO mapping tests, service tests, middleware tests, auth tests
+- [ ] **Phase 11: Integration Tests with TestContainers** - PostgreSQL integration tests with TestContainers for repositories, full API E2E
 
 ## Phase Details
 
@@ -165,7 +167,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -178,6 +180,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 7. React Frontend | 4/4 | ✅ Complete | 2026-04-25 |
 | 8. Docker Compose & Production Deployment | 3/3 | ✅ Complete | 2026-04-25 |
 | 9. Angular Frontend | 4/4 | ✅ Complete | 2026-04-25 |
+| 10. Unit Tests | 4/4 | ✅ Complete | 2026-04-29 |
+| 11. TestContainers Integration | 3/3 | ◆ Planned | 2026-04-29 |
 
 ### Phase 9: Angular Frontend
 
@@ -191,3 +195,34 @@ Plans:
 - [x] 09-02: Implement Dragon Ball CRUD UI (character list, detail, form) with reusable shared components
 - [x] 09-03: Implement Music catalog CRUD UI (artist list/detail, album detail, music form)
 - [x] 09-04: Add role-aware UI guards (HasRoleDirective, RoleGuard), error handling (toast queue, ErrorDisplay, GlobalErrorHandler)
+
+### Phase 10: Unit Tests (**COMPLETED**)
+
+**Goal:** Comprehensive unit test coverage for validators, DTO mappings, services, middleware, and auth components across both APIs, plus edge-case tests for domain models
+**Requirements**: TEST-01, TEST-02, TEST-03, TEST-04
+**Depends on:** Phase 9 (all API code exists)
+**Plans:** 4 plans — **all executed**
+
+Plans:
+- [x] 10-01: Create OpenCode.Api.Tests project with FluentValidation.TestHelper, NSubstitute, Microsoft.AspNetCore.TestHost
+- [x] 10-02: Implement validator tests (10 validators: 2 Character + 2 Genre + 2 Artist + 2 Album + 2 Track)
+- [x] 10-03: Implement DTO mapping tests (5 entity mapping suites), service tests (CorrelationIdMiddleware, KeycloakRolesClaimsTransformation)
+- [x] 10-04: Add PagedResult edge case tests and update solution file
+
+**Test Summary:** 65 tests total (25 Domain + 40 API):
+- 14 validator tests (CreateCharacter, UpdateCharacter, CreateGenre, UpdateGenre, CreateArtist, UpdateArtist, CreateAlbum, UpdateAlbum, CreateTrack, UpdateTrack)
+- 18 DTO mapping tests (Character, Planet, Transformation, Genre, Artist, Album, Track)
+- 9 service/auth/middleware tests (CorrelationIdMiddleware × 4, KeycloakRolesClaimsTransformation × 5)
+- 24 domain tests (PagedResult × 11, Entity properties × 8, Schema isolation × 4, Entity inheritance × 2)
+
+### Phase 11: Integration Tests with TestContainers (**PLANNED**)
+
+**Goal:** Integration tests using TestContainers for PostgreSQL to validate repositories against a real database, full API endpoint E2E flows, and schema isolation
+**Requirements**: TEST-05, TEST-06, TEST-07, TEST-08
+**Depends on:** Phase 10 (test infrastructure)
+**Plans:** 3 plans
+
+Plans:
+- [ ] 11-01: Scaffold integration test project with TestContainers.PostgreSQL, PostgresFixture, IntegrationTestBase, and solution wiring
+- [ ] 11-02: Implement repository integration tests (CharacterRepository, GenreRepository, ArtistRepository, AlbumRepository, TrackRepository with real DB CRUD)
+- [ ] 11-03: Implement API E2E integration tests (full CRUD via TestServer, schema isolation, correlation ID integration)
