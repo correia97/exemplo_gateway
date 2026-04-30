@@ -4,7 +4,7 @@ import ArtistDetail from './ArtistDetail'
 import AlbumDetail from './AlbumDetail'
 import MusicForm from './MusicForm'
 import { useToast } from '../../hooks/useApiError'
-import type { Artist, Album, Track, ArtistCreatePayload, AlbumCreatePayload, TrackCreatePayload } from '../../api/types'
+import type { Artist, Album, ArtistCreatePayload, AlbumCreatePayload, TrackCreatePayload } from '../../api/types'
 import { getArtist, getAlbum, createArtist, updateArtist, deleteArtist, createAlbum, updateAlbum, deleteAlbum, createTrack, updateTrack } from '../../api/music'
 
 type View = 'artist-list' | 'artist-detail' | 'album-detail' | 'create-artist' | 'edit-artist' | 'create-album' | 'edit-album' | 'create-track' | 'edit-track'
@@ -13,7 +13,6 @@ export default function MusicPage() {
   const [view, setView] = useState<View>('artist-list')
   const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null)
   const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null)
-  const [selectedTrack] = useState<Track | null>(null)
   const { toasts, handleError, dismissToast } = useToast()
 
   const handleSelectArtist = useCallback(async (id: number) => {
@@ -125,9 +124,6 @@ export default function MusicPage() {
       )}
       {view === 'create-track' && selectedAlbum && (
         <MusicForm mode="create-track" initial={{ albumId: selectedAlbum.id }} onSubmit={(d) => handleCreateTrack(d as TrackCreatePayload)} onCancel={handleBack} />
-      )}
-      {view === 'edit-track' && selectedTrack && (
-        <MusicForm mode="edit-track" initial={selectedTrack} onSubmit={(d) => handleUpdateTrack(selectedTrack.id, d as Partial<TrackCreatePayload>)} onCancel={handleBack} />
       )}
     </div>
   )
