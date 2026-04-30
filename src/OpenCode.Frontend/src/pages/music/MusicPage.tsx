@@ -14,7 +14,7 @@ export default function MusicPage() {
   const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null)
   const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null)
   const [selectedTrack] = useState<Track | null>(null)
-  const { handleError } = useToast()
+  const { toasts, handleError, dismissToast } = useToast()
 
   const handleSelectArtist = useCallback(async (id: number) => {
     try {
@@ -76,6 +76,17 @@ export default function MusicPage() {
 
   return (
     <div>
+      {toasts.length > 0 && (
+        <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+          {toasts.map(t => (
+            <div key={t.id} className="px-4 py-3 rounded shadow-lg text-white bg-red-600 flex items-center gap-3 min-w-[300px]">
+              <span className="flex-1 text-sm">{t.message}</span>
+              {t.correlationId && <span className="text-xs text-red-200 font-mono">{t.correlationId}</span>}
+              <button onClick={() => dismissToast(t.id)} className="text-white/80 hover:text-white text-lg leading-none">&times;</button>
+            </div>
+          ))}
+        </div>
+      )}
       <h1 className="text-2xl font-bold mb-4">Music Catalog</h1>
 
       {view === 'artist-list' && (
