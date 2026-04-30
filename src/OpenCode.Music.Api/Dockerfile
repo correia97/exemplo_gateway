@@ -16,7 +16,12 @@ RUN dotnet publish src/OpenCode.Music.Api/OpenCode.Music.Api.csproj -c Release -
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
+# Create non-root user for security hardening
+RUN adduser --disabled-password --gecos '' appuser
+
 COPY --from=build /app .
+
+USER appuser
 
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
