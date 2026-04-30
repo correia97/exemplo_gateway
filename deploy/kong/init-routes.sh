@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-sleep 90
-
 ADMIN_API="http://gateway:8001"
 UPSTREAM_DB="${UPSTREAM_DRAGONBALL_API:-http://dragonball-api:8080}"
 UPSTREAM_MUSIC="${UPSTREAM_MUSIC_API:-http://music-api:8080}"
