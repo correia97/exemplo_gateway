@@ -3,7 +3,6 @@ using OpenCode.Domain.Entities;
 using OpenCode.Domain.Interfaces;
 using OpenCode.Domain.Pagination;
 using OpenCode.Music.Api.Dtos;
-using OpenCode.Music.Api.Repositories;
 
 namespace OpenCode.Music.Api.Endpoints;
 
@@ -39,20 +38,10 @@ public static class Artists
         IArtistRepository repository,
         int id)
     {
-        var artist = await repository.GetByIdAsync(id);
-        if (artist is null)
-            return TypedResults.NotFound();
-
-        if (artist.ArtistGenres is null || artist.ArtistGenres.Count == 0)
-        {
-            var repo = (ArtistRepository)repository;
-            var fullArtist = await repo.GetByIdWithGenresAsync(id);
-            if (fullArtist is null)
-                return TypedResults.NotFound();
-            return TypedResults.Ok(fullArtist.ToResponse());
-        }
-
-        return TypedResults.Ok(artist.ToResponse());
+        var artist = await repository.GetByIdWithGenresAsync(id);  // Always includes genres
+        return artist is null
+            ? TypedResults.NotFound()
+            : TypedResults.Ok(artist.ToResponse());
     }
 
     private static async Task<Results<Created<ArtistResponse>, BadRequest>> CreateAsync(
