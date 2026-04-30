@@ -22,7 +22,7 @@ public static class AlbumMapping
             album.ReleaseDate,
             album.CoverUrl,
             album.ArtistId,
-            album.Artist?.Name,
+            album.Artist?.Name ?? $"Artist #{album.ArtistId}",
             album.CreatedAt,
             album.UpdatedAt);
 }
