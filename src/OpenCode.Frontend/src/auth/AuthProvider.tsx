@@ -31,7 +31,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const onUserLoaded = (loadedUser: User) => setUser(loadedUser)
     const onUserUnloaded = () => setUser(null)
     const onAccessTokenExpired = () => {
-      userManager.signinSilent().catch(() => {})
+      userManager.signinSilent().catch(() => {
+        // Silent renewal failed — user session likely expired; redirect to login
+        userManager.signinRedirect()
+      })
     }
 
     userManager.events.addUserLoaded(onUserLoaded)
