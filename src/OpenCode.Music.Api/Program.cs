@@ -48,7 +48,6 @@ builder.Services.AddScoped<MusicSeedService>();
 builder.Services.AddHostedService<MusicDbInitializer>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

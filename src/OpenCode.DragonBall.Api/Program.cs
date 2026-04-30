@@ -45,7 +45,6 @@ builder.Services.AddScoped<DragonBallSeedService>();
 builder.Services.AddHostedService<DragonBallDbInitializer>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
