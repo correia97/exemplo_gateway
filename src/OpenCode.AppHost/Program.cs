@@ -22,8 +22,6 @@ var jaeger = builder.AddContainer("jaeger", "jaegertracing/all-in-one:latest")
 
 var dragonballApi = builder.AddProject<Projects.OpenCode_DragonBall_Api>("dragonball-api")
     .WithReference(postgres)
-    .WithEnvironment("ConnectionStrings__dragonball",
-        "Host=localhost;Port=5432;Database=opencode;Username=dragonball_user;Password=dragonball_pass;SearchPath=dragonball;")
     .WithEnvironment("OTEL_EXPORTER_OTLP_ENDPOINT", "http://jaeger:4317")
     .WithEnvironment("TZ", "America/Sao_Paulo")
     .WithEndpoint("http", e => e.Port = 5000)
@@ -33,8 +31,6 @@ var dragonballApi = builder.AddProject<Projects.OpenCode_DragonBall_Api>("dragon
 
 var musicApi = builder.AddProject<Projects.OpenCode_Music_Api>("music-api")
     .WithReference(postgres)
-    .WithEnvironment("ConnectionStrings__music",
-        "Host=localhost;Port=5432;Database=opencode;Username=music_user;Password=music_pass;SearchPath=music;")
     .WithEnvironment("OTEL_EXPORTER_OTLP_ENDPOINT", "http://jaeger:4317")
     .WithEnvironment("TZ", "America/Sao_Paulo")
     .WithEndpoint("http", e => e.Port = 5002)
