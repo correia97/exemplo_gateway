@@ -1,5 +1,6 @@
 using OpenCode.Domain.Entities;
 using OpenCode.Domain.Interfaces;
+using OpenCode.Domain.Data;
 using OpenCode.Integration.Tests.Fixtures;
 using OpenCode.Music.Api.Repositories;
 
@@ -10,15 +11,16 @@ public class GenreRepositoryTests : IntegrationTestBase
 {
     public GenreRepositoryTests(PostgresFixture fixture) : base(fixture) { }
 
-    private IGenreRepository CreateRepo()
+    private static IGenreRepository CreateRepo(MusicContext ctx)
     {
-        return new GenreRepository(CreateMusicContext());
+        return new GenreRepository(ctx);
     }
 
     [Fact]
     public async Task AddAndGetById_ReturnsGenre()
     {
-        var repo = CreateRepo();
+        using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var g = new Genre { Name = "Jazz", Description = "Smooth jazz" };
         var created = await repo.AddAsync(g);
         Assert.True(created.Id > 0);
@@ -30,8 +32,8 @@ public class GenreRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task GetAll_Pagination_CorrectCount()
     {
-        var repo = CreateRepo();
         using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         ctx.Genres.Add(new Genre { Name = "Pop" });
         ctx.Genres.Add(new Genre { Name = "Classical" });
         ctx.Genres.Add(new Genre { Name = "Electronic" });
@@ -43,8 +45,8 @@ public class GenreRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task FilterByName_ReturnsMatches()
     {
-        var repo = CreateRepo();
         using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         ctx.Genres.Add(new Genre { Name = "Pop" });
         ctx.Genres.Add(new Genre { Name = "Punk" });
         ctx.Genres.Add(new Genre { Name = "Classical" });
@@ -56,7 +58,8 @@ public class GenreRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task Delete_RemovesGenre()
     {
-        var repo = CreateRepo();
+        using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var g = new Genre { Name = "Temporary" };
         var created = await repo.AddAsync(g);
         await repo.DeleteAsync(created);

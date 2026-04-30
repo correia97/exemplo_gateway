@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OpenCode.Domain.Entities;
+using OpenCode.Domain.Data;
 using OpenCode.Integration.Tests.Fixtures;
 using OpenCode.Music.Api.Repositories;
 
@@ -10,16 +11,16 @@ public class AlbumRepositoryTests : IntegrationTestBase
 {
     public AlbumRepositoryTests(PostgresFixture fixture) : base(fixture) { }
 
-    private AlbumRepository CreateRepo()
+    private static AlbumRepository CreateRepo(MusicContext ctx)
     {
-        return new AlbumRepository(CreateMusicContext());
+        return new AlbumRepository(ctx);
     }
 
     [Fact]
     public async Task AddAndGetById_ReturnsAlbum()
     {
-        var repo = CreateRepo();
         using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var artist = new Artist { Name = "Test" };
         ctx.Artists.Add(artist);
         await ctx.SaveChangesAsync();
@@ -34,8 +35,8 @@ public class AlbumRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task GetByIdWithArtist_LoadsArtist()
     {
-        var repo = CreateRepo();
         using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var artist = new Artist { Name = "The Beatles" };
         ctx.Artists.Add(artist);
         await ctx.SaveChangesAsync();
@@ -50,8 +51,8 @@ public class AlbumRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task GetAll_Pagination_CorrectCount()
     {
-        var repo = CreateRepo();
         using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var artist = new Artist { Name = "Test" };
         ctx.Artists.Add(artist);
         await ctx.SaveChangesAsync();
@@ -65,8 +66,8 @@ public class AlbumRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task GetByArtistId_ReturnsAlbumsForArtist()
     {
-        var repo = CreateRepo();
         using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var a1 = new Artist { Name = "A1" };
         var a2 = new Artist { Name = "A2" };
         ctx.Artists.AddRange(a1, a2);
@@ -82,8 +83,8 @@ public class AlbumRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task Delete_RemovesAlbum()
     {
-        var repo = CreateRepo();
         using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var artist = new Artist { Name = "Test" };
         ctx.Artists.Add(artist);
         await ctx.SaveChangesAsync();

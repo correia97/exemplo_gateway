@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using OpenCode.DragonBall.Api.Repositories;
 using OpenCode.Domain.Entities;
 using OpenCode.Domain.Interfaces;
+using OpenCode.Domain.Data;
 using OpenCode.Integration.Tests.Fixtures;
 
 namespace OpenCode.Integration.Tests.Repositories;
@@ -11,16 +12,16 @@ public class CharacterRepositoryTests : IntegrationTestBase
 {
     public CharacterRepositoryTests(PostgresFixture fixture) : base(fixture) { }
 
-    private ICharacterRepository CreateRepo()
+    private static ICharacterRepository CreateRepo(DragonBallContext ctx)
     {
-        return new CharacterRepository(CreateDragonBallContext());
+        return new CharacterRepository(ctx);
     }
 
     [Fact]
     public async Task AddAndGetById_ReturnsWithIncludes()
     {
-        var repo = CreateRepo();
         using var ctx = CreateDragonBallContext();
+        var repo = CreateRepo(ctx);
         var planet = new Planet { Name = "Namek" };
         ctx.Planets.Add(planet);
         await ctx.SaveChangesAsync();
@@ -36,8 +37,8 @@ public class CharacterRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task GetAll_Pagination_CorrectCount()
     {
-        var repo = CreateRepo();
         using var ctx = CreateDragonBallContext();
+        var repo = CreateRepo(ctx);
         var planet = new Planet { Name = "Earth" };
         ctx.Planets.Add(planet);
         await ctx.SaveChangesAsync();
@@ -54,8 +55,8 @@ public class CharacterRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task FilterByName_ReturnsMatches()
     {
-        var repo = CreateRepo();
         using var ctx = CreateDragonBallContext();
+        var repo = CreateRepo(ctx);
         var planet = new Planet { Name = "Earth" };
         ctx.Planets.Add(planet);
         await ctx.SaveChangesAsync();
@@ -70,8 +71,8 @@ public class CharacterRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task Update_PersistsChanges()
     {
-        var repo = CreateRepo();
         using var ctx = CreateDragonBallContext();
+        var repo = CreateRepo(ctx);
         var planet = new Planet { Name = "Earth" };
         ctx.Planets.Add(planet);
         await ctx.SaveChangesAsync();
@@ -87,8 +88,8 @@ public class CharacterRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task Delete_RemovesCharacter()
     {
-        var repo = CreateRepo();
         using var ctx = CreateDragonBallContext();
+        var repo = CreateRepo(ctx);
         var planet = new Planet { Name = "Earth" };
         ctx.Planets.Add(planet);
         await ctx.SaveChangesAsync();

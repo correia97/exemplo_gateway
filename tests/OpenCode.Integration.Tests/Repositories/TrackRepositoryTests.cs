@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OpenCode.Domain.Entities;
 using OpenCode.Domain.Interfaces;
+using OpenCode.Domain.Data;
 using OpenCode.Integration.Tests.Fixtures;
 using OpenCode.Music.Api.Repositories;
 
@@ -11,15 +12,16 @@ public class TrackRepositoryTests : IntegrationTestBase
 {
     public TrackRepositoryTests(PostgresFixture fixture) : base(fixture) { }
 
-    private ITrackRepository CreateRepo()
+    private static ITrackRepository CreateRepo(MusicContext ctx)
     {
-        return new TrackRepository(CreateMusicContext());
+        return new TrackRepository(ctx);
     }
 
     [Fact]
     public async Task AddAndGetById_ReturnsTrack()
     {
-        var repo = CreateRepo();
+        using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var t = new Track { Name = "Come Together", TrackNumber = 1 };
         var created = await repo.AddAsync(t);
         Assert.True(created.Id > 0);
@@ -31,8 +33,8 @@ public class TrackRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task GetAll_Pagination_CorrectCount()
     {
-        var repo = CreateRepo();
         using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         for (int i = 0; i < 5; i++)
             ctx.Tracks.Add(new Track { Name = $"Track {i}", TrackNumber = i + 1 });
         await ctx.SaveChangesAsync();
@@ -43,8 +45,8 @@ public class TrackRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task FilterByName_ReturnsMatches()
     {
-        var repo = CreateRepo();
         using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         ctx.Tracks.Add(new Track { Name = "Song One", TrackNumber = 1 });
         ctx.Tracks.Add(new Track { Name = "Song Two", TrackNumber = 2 });
         ctx.Tracks.Add(new Track { Name = "Another", TrackNumber = 3 });
@@ -56,8 +58,8 @@ public class TrackRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task GetByAlbumId_ReturnsTracks()
     {
-        var repo = CreateRepo();
         using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var artist = new Artist { Name = "Test" };
         ctx.Artists.Add(artist);
         await ctx.SaveChangesAsync();
@@ -75,7 +77,8 @@ public class TrackRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task Update_PersistsChanges()
     {
-        var repo = CreateRepo();
+        using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var t = new Track { Name = "Original", TrackNumber = 1 };
         var created = await repo.AddAsync(t);
         created.Name = "Updated";
@@ -88,7 +91,8 @@ public class TrackRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task Delete_RemovesTrack()
     {
-        var repo = CreateRepo();
+        using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var t = new Track { Name = "Temp", TrackNumber = 1 };
         var created = await repo.AddAsync(t);
         await repo.DeleteAsync(created);

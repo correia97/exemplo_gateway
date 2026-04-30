@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OpenCode.Domain.Entities;
 using OpenCode.Domain.Interfaces;
+using OpenCode.Domain.Data;
 using OpenCode.Integration.Tests.Fixtures;
 using OpenCode.Music.Api.Repositories;
 
@@ -11,15 +12,16 @@ public class ArtistRepositoryTests : IntegrationTestBase
 {
     public ArtistRepositoryTests(PostgresFixture fixture) : base(fixture) { }
 
-    private ArtistRepository CreateRepo()
+    private static ArtistRepository CreateRepo(MusicContext ctx)
     {
-        return new ArtistRepository(CreateMusicContext());
+        return new ArtistRepository(ctx);
     }
 
     [Fact]
     public async Task AddAndGetById_ReturnsArtist()
     {
-        var repo = CreateRepo();
+        using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var a = new Artist { Name = "The Beatles", Biography = "British rock band" };
         var created = await repo.AddAsync(a);
         Assert.True(created.Id > 0);
@@ -31,8 +33,8 @@ public class ArtistRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task CreateWithGenreAssociations()
     {
-        var repo = CreateRepo();
         using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var rock = await ctx.Genres.FirstAsync(g => g.Name == "Rock");
         var artist = new Artist { Name = "Queen", ArtistGenres = new List<ArtistGenre> { new() { GenreId = rock.Id } } };
         var created = await repo.AddAsync(artist);
@@ -44,8 +46,8 @@ public class ArtistRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task GetAll_Pagination_CorrectCount()
     {
-        var repo = CreateRepo();
         using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         ctx.Artists.Add(new Artist { Name = "Artist A" });
         ctx.Artists.Add(new Artist { Name = "Artist B" });
         ctx.Artists.Add(new Artist { Name = "Artist C" });
@@ -57,7 +59,8 @@ public class ArtistRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task Update_PersistsChanges()
     {
-        var repo = CreateRepo();
+        using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var a = new Artist { Name = "Queen" };
         var created = await repo.AddAsync(a);
         created.Biography = "Legendary";
@@ -70,7 +73,8 @@ public class ArtistRepositoryTests : IntegrationTestBase
     [Fact]
     public async Task Delete_RemovesArtist()
     {
-        var repo = CreateRepo();
+        using var ctx = CreateMusicContext();
+        var repo = CreateRepo(ctx);
         var a = new Artist { Name = "Temporary" };
         var created = await repo.AddAsync(a);
         await repo.DeleteAsync(created);
