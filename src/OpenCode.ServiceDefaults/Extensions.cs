@@ -72,8 +72,9 @@ internal class CorrelationIdMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        var correlationId = context.Request.Headers[CorrelationIdHeader].FirstOrDefault()
-                            ?? Guid.NewGuid().ToString();
+        var correlationId = context.Request.Headers[CorrelationIdHeader].FirstOrDefault();
+        if (string.IsNullOrWhiteSpace(correlationId))
+            correlationId = Guid.NewGuid().ToString();
 
         context.Response.OnStarting(() =>
         {
