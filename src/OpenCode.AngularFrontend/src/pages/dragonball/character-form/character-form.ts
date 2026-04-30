@@ -21,7 +21,6 @@ export class CharacterFormComponent implements OnInit {
   maxKi = '';
   description = '';
   planetId: number | undefined;
-  submitting = false;
 
   ngOnInit(): void {
     if (this.initial) {
@@ -36,7 +35,6 @@ export class CharacterFormComponent implements OnInit {
 
   onSubmit(): void {
     if (!this.name.trim() || !this.race.trim() || !this.ki.trim()) return;
-    this.submitting = true;
     this.save.emit({
       name: this.name.trim(),
       race: this.race.trim(),
