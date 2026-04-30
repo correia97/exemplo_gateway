@@ -13,7 +13,7 @@ var postgres = builder.AddPostgres("postgres", username, password)
     .WithBindMount("../OpenCode.Domain/Data", "/docker-entrypoint-initdb.d/")
     .WithHostPort(5432);
 
-var jaeger = builder.AddContainer("jaeger", "jaegertracing/all-in-one:latest")
+var jaeger = builder.AddContainer("jaeger", "jaegertracing/all-in-one:1.66")
     .WithEnvironment("COLLECTOR_OTLP_ENABLED", "true")
     .WithEnvironment("COLLECTOR_OTLP_HTTP_ENABLED", "true")
     .WithEnvironment("TZ", "America/Sao_Paulo")
@@ -39,7 +39,7 @@ var musicApi = builder.AddProject<Projects.OpenCode_Music_Api>("music-api")
     .WithReplicas(1)
     .WaitFor(postgres);
 
-var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak:latest")
+var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak:26.2")
     .WithArgs("start-dev", "--import-realm")
     .WithEnvironment("KC_DB", "postgres")
     .WithEnvironment("KC_DB_URL", "jdbc:postgresql://postgres:5432/opencode")
