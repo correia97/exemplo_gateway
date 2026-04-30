@@ -3,6 +3,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var username = builder.AddParameter("postgresUser",  "postgres", secret: true);
 var password = builder.AddParameter("postgresPass", "postgres", secret: true);
+var keycloakAdminPassword = builder.AddParameter("keycloakAdminPassword", "admin", secret: true);
 
 var postgres = builder.AddPostgres("postgres", username, password)
     .WithDataVolume()
@@ -46,7 +47,7 @@ var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak:lates
     .WithEnvironment("KC_DB_PASSWORD", "keycloak_pass")
     .WithEnvironment("KC_DB_SCHEMA", "keycloak")
     .WithEnvironment("KEYCLOAK_ADMIN", "admin")
-    .WithEnvironment("KEYCLOAK_ADMIN_PASSWORD", "admin")
+    .WithEnvironment("KEYCLOAK_ADMIN_PASSWORD", keycloakAdminPassword)
     .WithEnvironment("KC_IMPORT_REALM", "opencode-realm.json")
     .WithEnvironment("KC_HOSTNAME_URL", "http://localhost:8080")
     .WithEnvironment("TZ", "America/Sao_Paulo")
