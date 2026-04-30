@@ -59,7 +59,9 @@ public static class Characters
             MaxKi = request.MaxKi,
             Description = request.Description,
             PictureUrl = request.PictureUrl,
-            PlanetId = request.PlanetId
+            PlanetId = request.PlanetId,
+            IsEarthling = request.IsEarthling,
+            IntroductionPhase = request.IntroductionPhase
         };
 
         var created = await repository.AddAsync(character);
@@ -83,6 +85,8 @@ public static class Characters
         existing.Description = request.Description;
         existing.PictureUrl = request.PictureUrl;
         existing.PlanetId = request.PlanetId;
+        existing.IsEarthling = request.IsEarthling;
+        existing.IntroductionPhase = request.IntroductionPhase;
 
         await repository.UpdateAsync(existing);
         var full = await repository.GetByIdAsync(id);

@@ -7,7 +7,9 @@ public record CreateCharacterRequest(
     string? MaxKi,
     string? Description,
     string? PictureUrl,
-    int? PlanetId
+    int? PlanetId,
+    bool IsEarthling = false,
+    string? IntroductionPhase = null
 );
 
 public record UpdateCharacterRequest(
@@ -17,5 +19,7 @@ public record UpdateCharacterRequest(
     string? MaxKi,
     string? Description,
     string? PictureUrl,
-    int? PlanetId
+    int? PlanetId,
+    bool IsEarthling = false,
+    string? IntroductionPhase = null
 );

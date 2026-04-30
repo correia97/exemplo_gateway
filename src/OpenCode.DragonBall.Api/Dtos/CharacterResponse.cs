@@ -25,6 +25,8 @@ public record CharacterResponse(
     string? ImageUrl,
     PlanetResponse? Planet,
     List<TransformationResponse> Transformations,
+    bool IsEarthling,
+    string? IntroductionPhase,
     DateTime CreatedAt,
     DateTime UpdatedAt
 );
@@ -48,6 +50,8 @@ public static class CharacterMapping
             character.PictureUrl,
             character.Planet?.ToResponse(),
             character.Transformations.Select(t => t.ToResponse()).ToList(),
+            character.IsEarthling,
+            character.IntroductionPhase,
             character.CreatedAt,
             character.UpdatedAt);
 }
