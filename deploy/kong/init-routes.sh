@@ -83,6 +83,26 @@ curl -s -X POST "$ADMIN_API/services/dragonball-api/plugins" \
 EOF
 )"
 
+echo "Adding OIDC auth plugin to dragonball-api"
+curl -s -X POST "$ADMIN_API/services/dragonball-api/plugins" \
+  -H "Content-Type: application/json" \
+  -d "$(cat <<EOF
+{
+  "name": "openid-connect",
+  "config": {
+    "issuer": "http://keycloak:8080/realms/opencode",
+    "client_id": "kong-gateway",
+    "client_secret": "\${OIDC_CLIENT_SECRET:-CHANGE_ME}",
+    "auth_methods": ["bearer"],
+    "bearer_token_param_type": ["header"],
+    "run_on_preflight": false
+  },
+  "protocols": ["http", "https"],
+  "enabled": true
+}
+EOF
+)"
+
 echo "Adding CORS plugin to music-api"
 curl -s -X POST "$ADMIN_API/services/music-api/plugins" \
   -H "Content-Type: application/json" \
@@ -97,6 +117,26 @@ curl -s -X POST "$ADMIN_API/services/music-api/plugins" \
     "credentials": true,
     "max_age": 86400
   }
+}
+EOF
+)"
+
+echo "Adding OIDC auth plugin to music-api"
+curl -s -X POST "$ADMIN_API/services/music-api/plugins" \
+  -H "Content-Type: application/json" \
+  -d "$(cat <<EOF
+{
+  "name": "openid-connect",
+  "config": {
+    "issuer": "http://keycloak:8080/realms/opencode",
+    "client_id": "kong-gateway",
+    "client_secret": "\${OIDC_CLIENT_SECRET:-CHANGE_ME}",
+    "auth_methods": ["bearer"],
+    "bearer_token_param_type": ["header"],
+    "run_on_preflight": false
+  },
+  "protocols": ["http", "https"],
+  "enabled": true
 }
 EOF
 )"
