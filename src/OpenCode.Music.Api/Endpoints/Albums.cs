@@ -13,9 +13,9 @@ public static class Albums
     {
         group.MapGet("/", GetAllAsync).AllowAnonymous();
         group.MapGet("/{id:int}", GetByIdAsync).AllowAnonymous();
-        group.MapPost("/", CreateAsync);
-        group.MapPut("/{id:int}", UpdateAsync);
-        group.MapDelete("/{id:int}", DeleteAsync);
+        group.MapPost("/", CreateAsync).RequireAuthorization("ApiPolicy");
+        group.MapPut("/{id:int}", UpdateAsync).RequireAuthorization("ApiPolicy");
+        group.MapDelete("/{id:int}", DeleteAsync).RequireAuthorization("ApiPolicy");
         group.MapGet("/{albumId:int}/tracks", GetTracksByAlbumAsync).AllowAnonymous();
         return group;
     }
