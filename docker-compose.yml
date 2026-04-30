@@ -204,8 +204,8 @@ services:
     ports:
       - "3000:80"
     environment:
-      DRAGONBALL_API_URL: http://localhost:5000
-      MUSIC_API_URL: http://localhost:5002
+      DRAGONBALL_API_URL: http://localhost:8000/api/dragonball
+      MUSIC_API_URL: http://localhost:8000/api/music
       KEYCLOAK_URL: http://localhost:8080
       TZ: America/Sao_Paulo
     networks:
@@ -228,8 +228,8 @@ services:
     ports:
       - "4200:80"
     environment:
-      DRAGONBALL_API_URL: http://localhost:5000
-      MUSIC_API_URL: http://localhost:5002
+      DRAGONBALL_API_URL: http://localhost:8000/api/dragonball
+      MUSIC_API_URL: http://localhost:8000/api/music
       KEYCLOAK_URL: http://localhost:8080
       TZ: America/Sao_Paulo
     networks:
