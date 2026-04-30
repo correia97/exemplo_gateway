@@ -1,8 +1,8 @@
-# 05-01: APISIX Configuration File — Summary
+# 05-01: Kong Configuration File — Summary
 
 ## What Was Done
 
-1. **APISIX config** at `deploy/apisix/config.yaml`:
+1. **Kong config** at `deploy/kong/config.yaml`:
    - `apix: node_listen: 9080`, `enable_admin: true`
    - Admin API key: `edd1c9f034335f136f87ad84b625c8f1`
    - Plugin list includes: `jwt-auth`, `key-auth`, `limit-req`, `limit-count`, `cors`, `prometheus`, `opentelemetry`, `proxy-rewrite`, `response-rewrite`
@@ -11,16 +11,16 @@
 2. **Docker Compose** service:
    - Image `apache/apisix:3.9.1-alpine`
    - Ports: 9080 (HTTP), 9180 (Admin API), 9443 (HTTPS)
-   - Config mounted from `./deploy/apisix/config.yaml`
+   - Config mounted from `./deploy/kong/config.yaml`
    - Network `opencode-net`
 
 3. **`init-routes.sh`** lifecycle:
-   - Runs after APISIX starts via health check polling
+   - Runs after Kong starts via health check polling
    - Creates upstreams and routes via Admin API
 
 ## Verification
 
-- APISIX starts and Admin API responds on port 9180
+- Kong starts and Admin API responds on port 9180
 - `GET /apisix/admin/routes` returns configured routes
 - Config YAML validates without errors
 

@@ -2,7 +2,7 @@
 
 ## Vision
 
-A React 19 + Vite SPA that consumes both APIs exclusively through APISIX, with OIDC login via Keycloak (Authorization Code + PKCE), role-aware CRUD UI, Tailwind CSS styling, and correlation ID display for debugging.
+A React 19 + Vite SPA that consumes both APIs exclusively through Kong, with OIDC login via Keycloak (Authorization Code + PKCE), role-aware CRUD UI, Tailwind CSS styling, and correlation ID display for debugging.
 
 ## Key Decisions
 
@@ -14,7 +14,7 @@ A React 19 + Vite SPA that consumes both APIs exclusively through APISIX, with O
 | Layout | Sidebar + TopBar + Content | Collapsible sidebar nav, top bar with user avatar/login state |
 | Routing | React Router v7 | Standard choice, lazy loading, type-safe params |
 | HTTP Client | Fetch API wrapper | Lightweight custom wrapper with auth header + correlation ID injection |
-| Frontend Serving | Vite dev server directly (port 5173) | Simpler dev setup, APISIX only proxies API routes (CORS already configured) |
+| Frontend Serving | Vite dev server directly (port 5173) | Simpler dev setup, Kong only proxies API routes (CORS already configured) |
 | Styling Approach | Tailwind CSS + custom theme | Consistent color palette, responsive breakpoints |
 | Component Library | Custom components | No heavy UI framework, Tailwind-based reusable primitives |
 
@@ -30,7 +30,7 @@ A React 19 + Vite SPA that consumes both APIs exclusively through APISIX, with O
 
 ## API Integration
 
-- Base URL: `http://localhost9080/api/` (APISIX proxy)
+- Base URL: `http://localhost9080/api/` (Kong proxy)
 - All GET requests: no auth header needed
 - All POST/PUT/DELETE requests: inject `Bearer <access_token>` from oidc-client-ts
 - Custom `X-Correlation-Id` header on every request (generated per-request UUID)

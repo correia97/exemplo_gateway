@@ -9,5 +9,7 @@
   <Folder Name="/frontend/" />
   <Folder Name="/tests/">
     <Project Path="tests/OpenCode.Domain.Tests/OpenCode.Domain.Tests.csproj" />
+    <Project Path="tests/OpenCode.Api.Tests/OpenCode.Api.Tests.csproj" />
+    <Project Path="tests/OpenCode.Integration.Tests/OpenCode.Integration.Tests.csproj" />
   </Folder>
 </Solution>

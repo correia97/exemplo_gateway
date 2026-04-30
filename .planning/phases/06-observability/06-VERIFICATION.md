@@ -1,6 +1,6 @@
 # Phase 6: OpenTelemetry & Observability — Verification
 
-## 6.01 — APISIX OTel Plugin + Jaeger + OTLP Wiring
+## 6.01 — Kong OTel Plugin + Jaeger + OTLP Wiring
 
 **Status:** ✅ Complete
 
@@ -13,8 +13,8 @@
 | Jaeger env `COLLECTOR_OTLP_HTTP_ENABLED=true` | Set in container definition |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` on dragonball-api | `http://jaeger:4317` |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` on music-api | `http://jaeger:4317` |
-| `JAEGER_ENDPOINT` env var on APISIX container | `http://jaeger:4318` |
-| APISIX entrypoint chains init-routes-otel.sh | `chmod +x ... && init-routes.sh && init-routes-otel.sh && exec openresty` |
+| `JAEGER_ENDPOINT` env var on Kong container | `http://jaeger:4318` |
+| Kong entrypoint chains init-routes-otel.sh | `chmod +x ... && init-routes.sh && init-routes-otel.sh && exec openresty` |
 
 ## 6.02 — Npgsql Instrumentation + ILogger Scope
 
@@ -43,7 +43,7 @@ docker exec <apisix-container-id> curl -s http://127.0.0.1:9180/apisix/admin/rou
 ```powershell
 # Open in browser
 start http://localhost:16686
-# Expected: Jaeger UI dashboard, service list shows "dragonball-api", "music-api", "apisix"
+# Expected: Jaeger UI dashboard, service list shows "dragonball-api", "music-api", "Kong"
 ```
 
 ### Scenario 2: Trace generated on GET request
@@ -55,7 +55,7 @@ $token = curl -s -X POST "http://localhost:8080/realms/OpenCode/protocol/openid-
 curl -s http://localhost9080/api/dragonball/characters -H "Authorization: Bearer $token" -H "X-Correlation-Id: test-trace-1"
 ```
 
-Then in Jaeger UI: Search for `test-trace-1` — should show span from APISIX → dragonball-api → Npgsql query.
+Then in Jaeger UI: Search for `test-trace-1` — should show span from Kong → dragonball-api → Npgsql query.
 
 ### Scenario 3: Trace generated on write request
 ```powershell

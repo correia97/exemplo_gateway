@@ -38,6 +38,6 @@
 
 ## Key Findings
 
-- Vite proxy simplifies development (no CORS issues with APISIX)
+- Vite proxy simplifies development (no CORS issues with Kong)
 - Multi-stage Docker build keeps image size small (~50MB)
 - Nginx SPA routing requires `try_files $uri $uri/ /index.html` for client-side routes

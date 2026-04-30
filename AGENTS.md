@@ -2,9 +2,9 @@
 
 ## Project
 
-.NET 10 PoC with two CRUD APIs (Dragon Ball characters + Music catalog), single PostgreSQL database (schemas: `dragonball`, `music`, `keycloak`), Apache APISIX gateway, Keycloak auth, OpenTelemetry observability, .NET Aspire orchestration, and React frontend.
+.NET 10 PoC with two CRUD APIs (Dragon Ball characters + Music catalog), single PostgreSQL database (schemas: `dragonball`, `music`, `keycloak`), Apache Kong gateway, Keycloak auth, OpenTelemetry observability, .NET Aspire orchestration, and React frontend.
 
-**Core value:** Validate that the full stack (.NET 10 + Aspire + Keycloak + APISIX + OpenTelemetry + EF Core + PostgreSQL) works together as a coherent architecture.
+**Core value:** Validate that the full stack (.NET 10 + Aspire + Keycloak + Kong + OpenTelemetry + EF Core + PostgreSQL) works together as a coherent architecture.
 
 ## Workflow Commands
 
@@ -35,7 +35,7 @@
 ## Rules
 
 - No Bitnami Docker images; use latest stable official tags
-- Public reads, protected writes (Keycloak + APISIX dual auth)
+- Public reads, protected writes (Keycloak + Kong dual auth)
 - Single PostgreSQL DB with schema-based isolation
 - Repository pattern with EF Core
 - Correlation ID on all requests/responses

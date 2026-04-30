@@ -2,11 +2,11 @@
 
 ## What This Is
 
-A .NET 10 proof-of-concept showcasing enterprise backend patterns. Two independent CRUD APIs (Dragon Ball characters and Music catalog) share a single PostgreSQL database with isolated schemas, fronted by Apache APISIX and secured via Keycloak. The stack includes .NET Aspire orchestration, OpenTelemetry observability, and a basic React frontend.
+A .NET 10 proof-of-concept showcasing enterprise backend patterns. Two independent CRUD APIs (Dragon Ball characters and Music catalog) share a single PostgreSQL database with isolated schemas, fronted by Kong and secured via Keycloak. The stack includes .NET Aspire orchestration, OpenTelemetry observability, and a basic React frontend.
 
 ## Core Value
 
-Validate that the full stack (.NET 10 + Aspire + Keycloak + APISIX + OpenTelemetry + EF Core + PostgreSQL) works together as a coherent, observable, and secure architecture for API development.
+Validate that the full stack (.NET 10 + Aspire + Keycloak + Kong + OpenTelemetry + EF Core + PostgreSQL) works together as a coherent, observable, and secure architecture for API development.
 
 ## Requirements
 
@@ -27,7 +27,7 @@ Validate that the full stack (.NET 10 + Aspire + Keycloak + APISIX + OpenTelemet
 - [ ] Repository pattern with Entity Framework Core
 - [ ] OpenTelemetry for metrics, logs, and traces
 - [ ] Keycloak authentication (public reads, protected writes)
-- [ ] Apache APISIX as API gateway
+- [ ] Kong as API gateway
 - [ ] React frontend consuming both APIs
 - [ ] Track metadata: name, track number, duration, lyrics
 - [ ] Artists can have albums with tracks, plus standalone singles
@@ -45,14 +45,14 @@ Validate that the full stack (.NET 10 + Aspire + Keycloak + APISIX + OpenTelemet
 
 ## Context
 
-Proof-of-concept architecture validation project. The goal is to prove that the selected stack integrates cleanly before committing to a production build. Both APIs expose similar CRUD patterns with pagination and filtering, making this a good benchmark for the repository pattern + EF Core approach. Keycloak + APISIX provides a realistic enterprise auth/gateway layer. OpenTelemetry + Aspire gives full observability out of the box.
+Proof-of-concept architecture validation project. The goal is to prove that the selected stack integrates cleanly before committing to a production build. Both APIs expose similar CRUD patterns with pagination and filtering, making this a good benchmark for the repository pattern + EF Core approach. Keycloak + Kong provides a realistic enterprise auth/gateway layer. OpenTelemetry + Aspire gives full observability out of the box.
 
 ## Constraints
 
 - **Tech stack**: .NET 10 SDK, ASP.NET Core, EF Core, PostgreSQL 17
 - **Docker**: No Bitnami images, always use `latest` stable official tags
 - **Auth**: Keycloak 26+ with dedicated PostgreSQL schema
-- **Gateway**: Apache APISIX 3.x
+- **Gateway**: Kong
 - **Frontend**: React with Vite
 - **Orchestration**: .NET Aspire 9.x
 - **Observability**: OpenTelemetry (OTLP)

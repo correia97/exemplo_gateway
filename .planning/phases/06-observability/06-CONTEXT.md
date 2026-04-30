@@ -2,7 +2,7 @@
 
 ## Objective
 
-Wire end-to-end distributed tracing across APISIX, both .NET APIs, and PostgreSQL. Enhance the existing Correlation ID middleware with structured logging integration. Configure the APISIX OpenTelemetry plugin to generate gateway spans. Add Npgsql instrumentation for database query spans. Since the Aspire Dashboard workload (DCP) is not available on the dev machine, use a standalone Jaeger container as the OTLP collector and trace visualization UI.
+Wire end-to-end distributed tracing across Kong, both .NET APIs, and PostgreSQL. Enhance the existing Correlation ID middleware with structured logging integration. Configure the Kong OpenTelemetry plugin to generate gateway spans. Add Npgsql instrumentation for database query spans. Since the Aspire Dashboard workload (DCP) is not available on the dev machine, use a standalone Jaeger container as the OTLP collector and trace visualization UI.
 
 ## Key Decisions
 
@@ -15,14 +15,14 @@ Wire end-to-end distributed tracing across APISIX, both .NET APIs, and PostgreSQ
 **Implications:**
 - Jaeger replaces Aspire Dashboard for trace visualization (OTEL-07 adapted)
 - OTLP endpoint for .NET APIs: `http://host.docker.internal:4318/` (env var override)
-- OTLP endpoint for APISIX: `http://jaeger:4318/v1/traces` (container DNS)
+- OTLP endpoint for Kong: `http://jaeger:4318/v1/traces` (container DNS)
 - Can be replaced with Aspire Dashboard later if DCP workload is installed
 
 ### D-02: Append `opentelemetry` plugin as global rule, not per-route
 
-**Context:** APISIX supports both global rules and per-route plugin configuration. ALL routes should generate OTel spans.
+**Context:** Kong supports both global rules and per-route plugin configuration. ALL routes should generate OTel spans.
 
-**Decision:** Configure the `opentelemetry` plugin as a **global rule** (like `request-id`). This ensures every request through APISIX gets a gateway span without modifying individual route definitions.
+**Decision:** Configure the `opentelemetry` plugin as a **global rule** (like `request-id`). This ensures every request through Kong gets a gateway span without modifying individual route definitions.
 
 **Implications:**
 - Single Admin API call to create/update the global rule
@@ -65,8 +65,8 @@ Wire end-to-end distributed tracing across APISIX, both .NET APIs, and PostgreSQ
 ## Dependencies
 
 - **Phase 1 (ServiceDefaults):** Existing OTel SDK setup, CorrelationIdMiddleware — enhanced in this phase
-- **Phase 5 (APISIX):** config.yaml and init-routes.sh — modified to add opentelemetry plugin
-- **Phase 5 (APISIX):** APISIX must be verified operational before OTel plugin can be tested
+- **Phase 5 (Kong):** config.yaml and init-routes.sh — modified to add opentelemetry plugin
+- **Phase 5 (Kong):** Kong must be verified operational before OTel plugin can be tested
 - **Phase 3 (APIs):** Both APIs must be running to generate traces
 - **Phase 5 VERIFICATION:** Should be executed before Phase 6 verification to confirm baseline routing works
 
@@ -78,8 +78,8 @@ Wire end-to-end distributed tracing across APISIX, both .NET APIs, and PostgreSQ
 |-----|-------------|----------|
 | OTEL-02 | Correlation ID on all requests/responses | Already done (Phase 1 + Phase 5). Verify existing implementation. |
 | OTEL-03 | Correlation ID propagated and in structured logs | Enhance CorrelationIdMiddleware to push into ILogger scopes. |
-| OTEL-04 | Distributed traces: browser → APISIX → .NET API → PostgreSQL | W3C traceparent propagation via APISIX OTel plugin + Npgsql instrumentation |
-| OTEL-05 | APISIX OTel plugin with OTLP collector | Add `opentelemetry` plugin to config.yaml whitelist + global rule in init-routes.sh |
+| OTEL-04 | Distributed traces: browser → Kong → .NET API → PostgreSQL | W3C traceparent propagation via Kong OTel plugin + Npgsql instrumentation |
+| OTEL-05 | Kong OTel plugin with OTLP collector | Add `opentelemetry` plugin to config.yaml whitelist + global rule in init-routes.sh |
 | OTEL-06 | Npgsql instrumentation creates database spans | Add NuGet package + `.AddNpgsqlInstrumentation()` to ServiceDefaults |
 | OTEL-07 | Aspire Dashboard shows distributed traces | **Adapted:** Use Jaeger UI for trace visualization (DCP not installed) |
 
@@ -108,7 +108,7 @@ Wire end-to-end distributed tracing across APISIX, both .NET APIs, and PostgreSQ
 
 | Threat | Category | Component | Mitigation |
 |--------|----------|-----------|------------|
-| OTLP endpoint DDoS | Denial of Service | Jaeger collector | Buffer in APISIX OTel plugin (batch config), no external exposure |
+| OTLP endpoint DDoS | Denial of Service | Jaeger collector | Buffer in Kong OTel plugin (batch config), no external exposure |
 | Trace data contains SQL | Information Disclosure | Npgsql instrumentation | `SetDbStatementForText=true` captures only sanitized SQL (no parameter values) |
 | Correlation ID collision | Spoofing | CorrelationIdMiddleware | UUID v4 generation, no sequential IDs |
 | Jaeger UI unauthenticated | Information Disclosure | Jaeger container | Not exposed to host network (Aspire inner-loop only). Accept for PoC. |

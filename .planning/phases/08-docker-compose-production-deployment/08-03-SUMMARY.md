@@ -9,7 +9,7 @@
 1. **Image Audit** — verifies no Bitnami images across all compose files
 2. **Build Phase** — verifies all 3 custom images build successfully
 3. **Startup Verification** — all 7 services start and pass health checks
-4. **APISIX Gateway** — routing, public GET, protected write, CORS, correlation ID
+4. **Kong Gateway** — routing, public GET, protected write, CORS, correlation ID
 5. **Keycloak Auth** — token acquisition, POST with editor token, write protection
 6. **Music API CRUD** — genre creation and listing smoke test
 7. **Frontend** — serves content, SPA routing fallback

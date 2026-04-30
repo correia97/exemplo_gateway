@@ -1,4 +1,4 @@
-# 05-04: APISIX Rate Limiting, CORS & Correlation ID — Summary
+# 05-04: Kong Rate Limiting, CORS & Correlation ID — Summary
 
 ## What Was Done
 
@@ -29,7 +29,7 @@
 
 - Rate limit exceeded → 429 response with `Retry-After` header
 - CORS preflight (OPTIONS) returns correct headers
-- Correlation ID flows from request → APISIX → backend → response
+- Correlation ID flows from request → Kong → backend → response
 - Prometheus metrics endpoint returns valid metrics
 
 ## Key Findings

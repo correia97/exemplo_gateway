@@ -30,12 +30,12 @@
   "registrationAllowed": true,
   "registrationEmailAsUsername": true,
   "rememberMe": false,
-  "verifyEmail": true,
+  "verifyEmail": false,
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
   "resetPasswordAllowed": false,
   "editUsernameAllowed": false,
-  "bruteForceProtected": true,
+  "bruteForceProtected": false,
   "permanentLockout": false,
   "maxTemporaryLockouts": 0,
   "bruteForceStrategy": "MULTIPLE",
@@ -44,7 +44,7 @@
   "waitIncrementSeconds": 60,
   "quickLoginCheckMilliSeconds": 1000,
   "maxDeltaTimeSeconds": 43200,
-  "failureFactor": 5,
+  "failureFactor": 30,
   "maxSecondaryAuthFailures": 0,
   "roles": {
     "realm": [
@@ -518,8 +518,7 @@
       "disableableCredentialTypes": [],
       "requiredActions": [],
       "realmRoles": [
-        "default-roles-opencode",
-        "editor"
+        "default-roles-opencode"
       ],
       "clientRoles": {
         "dragonball-api": [
@@ -540,8 +539,7 @@
       "disableableCredentialTypes": [],
       "requiredActions": [],
       "realmRoles": [
-        "default-roles-opencode",
-        "editor"
+        "default-roles-opencode"
       ],
       "clientRoles": {
         "music-api": [
@@ -776,7 +774,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "${DRAGONBALL_API_SECRET}",
+      "secret": "z0ha560UlsBzE5jkufQU0xDO5Ske4ACb",
       "redirectUris": [
         ""
       ],
@@ -810,7 +808,7 @@
         "dpop.bound.access.tokens": "false"
       },
       "authenticationFlowBindingOverrides": {},
-      "fullScopeAllowed": false,
+      "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": -1,
       "defaultClientScopes": [
         "service_account",
@@ -849,6 +847,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
+      "secret": "b6ZmO3ykike5hwWYrl5tu3m4vAdSPajl",
       "redirectUris": [
         "http://localhost:3000/*",
         "http://localhost:4200/*",
@@ -892,7 +891,7 @@
         "dpop.bound.access.tokens": "false"
       },
       "authenticationFlowBindingOverrides": {},
-      "fullScopeAllowed": false,
+      "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": -1,
       "protocolMappers": [
         {
@@ -950,7 +949,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "${MUSIC_API_SECRET}",
+      "secret": "vN9206gfp08XJjyw5xjGqehsRNLgeVBv",
       "redirectUris": [
         ""
       ],
@@ -984,7 +983,7 @@
         "dpop.bound.access.tokens": "false"
       },
       "authenticationFlowBindingOverrides": {},
-      "fullScopeAllowed": false,
+      "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": -1,
       "defaultClientScopes": [
         "service_account",

@@ -2,8 +2,8 @@
 
 ## Success Criteria (from ROADMAP)
 
-1. `docker compose up` starts all 7 services (PostgreSQL, Keycloak, APISIX, DragonBall API, Music API, React frontend) successfully
-2. The full stack works without Aspire: APISIX routing, Keycloak auth, and both CRUD APIs respond correctly
+1. `docker compose up` starts all 7 services (PostgreSQL, Keycloak, Kong, DragonBall API, Music API, React frontend) successfully
+2. The full stack works without Aspire: Kong routing, Keycloak auth, and both CRUD APIs respond correctly
 3. All container images use `latest` stable official tags (no Bitnami images)
 4. Health checks are configured for every service with proper restart policies
 
@@ -26,7 +26,7 @@ Expected output:
 image: postgres:17
 image: quay.io/keycloak/keycloak:latest
 image: quay.io/coreos/etcd:v3.5
-image: apache/apisix:3.9.1-alpine
+image: apache/Kong:3.9.1-alpine
 ```
 
 No line should contain "bitnami" (case-insensitive):
@@ -100,7 +100,7 @@ Expected output pattern:
 | opencode-postgres | Up (healthy) |
 | opencode-keycloak | Up (healthy) |
 | opencode-etcd | Up (healthy) |
-| opencode-apisix | Up (healthy) |
+| opencode-Kong | Up (healthy) |
 | opencode-dragonball-api | Up (healthy) |
 | opencode-music-api | Up (healthy) |
 | opencode-frontend | Up (healthy) |
@@ -112,13 +112,13 @@ docker compose logs <service-name>
 
 ---
 
-## Step 5: APISIX Gateway Verification
+## Step 5: Kong Gateway Verification
 
-### 5a: APISIX is listening on port 8000
+### 5a: Kong is listening on port 8000
 ```bash
 curl -s -o /dev/null -w "%{http_code}" http://localhost9080/
 ```
-Expected: `404` (APISIX is listening, no route matches root — this is correct).
+Expected: `404` (Kong is listening, no route matches root — this is correct).
 
 ### 5b: Dragon Ball GET route (public, no auth)
 ```bash
@@ -306,12 +306,12 @@ Common issues:
 | Keycloak unhealthy | PostgreSQL not ready yet | Wait longer (start_period: 60s); check POSTGRES_DB env |
 | Keycloak fails to import realm | Realm JSON path wrong | Verify volume mount path is absolute or relative correctly |
 | etcd unhealthy | ALLOW_NONE_AUTHENTICATION not set | Check env vars in compose file |
-| APISIX unhealthy | etcd not ready | APISIX depends on etcd; check etcd logs |
-| APISIX returns 503 | Upstream API not reachable | Check API containers are healthy; verify container DNS names |
-| APISIX returns 404 on route | Routes not initialized | Check init-routes.sh ran; check APISIX entrypoint command |
+| Kong unhealthy | etcd not ready | Kong depends on etcd; check etcd logs |
+| Kong returns 503 | Upstream API not reachable | Check API containers are healthy; verify container DNS names |
+| Kong returns 404 on route | Routes not initialized | Check init-routes.sh ran; check Kong entrypoint command |
 | DragonBall API unhealthy | PostgreSQL not ready | depends_on uses service_healthy; check postgres is actually healthy |
 | Music API unhealthy | PostgreSQL not ready | Same as DragonBall |
-| Frontend unhealthy | APISIX not ready | depends_on uses service_started; check APISIX state |
+| Frontend unhealthy | Kong not ready | depends_on uses service_started; check Kong state |
 | OIDC returns 401 | Keycloak realm or client secret mismatch | Verify `opencode-realm.json` has correct client secrets |
 | docker build fails for .NET APIs | Missing Directory.Packages.props or solution file | Build context is project root; verify Dockerfile COPY paths |
 

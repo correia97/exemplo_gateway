@@ -12,7 +12,7 @@
 4. **Created API client interceptor:** `client.service.ts` with `API_BASE_URL`, `X-Correlation-Id` on every request, `Authorization: Bearer` on non-GET, structured error objects
 5. **Created app shell:** `LayoutComponent` with collapsible sidebar (Dashboard, Dragon Ball, Music nav links) + top bar (hamburger toggle, logo, login/logout) + `router-outlet` content area
 6. **Created pages:** Login (redirect to Keycloak), Callback (OIDC handler), Dashboard (authenticated/anonymous variants)
-7. **Wired into AppHost:** `AddExecutable("angular-frontend", ...)` port 4200, waits for APISIX
+7. **Wired into AppHost:** `AddExecutable("angular-frontend", ...)` port 4200, waits for Kong
 8. **Build verification:** `ng build --configuration development` passes, `dotnet build OpenCode.slnx` passes
 9. **Fixed Angular 21 API incompatibilities:** `withInterceptorsFromDi()` takes no args, `loadChildren` → `.then(m => m.routes)`, plain `aria-label` for `attr.aria-label`, arrow function template expressions moved to component methods
 

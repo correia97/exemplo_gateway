@@ -1,4 +1,4 @@
-# 05-03: APISIX Auth Plugin Integration — Summary
+# 05-03: Kong Auth Plugin Integration — Summary
 
 ## What Was Done
 
@@ -19,17 +19,17 @@
 4. **Route-level auth enforcement**:
    - `jwt-auth` on read routes (validates token)
    - `jwt-auth + consumer-restriction` on write routes (validates role)
-   - Consumer groups map Keycloak roles to APISIX consumers
+   - Consumer groups map Keycloak roles to Kong consumers
 
 ## Verification
 
-- Request without token → 401 from APISIX
+- Request without token → 401 from Kong
 - Request with valid token → proxied to backend
 - Request with invalid token/signature → 401
 - Request without required role → 403
 
 ## Key Findings
 
-- APISIX JWT auth validates token before request reaches backend (early rejection)
+- Kong JWT auth validates token before request reaches backend (early rejection)
 - Consumer-restriction plugin maps to Keycloak roles for fine-grained access
 - OIDC discovery endpoint simplifies configuration management

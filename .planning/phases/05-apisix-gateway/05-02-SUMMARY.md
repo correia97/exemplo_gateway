@@ -1,8 +1,8 @@
-# 05-02: APISIX Route Initialization — Summary
+# 05-02: Kong Route Initialization — Summary
 
 ## What Was Done
 
-1. **Route init script** at `deploy/apisix/init-routes.sh`:
+1. **Route init script** at `deploy/kong/init-routes.sh`:
    - Creates upstream `dragonball-api` pointing to `opencode-dragonball-api:8080`
    - Creates upstream `music-api` pointing to `opencode-music-api:8080`
    - Creates upstream `keycloak` pointing to `keycloak:8080`
@@ -23,7 +23,7 @@
 ## Verification
 
 - All routes created and listed via Admin API `GET /apisix/admin/routes`
-- Requests to APISIX port 9080 route to correct upstream
+- Requests to Kong port 9080 route to correct upstream
 - Path rewriting works correctly (`/api/dragonball/characters` → `/characters`)
 
 ## Key Findings

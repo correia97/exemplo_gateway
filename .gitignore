@@ -49,6 +49,11 @@ Thumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 
+**/[Bb]in/
+**/[Oo]bj/
+**/[Ll]og/
+**/[Ll]ogs/
+
 # ------------------------------------------------------------
 # NuGet
 # ------------------------------------------------------------
@@ -69,6 +74,10 @@ dist/
 tmp/
 app/**/*.js
 app/**/*.js.map
+**/dist/
+tmp/
+**/app/**/*.js
+app/**/*.js.map
 
 # Angular caches
 .angular/
@@ -76,6 +85,11 @@ app/**/*.js.map
 angular.json
 tsconfig.json
 tslint.json
+**/.angular/
+**/.angular-cli.json
+**/angular.json
+**/tsconfig.json
+**/tslint.json
 
 # Angular IDE
 .idea/
@@ -86,6 +100,13 @@ node_modules/
 npm-debug.log
 yarn-error.log
 yarn.lock
+package-lock.json
+
+
+**/node_modules/
+**/npm-debug.log
+**/yarn-error.log
+**/yarn.lock
 package-lock.json
 
 # ------------------------------------------------------------
@@ -100,10 +121,22 @@ dist-ssr/
 .env.test.local
 .env.production.local
 
+
+**/dist/
+**/dist-ssr/
+**/*.local
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+
 # Vite
 .vite/
 rollup.config.js.timestamp-*
 vite.config.ts.timestamp-*
+**/.vite/
+**/rollup.config.js.timestamp-*
+**/vite.config.ts.timestamp-*
 
 # ESLint
 .eslintcache

@@ -1,9 +1,9 @@
-# Phase 5: APISIX Gateway — Design Context
+# Phase 5: Kong Gateway — Design Context
 
 ## Deployment
 
-- APISIX `apache/apisix:3.9.1-alpine` as raw container via `AddContainer` in AppHost
-- etcd container for APISIX data persistence (route definitions, plugin configs)
+- Kong `apache/apisix:3.9.1-alpine` as raw container via `AddContainer` in AppHost
+- etcd container for Kong data persistence (route definitions, plugin configs)
 - Routes created via Admin API at startup through an init script
 - Config files stored in `.planning/phases/05-apisix-gateway/`
 
@@ -16,14 +16,14 @@
 
 - `strip_prefix: true` — backend APIs see `/characters`, `/genres` without `/api/dragonball` prefix
 - GET routes pass through without authentication
-- POST/PUT/DELETE routes protected by APISIX `openid-connect` plugin
+- POST/PUT/DELETE routes protected by Kong `openid-connect` plugin
 
 ## Dual Auth Model
 
 - **GET routes**: No auth plugin — public read access
 - **POST/PUT/DELETE routes**: `openid-connect` plugin in `bearer_only` mode
   - Validates JWT bearer token using Keycloak JWKS endpoint
-  - No authorization code redirect (APISIX is not the OIDC initiator)
+  - No authorization code redirect (Kong is not the OIDC initiator)
   - Reuses existing Keycloak clients (`dragonball-api`, `music-api`) for plugin config
 - Token validation at gateway level is in ADDITION to .NET-level JWT validation (defense in depth)
 
@@ -38,7 +38,7 @@
 
 ## CORS
 
-- Configured via APISIX `cors` plugin at route level
+- Configured via Kong `cors` plugin at route level
 - Allowed origins: `http://localhost:5173`, `http://localhost:3000`, `http://localhost`, `http://localhost:5003`
 - Allow all methods (GET, POST, PUT, DELETE, OPTIONS)
 - Allow all headers
@@ -46,7 +46,7 @@
 
 ## Correlation ID
 
-- APISIX `request-id` plugin generates UUID-based correlation IDs
+- Kong `request-id` plugin generates UUID-based correlation IDs
 - Header name: `X-Correlation-Id` (consistent with .NET `UseCorrelationId()` middleware)
 - Generated for all requests at entry point
 - Passed through to upstream APIs
@@ -54,7 +54,7 @@
 ## Upstream Discovery
 
 - Upstream URLs resolved via Aspire service discovery environment variables
-- APISIX config references variables injected by AppHost
+- Kong config references variables injected by AppHost
 - Ports dynamically assigned by Aspire
 
 ## Plugins Enabled
@@ -70,13 +70,13 @@
 
 - Phase 3 (APIs running with working endpoints)
 - Phase 4 (Keycloak running with realm and clients configured)
-- etcd container must start before APISIX
-- APISIX must start before routes are configured via Admin API
+- etcd container must start before Kong
+- Kong must start before routes are configured via Admin API
 - Routes must exist before frontend can send requests through gateway
 
 ## Files
 
-- `.planning/phases/05-apisix-gateway/config.yaml` — APISIX main configuration
+- `.planning/phases/05-apisix-gateway/config.yaml` — Kong main configuration
 - `.planning/phases/05-apisix-gateway/init-routes.sh` — Admin API script to create routes
 - `.planning/phases/05-apisix-gateway/etcd-config.sh` — etcd startup (minimal, default config)
 
@@ -84,10 +84,10 @@
 
 | Req | Description | Approach |
 |-----|-------------|----------|
-| GATE-01 | APISIX entry point on port 8000 | APISIX container with `WithEndpoint(port: 8000, targetPort: 9080)` |
+| GATE-01 | Kong entry point on port 8000 | Kong container with `WithEndpoint(port: 8000, targetPort: 9080)` |
 | GATE-02 | Route `/api/dragonball/*` | Route with upstream to dragonball-api, strip prefix |
 | GATE-03 | Route `/api/music/*` | Route with upstream to music-api, strip prefix |
 | GATE-04 | Dual auth model | OIDC plugin on write routes, no plugin on GET routes |
 | GATE-05 | OIDC JWKS validation | openid-connect plugin in bearer_only mode | 
-| GATE-06 | CORS at APISIX level | cors plugin on all routes |
+| GATE-06 | CORS at Kong level | cors plugin on all routes |
 | GATE-07 | Correlation ID | request-id plugin globally |

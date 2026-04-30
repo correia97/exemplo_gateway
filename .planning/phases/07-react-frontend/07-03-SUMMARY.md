@@ -26,7 +26,7 @@
 
 5. **Environment configuration**:
    - `VITE_KEYCLOAK_URL`, `VITE_KEYCLOAK_REALM`, `VITE_KEYCLOAK_CLIENT_ID`
-   - `VITE_API_BASE_URL` — APISIX gateway URL
+   - `VITE_API_BASE_URL` — Kong gateway URL
 
 ## Verification
 

@@ -1,12 +1,12 @@
 # Phase 6: OpenTelemetry & Observability — Research
 
 **Researched:** 2026-04-25
-**Domain:** OpenTelemetry, OTLP Export, APISIX OTel Plugin, Npgsql Instrumentation, Structured Logging
+**Domain:** OpenTelemetry, OTLP Export, Kong OTel Plugin, Npgsql Instrumentation, Structured Logging
 **Confidence:** HIGH
 
 ## Summary
 
-Phase 6 wires end-to-end distributed tracing across APISIX, both .NET APIs, and PostgreSQL. Correlation ID (already implemented in Phase 1's ServiceDefaults + Phase 5's APISIX `request-id` plugin) is enhanced with structured logging integration. Npgsql instrumentation is added for database query spans. APISIX's `opentelemetry` plugin is configured to emit gateway spans. Since the Aspire Dashboard workload (DCP) is not installed on the dev machine, a standalone Jaeger container is used as the OTLP collector and trace visualization UI.
+Phase 6 wires end-to-end distributed tracing across Kong, both .NET APIs, and PostgreSQL. Correlation ID (already implemented in Phase 1's ServiceDefaults + Phase 5's Kong `request-id` plugin) is enhanced with structured logging integration. Npgsql instrumentation is added for database query spans. Kong's `opentelemetry` plugin is configured to emit gateway spans. Since the Aspire Dashboard workload (DCP) is not installed on the dev machine, a standalone Jaeger container is used as the OTLP collector and trace visualization UI.
 
 ## Key Findings from Codebase Analysis
 
@@ -48,7 +48,7 @@ builder.Services.AddOpenTelemetry()
 - Sets `context.TraceIdentifier = correlationId`
 - Adds `X-Correlation-Id` response header
 
-**Phase 5 APISIX** has `request-id` global rule that generates `X-Correlation-Id` header.
+**Phase 5 Kong** has `request-id` global rule that generates `X-Correlation-Id` header.
 
 Both APIs call `app.UseCorrelationId()` in Program.cs.
 
@@ -68,7 +68,7 @@ options.CustomizeProblemDetails = ctx =>
 
 This is already complete for OTEL-02 partial coverage.
 
-### 4. APISIX Configuration (Phase 5)
+### 4. Kong Configuration (Phase 5)
 
 `config.yaml` plugin whitelist:
 ```yaml
@@ -106,7 +106,7 @@ Browser/curl
   │
   ▼ port 8000
 ┌─────────────────────┐
-│   APISIX 3.9.1      │
+│   Kong 3.9.1      │
 │                     │
 │  OTel Plugin:       │  ← Sends W3C traceparent + spans
 │  - collector:       │
@@ -148,11 +148,11 @@ Browser/curl
 └──────────────────────┘
 ```
 
-## APISIX OpenTelemetry Plugin
+## Kong OpenTelemetry Plugin
 
 ### Configuration
 
-The `opentelemetry` plugin in APISIX 3.9.x supports:
+The `opentelemetry` plugin in Kong 3.9.x supports:
 
 | Attribute | Required | Default | Description |
 |-----------|----------|---------|-------------|
@@ -169,9 +169,9 @@ Should be added as a **global rule** (like `request-id`) so ALL routes generate 
 
 ### Trace Context Propagation
 
-APISIX automatically handles W3C `traceparent` header propagation when the `opentelemetry` plugin is enabled:
-- If the incoming request has `traceparent`, APISIX uses it as parent span
-- If absent, APISIX generates a new trace
+Kong automatically handles W3C `traceparent` header propagation when the `opentelemetry` plugin is enabled:
+- If the incoming request has `traceparent`, Kong uses it as parent span
+- If absent, Kong generates a new trace
 - The `traceparent` is forwarded to the upstream (.NET API)
 - This creates a continuous trace chain
 
@@ -311,14 +311,14 @@ Expected trace chain for a single request:
 
 | Span Order | Service | Span Type | Details |
 |-----------|---------|-----------|---------|
-| 1 | APISIX | HTTP Server | `GET /api/dragonball/characters` |
+| 1 | Kong | HTTP Server | `GET /api/dragonball/characters` |
 | 2 | .NET API | HTTP Server | `GET /characters` (after strip_prefix) |
 | 3 | .NET API | Internal | `CharacterRepository.ListAsync` |
 | 4 | PostgreSQL | Database | `SELECT ... FROM characters ...` |
 
 Verification commands:
 ```bash
-# Send a request through APISIX
+# Send a request through Kong
 curl -s "http://localhost9080/api/dragonball/characters?page=1&pageSize=5"
 
 # Check Jaeger UI for traces
@@ -328,24 +328,24 @@ open http://localhost:16686/search
 ## Constraints
 
 1. **AppHost is compile-only (no DCP/Dashboard):** OTEL-07 (Aspire Dashboard) cannot use the built-in dashboard. Fallback to Jaeger for trace visualization.
-2. **Phase 5 VERIFICATION not yet executed:** The APISIX gateway is not verified to be correctly routing. Phase 6 depends on Phase 5 being operational.
+2. **Phase 5 VERIFICATION not yet executed:** The Kong gateway is not verified to be correctly routing. Phase 6 depends on Phase 5 being operational.
 3. **Both APIs run as host processes (not containers):** In Aspire inner-loop, API projects run on the host. Jaeger runs as a container. The .NET APIs need to reach Jaeger via `host.docker.internal:4318`.
-4. **APISIX runs in container:** Can reach Jaeger via Docker network (service name `jaeger:4318`).
+4. **Kong runs in container:** Can reach Jaeger via Docker network (service name `jaeger:4318`).
 
 ## Anti-Patterns to Avoid
 
 1. **No OTLP exporter timeout** — Default 10s timeout blocks startup. Set to 1s (Pitfall 10 from RESEARCH).
 2. **Setting OTLP endpoint only in ServiceDefaults** — The endpoint needs to be configurable per environment (Aspire vs Jaeger vs production).
 3. **Adding Npgsql instrumentation without sanitized SQL** — Set `SetDbStatementForText = true` only, skip storing raw SQL parameters.
-4. **Overriding Correlation ID in .NET middleware** — APISIX already generates it; .NET middleware should preserve it.
-5. **Forgetting `traceparent` propagation** — Without W3C trace context, APISIX and .NET spans won't be in the same trace.
+4. **Overriding Correlation ID in .NET middleware** — Kong already generates it; .NET middleware should preserve it.
+5. **Forgetting `traceparent` propagation** — Without W3C trace context, Kong and .NET spans won't be in the same trace.
 
 ## Assumptions Log
 
 | # | Claim | Risk if Wrong |
 |---|-------|---------------|
 | A1 | `jaegertracing/all-in-one:latest` supports OTLP HTTP on port 4318 | Low — well-documented since Jaeger v1.58+ |
-| A2 | APISIX 3.9.x `opentelemetry` plugin supports OTLP HTTP export | Medium — need to verify plugin docs for 3.9.1 |
+| A2 | Kong 3.9.x `opentelemetry` plugin supports OTLP HTTP export | Medium — need to verify plugin docs for 3.9.1 |
 | A3 | `OpenTelemetry.Instrumentation.Npgsql` 1.x is compatible with .NET 10 | Medium — OTel .NET packages occasionally lag behind .NET releases |
 | A4 | `host.docker.internal:4318` resolves from .NET APIs to Jaeger container | Low — standard Docker Desktop behavior on Windows |
 | A5 | Trace context (traceparent) propagates through ASP.NET Core automatically | Low — OTel SDK handles this by default |
@@ -355,7 +355,7 @@ open http://localhost:16686/search
 ### Primary (HIGH confidence)
 - [VERIFIED: OpenTelemetry .NET SDK] — OTel configuration, exporter setup, instrumentation APIs
 - [VERIFIED: Npgsql OTel instrumentation] — Database span capture via `AddNpgsqlInstrumentation()`
-- [VERIFIED: APISIX opentelemetry plugin docs] — Plugin config, collector address, batch settings
+- [VERIFIED: Kong opentelemetry plugin docs] — Plugin config, collector address, batch settings
 - [VERIFIED: Jaeger all-in-one Docker image] — Ports 4317/4318 for OTLP, 16686 for UI
 - [VERIFIED: W3C Trace Context spec] — `traceparent` header format and propagation rules
 
@@ -366,7 +366,7 @@ open http://localhost:16686/search
 ## Metadata
 
 **Confidence breakdown:**
-- APISIX OTel plugin: HIGH — well-documented with example configs
+- Kong OTel plugin: HIGH — well-documented with example configs
 - Npgsql instrumentation: HIGH — standard OTel pattern
 - Jaeger as collector: HIGH — official Docker image, well-documented
 - Structured logging: HIGH — standard .NET ILogger scopes

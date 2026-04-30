@@ -37,4 +37,4 @@
 - Health checks enable container orchestration (Docker restart on failure)
 - Business metrics (entity counts) require custom `Meter` instrumentation
 - Correlation ID in logs enables cross-service debugging workflows
-- Prometheus scrape endpoint compatible with APISIX prometheus plugin
+- Prometheus scrape endpoint compatible with Kong prometheus plugin

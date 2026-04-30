@@ -4,7 +4,7 @@
 
 Determine the technical approach and patterns for building a React 19 + Vite SPA that:
 1. Authenticates via Keycloak OIDC (Authorization Code + PKCE)
-2. Communicates exclusively through APISIX gateway
+2. Communicates exclusively through Kong gateway
 3. Provides role-aware CRUD UIs for both Dragon Ball and Music APIs
 
 ## Stack Selection
@@ -19,7 +19,7 @@ Determine the technical approach and patterns for building a React 19 + Vite SPA
 - **npm**: `vite@6`, `@vitejs/plugin-react@4`
 - **Why Vite**: Fastest dev server, native ESM, simple config, React SPA template available
 - **Dev server**: Port 5173 (default), enables HMR during development
-- **Proxy config**: Not needed — frontend calls APISIX directly on port 8000
+- **Proxy config**: Not needed — frontend calls Kong directly on port 8000
 
 ### oidc-client-ts v3.x
 - **npm**: `oidc-client-ts@3`
@@ -98,7 +98,7 @@ src/OpenCode.Frontend/
 
 ### Data Flow
 ```
-Browser ──GET/POST/PUT/DELETE──→ APISIX (9080) ──→ .NET API ──→ PostgreSQL
+Browser ──GET/POST/PUT/DELETE──→ Kong (9080) ──→ .NET API ──→ PostgreSQL
                 │                       ↑
                 │                  (strips prefix,
                 │                   adds CORS,
@@ -187,10 +187,10 @@ From Phase 4 analysis:
 - `RequireHttpsMetadata = false` (development)
 - Access tokens: 5-minute expiry (need refresh token flow)
 
-## APISIX Integration Points
+## Kong Integration Points
 
 From Phase 5 analysis:
-- APISIX proxy at `http://localhost9080`
+- Kong proxy at `http://localhost9080`
 - Routes: `/api/dragonball/*` → DragonBall API, `/api/music/*` → Music API
 - CORS already configured for `http://localhost:5173`
 - `request-id` plugin adds `X-Correlation-Id` header to all responses
@@ -199,10 +199,10 @@ From Phase 5 analysis:
 
 ## Common Pitfalls
 
-1. **CORS preflight**: APISIX must handle OPTIONS requests before they reach the .NET APIs (already configured in Phase 5)
+1. **CORS preflight**: Kong must handle OPTIONS requests before they reach the .NET APIs (already configured in Phase 5)
 2. **Token expiry**: Access tokens are 5-minute; silent refresh must be configured to avoid 401 errors during long sessions
 3. **Redirect URI mismatch**: Keycloak redirect URIs must exactly match the frontend callback URL (no trailing slash mismatch)
 4. **Public client CORS**: Keycloak requires `Web Origins` configuration for `http://localhost:5173` — the `frontend` client must have this set
-5. **APISIX is not Keycloak**: The frontend talks to APISIX for API calls but directly to Keycloak for authentication (login redirect / token exchange)
+5. **Kong is not Keycloak**: The frontend talks to Kong for API calls but directly to Keycloak for authentication (login redirect / token exchange)
 6. **Multiple auth popups**: `automaticSilentRenew` with iframe-based renew may trigger popup blockers — use `silent_redirect_uri` with a dedicated HTML page
 7. **State/Nonce validation**: `oidc-client-ts` handles this automatically, but an improperly configured `redirect_uri` will fail silently

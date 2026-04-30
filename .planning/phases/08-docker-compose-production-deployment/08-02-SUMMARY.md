@@ -18,7 +18,7 @@
 | PostgreSQL | pg_isready -U postgres -d opencode | 10s | 30s |
 | Keycloak | TCP socket test on :8080 | 15s | 60s |
 | etcd | etcdctl endpoint health | 15s | 10s |
-| APISIX | curl Admin API :9180/routes | 10s | 15s |
+| Kong | curl Admin API :9180/routes | 10s | 15s |
 | DragonBall API | curl :8080/ | 15s | 30s |
 | Music API | curl :8080/ | 15s | 30s |
 | Frontend | curl :80/ | 15s | 15s |

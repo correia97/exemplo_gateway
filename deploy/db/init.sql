@@ -49,6 +49,8 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA dragonball TO dragonball_user;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA dragonball TO dragonball_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA dragonball GRANT ALL ON TABLES TO dragonball_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA dragonball GRANT ALL ON SEQUENCES TO dragonball_user;
+GRANT ALL PRIVILEGES ON SCHEMA dragonball TO dragonball_user;
+
 
 -- ============================================================
 -- GRANTS -- Music schema
@@ -59,7 +61,7 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA music TO music_user;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA music TO music_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA music GRANT ALL ON TABLES TO music_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA music GRANT ALL ON SEQUENCES TO music_user;
-
+GRANT ALL PRIVILEGES ON SCHEMA music TO music_user;
 -- ============================================================
 -- GRANTS -- Keycloak schema
 -- ============================================================
@@ -69,6 +71,7 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA keycloak TO keycloak_user;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA keycloak TO keycloak_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA keycloak GRANT ALL ON TABLES TO keycloak_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA keycloak GRANT ALL ON SEQUENCES TO keycloak_user;
+GRANT ALL PRIVILEGES ON SCHEMA keycloak TO keycloak_user;
 -- Ensure database-level CONNECT privilege for each user
 GRANT CONNECT ON DATABASE opencode TO dragonball_user;
 GRANT CONNECT ON DATABASE opencode TO music_user;
@@ -85,3 +88,4 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO kong_user;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO kong_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO kong_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO kong_user;
+GRANT ALL PRIVILEGES ON SCHEMA public TO kong_user;
