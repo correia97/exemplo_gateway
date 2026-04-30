@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import DataTable from '../../components/DataTable'
 import Pagination from '../../components/Pagination'
 import EmptyState from '../../components/EmptyState'
+import ErrorDisplay from '../../components/ErrorDisplay'
 import WriteGuard from '../../auth/WriteGuard'
 import { getCharacters } from '../../api/dragonball'
 import type { Character } from '../../api/types'
@@ -17,6 +18,8 @@ export default function CharacterList({ onSelect, onCreate }: Props) {
   const [totalPages, setTotalPages] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
   const [search, setSearch] = useState('')
   const [raceFilter, setRaceFilter] = useState('')
   const pageSize = 10
@@ -25,6 +28,7 @@ export default function CharacterList({ onSelect, onCreate }: Props) {
   useEffect(() => {
     const id = ++fetchId.current
     setIsLoading(id === 1)
+    setError(null)
 
     const filters: Record<string, unknown> = { page, pageSize }
     if (search) filters.name = search
@@ -36,12 +40,13 @@ export default function CharacterList({ onSelect, onCreate }: Props) {
       setTotalPages(result.totalPages)
       setTotalCount(result.totalCount)
       setIsLoading(false)
-    }).catch(() => {
+    }).catch((err: unknown) => {
       if (id !== fetchId.current) return
+      setError(err instanceof Error ? err.message : 'Failed to load characters')
       setCharacters([])
       setIsLoading(false)
     })
-  }, [page, search, raceFilter])
+  }, [page, search, raceFilter, retryCount])
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value)
@@ -88,7 +93,10 @@ export default function CharacterList({ onSelect, onCreate }: Props) {
           </button>
         </WriteGuard>
       </div>
-      {characters.length === 0 && !isLoading ? (
+      {error && (
+        <ErrorDisplay message={error} onRetry={() => setRetryCount(c => c + 1)} />
+      )}
+      {!error && characters.length === 0 && !isLoading ? (
         <WriteGuard fallback={<EmptyState message="No characters found" />}>
           <EmptyState message="No characters found" actionLabel="Create one" onAction={onCreate} />
         </WriteGuard>
