@@ -44,8 +44,8 @@ status: all_fixed
 **Files modified:** `docker-compose.yml`
 **Commit:** `6efc0ef`
 **Applied fix:**
-- Pinned `quay.io/keycloak/keycloak:latest` to `quay.io/keycloak/keycloak:26.1.7`
-- Pinned `jaegertracing/all-in-one:latest` to `jaegertracing/all-in-one:1.64.0`
+- Pinned `quay.io/keycloak/keycloak:latest` to `quay.io/keycloak/keycloak:26.6.1`
+- Pinned `jaegertracing/all-in-one:latest` to `jaegertracing/all-in-one:1.76.0`
 
 ### WR-02: No non-root user in .NET API runtime images
 

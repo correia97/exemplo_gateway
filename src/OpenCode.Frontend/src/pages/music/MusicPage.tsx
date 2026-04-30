@@ -5,7 +5,7 @@ import AlbumDetail from './AlbumDetail'
 import MusicForm from './MusicForm'
 import { useToast } from '../../hooks/useApiError'
 import type { Artist, Album, ArtistCreatePayload, AlbumCreatePayload, TrackCreatePayload } from '../../api/types'
-import { getArtist, getAlbum, createArtist, updateArtist, deleteArtist, createAlbum, updateAlbum, deleteAlbum, createTrack, updateTrack } from '../../api/music'
+import { getArtist, getAlbum, createArtist, updateArtist, deleteArtist, createAlbum, updateAlbum, deleteAlbum, createTrack } from '../../api/music'
 
 type View = 'artist-list' | 'artist-detail' | 'album-detail' | 'create-artist' | 'edit-artist' | 'create-album' | 'edit-album' | 'create-track' | 'edit-track'
 
@@ -59,9 +59,6 @@ export default function MusicPage() {
 
   const handleCreateTrack = useCallback(async (data: TrackCreatePayload) => {
     try { await createTrack(data); if (selectedAlbum) setSelectedAlbum(await getAlbum(selectedAlbum.id)); setView('album-detail') } catch (e: unknown) { handleError(e) }
-  }, [selectedAlbum, handleError])
-  const handleUpdateTrack = useCallback(async (id: number, data: Partial<TrackCreatePayload>) => {
-    try { await updateTrack(id, data); if (selectedAlbum) setSelectedAlbum(await getAlbum(selectedAlbum.id)); setView('album-detail') } catch (e: unknown) { handleError(e) }
   }, [selectedAlbum, handleError])
   const handleBack = useCallback(() => {
     if (view === 'artist-detail' || view.startsWith('create-') || view.startsWith('edit-')) {

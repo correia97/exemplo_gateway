@@ -2,9 +2,9 @@
 
 ## Success Criteria (from ROADMAP)
 
-1. `docker compose up` starts all 7 services (PostgreSQL, Keycloak, Kong, DragonBall API, Music API, React frontend) successfully
+1. `docker compose up` starts all services (PostgreSQL, Keycloak, Kong, Jaeger, DragonBall API, Music API, React frontend, Angular frontend) successfully
 2. The full stack works without Aspire: Kong routing, Keycloak auth, and both CRUD APIs respond correctly
-3. All container images use `latest` stable official tags (no Bitnami images)
+3. All container images use pinned stable official tags (no Bitnami images)
 4. Health checks are configured for every service with proper restart policies
 
 ## Prerequisites
@@ -24,9 +24,10 @@ Select-String "image:" docker-compose.yml
 Expected output:
 ```
 image: postgres:17
-image: quay.io/keycloak/keycloak:latest
-image: quay.io/coreos/etcd:v3.5
-image: apache/Kong:3.9.1-alpine
+image: quay.io/keycloak/keycloak:26.6.1
+image: kong/kong:3.9.1-ubuntu
+image: jaegertracing/all-in-one:1.76.0
+image: rootpublic/curl:bookworm-slim_rootio
 ```
 
 No line should contain "bitnami" (case-insensitive):
@@ -53,11 +54,11 @@ Verify non-root users:
 ```bash
 # Check DragonBall API user
 docker run --rm opencode-dragonball-api:latest whoami
-# Expected: appuser
+# Expected: app
 
 # Check Music API user
 docker run --rm opencode-music-api:latest whoami
-# Expected: appuser
+# Expected: app
 
 # Check Frontend user
 docker run --rm opencode-frontend:latest whoami
@@ -87,7 +88,7 @@ Wait 60-90 seconds for all services to become healthy (especially Keycloak on fi
 docker compose ps
 ```
 
-Expected: all 7 services show `Up` and `(healthy)` status.
+Expected: all services show `Up` and `(healthy)` status.
 
 ```bash
 # Detailed health per service
@@ -97,13 +98,15 @@ docker compose ps --format "table {{.Name}}\t{{.Status}}"
 Expected output pattern:
 | Name | Status |
 |------|--------|
-| opencode-postgres | Up (healthy) |
-| opencode-keycloak | Up (healthy) |
-| opencode-etcd | Up (healthy) |
-| opencode-Kong | Up (healthy) |
-| opencode-dragonball-api | Up (healthy) |
-| opencode-music-api | Up (healthy) |
-| opencode-frontend | Up (healthy) |
+| postgres | Up (healthy) |
+| keycloak | Up (healthy) |
+| kong-init | Up (healthy) |
+| kong | Up (healthy) |
+| jaeger | Up (healthy) |
+| dragonball-api | Up (healthy) |
+| music-api | Up (healthy) |
+| frontend | Up (healthy) |
+| angular-frontend | Up (healthy) |
 
 If any service is not healthy, check logs:
 ```bash
@@ -116,42 +119,42 @@ docker compose logs <service-name>
 
 ### 5a: Kong is listening on port 8000
 ```bash
-curl -s -o /dev/null -w "%{http_code}" http://localhost9080/
+curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/
 ```
 Expected: `404` (Kong is listening, no route matches root — this is correct).
 
 ### 5b: Dragon Ball GET route (public, no auth)
 ```bash
-curl -s -w "\nHTTP %{http_code}" "http://localhost9080/api/dragonball/characters?page=1&pageSize=5"
+curl -s -w "\nHTTP %{http_code}" "http://localhost:8000/api/dragonball/characters?page=1&pageSize=5"
 ```
 Expected: HTTP 200 with pagination envelope (may have empty `data` array if no characters exist).
 
 ### 5c: Music GET route (public, no auth)
 ```bash
-curl -s -w "\nHTTP %{http_code}" "http://localhost9080/api/music/artists?page=1&pageSize=5"
+curl -s -w "\nHTTP %{http_code}" "http://localhost:8000/api/music/artists?page=1&pageSize=5"
 ```
 Expected: HTTP 200 with pagination envelope.
 
 ### 5d: POST without auth (should return 401)
 ```bash
-curl -s -o /dev/null -w "Status: %{http_code}\n" -X POST "http://localhost9080/api/dragonball/characters" \
+curl -s -o /dev/null -w "Status: %{http_code}\n" -X POST "http://localhost:8000/api/dragonball/characters" \
   -H "Content-Type: application/json" \
-  -d '{"name":"TestCharacter","isEarthling":true,"introductionPhase":"Saiyan Saga","pictureUrl":"http://example.com/pic.jpg"}'
+  -d '{"name":"TestCharacter","isEarthling":true,"introductionPhase":"Saiyan Saga"}'
 ```
 Expected: `401` (write requires auth).
 
 ### 5e: POST invalid token (should return 401)
 ```bash
-curl -s -o /dev/null -w "Status: %{http_code}\n" -X POST "http://localhost9080/api/dragonball/characters" \
+curl -s -o /dev/null -w "Status: %{http_code}\n" -X POST "http://localhost:8000/api/dragonball/characters" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer garbage-token" \
-  -d '{"name":"TestCharacter","isEarthling":true,"introductionPhase":"Saiyan Saga","pictureUrl":"http://example.com/pic.jpg"}'
+  -d '{"name":"TestCharacter","isEarthling":true,"introductionPhase":"Saiyan Saga"}'
 ```
 Expected: `401`.
 
 ### 5f: CORS preflight
 ```bash
-curl -s -D - -o /dev/null -X OPTIONS "http://localhost9080/api/dragonball/characters" \
+curl -s -D - -o /dev/null -X OPTIONS "http://localhost:8000/api/dragonball/characters" \
   -H "Origin: http://localhost:3000" \
   -H "Access-Control-Request-Method: POST"
 ```
@@ -159,7 +162,7 @@ Expected: Response headers include `Access-Control-Allow-Origin: http://localhos
 
 ### 5g: Correlation ID
 ```bash
-curl -s -D - -o /dev/null "http://localhost9080/api/dragonball/characters?page=1&pageSize=1"
+curl -s -D - -o /dev/null "http://localhost:8000/api/dragonball/characters?page=1&pageSize=1"
 ```
 Expected: Response includes `X-Correlation-Id: <uuid>` header. Run twice — IDs should differ.
 
@@ -186,7 +189,7 @@ Expected: Token length > 100 (valid JWT).
 
 ### 6c: POST with editor token (should succeed)
 ```bash
-curl -s -w "\nHTTP %{http_code}" -X POST "http://localhost9080/api/dragonball/characters" `
+curl -s -w "\nHTTP %{http_code}" -X POST "http://localhost:8000/api/dragonball/characters" `
   -H "Content-Type: application/json" `
   -H "Authorization: Bearer $EDITOR_TOKEN" `
   -d '{"name":"Goku","isEarthling":false,"introductionPhase":"Dragon Ball","pictureUrl":"http://example.com/goku.jpg"}'
@@ -195,7 +198,7 @@ Expected: HTTP 201 with the created character data.
 
 ### 6d: Verify created character via GET
 ```bash
-curl -s -w "\nHTTP %{http_code}" "http://localhost9080/api/dragonball/characters?page=1&pageSize=10"
+curl -s -w "\nHTTP %{http_code}" "http://localhost:8000/api/dragonball/characters?page=1&pageSize=10"
 ```
 Expected: HTTP 200 — the `data` array should include "Goku".
 
@@ -205,7 +208,7 @@ Expected: HTTP 200 — the `data` array should include "Goku".
 
 ### 7a: Create a genre (with editor token)
 ```bash
-curl -s -w "\nHTTP %{http_code}" -X POST "http://localhost9080/api/music/genres" `
+curl -s -w "\nHTTP %{http_code}" -X POST "http://localhost:8000/api/music/genres" `
   -H "Content-Type: application/json" `
   -H "Authorization: Bearer $EDITOR_TOKEN" `
   -d '{"name":"Rock","description":"Rock music genre"}'
@@ -214,7 +217,7 @@ Expected: HTTP 201.
 
 ### 7b: List genres (public)
 ```bash
-curl -s -w "\nHTTP %{http_code}" "http://localhost9080/api/music/genres?page=1&pageSize=10"
+curl -s -w "\nHTTP %{http_code}" "http://localhost:8000/api/music/genres?page=1&pageSize=10"
 ```
 Expected: HTTP 200 with genre data.
 
@@ -273,10 +276,10 @@ $svcs = docker compose config --services
 Write-Host ($svcs -join ", ") (if ($svcs.Count -eq 7) { "✓" } else { "✗ Expected 7" })
 
 Write-Host "`n5. API Health" -ForegroundColor Yellow
-$result1 = curl -s -o /dev/null -w "%{http_code}" http://localhost9080/api/dragonball/characters
+$result1 = curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/dragonball/characters
 Write-Host "Dragon Ball GET: $result1" (if ($result1 -eq 200) { "✓" } else { "✗" })
 
-$result2 = curl -s -o /dev/null -w "%{http_code}" http://localhost9080/api/music/artists
+$result2 = curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/music/artists
 Write-Host "Music GET: $result2" (if ($result2 -eq 200) { "✓" } else { "✗" })
 
 Write-Host "`n6. Frontend" -ForegroundColor Yellow
@@ -284,7 +287,7 @@ $fe = curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/
 Write-Host "Frontend: $fe" (if ($fe -eq 200) { "✓" } else { "✗" })
 
 Write-Host "`n7. Correlation ID" -ForegroundColor Yellow
-$corr = curl -s -D - -o /dev/null "http://localhost9080/api/dragonball/characters" | Select-String "X-Correlation-Id"
+$corr = curl -s -D - -o /dev/null "http://localhost:8000/api/dragonball/characters" | Select-String "X-Correlation-Id"
 Write-Host "Correlation ID: $corr" (if ($corr) { "✓" } else { "✗" })
 ```
 
@@ -305,8 +308,8 @@ Common issues:
 | PostgreSQL unhealthy | Port 5432 already in use | Stop local PostgreSQL or change mapped port |
 | Keycloak unhealthy | PostgreSQL not ready yet | Wait longer (start_period: 60s); check POSTGRES_DB env |
 | Keycloak fails to import realm | Realm JSON path wrong | Verify volume mount path is absolute or relative correctly |
-| etcd unhealthy | ALLOW_NONE_AUTHENTICATION not set | Check env vars in compose file |
-| Kong unhealthy | etcd not ready | Kong depends on etcd; check etcd logs |
+| Kong init (kong-init) unhealthy | PostgreSQL not ready | Check postgres is healthy; verify KONG_PG_* env vars |
+| Kong unhealthy | PostgreSQL not ready | Kong depends on postgres; check postgres logs |
 | Kong returns 503 | Upstream API not reachable | Check API containers are healthy; verify container DNS names |
 | Kong returns 404 on route | Routes not initialized | Check init-routes.sh ran; check Kong entrypoint command |
 | DragonBall API unhealthy | PostgreSQL not ready | depends_on uses service_healthy; check postgres is actually healthy |

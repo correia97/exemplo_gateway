@@ -17,7 +17,7 @@
 9. **Troubleshooting** — common failure modes with causes and fixes
 
 ## ROADMAP Success Criteria Addressed
-- [x] Criterion 1: `docker compose up` starts all 7 services
+- [x] Criterion 1: `docker compose up` starts all services
 - [x] Criterion 2: Full stack works without Aspire
 - [x] Criterion 3: No Bitnami images
 - [x] Criterion 4: Health checks on every service

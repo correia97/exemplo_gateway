@@ -119,13 +119,13 @@ Then fix the health check in `docker-compose.yml` to target the correct path:
 
 **File:** `docker-compose.yml:26,178`
 
-**Issue:** Keycloak (`quay.io/keycloak/keycloak:latest`) and Jaeger (`jaegertracing/all-in-one:latest`) use the `:latest` tag. In a production deployment context, `:latest` is non-deterministic — the exact image can change with any rebuild, leading to untested version upgrades, unexpected breaking changes, and inability to reproduce a known-good state.
+**Issue:** Keycloak (`quay.io/keycloak/keycloak:latest`) and Jaeger (`jaegertracing/all-in-one:latest`) used the `:latest` tag in the original plan. In a production deployment context, `:latest` is non-deterministic — the exact image can change with any rebuild, leading to untested version upgrades, unexpected breaking changes, and inability to reproduce a known-good state.
 
 **Fix:** Pin to specific versions:
 ```yaml
-    image: quay.io/keycloak/keycloak:26.1.7    # or current stable
+    image: quay.io/keycloak/keycloak:26.6.1    # pinned version
     ...
-    image: jaegertracing/all-in-one:1.64.0     # or current stable
+    image: jaegertracing/all-in-one:1.76.0     # pinned version
 ```
 
 ---

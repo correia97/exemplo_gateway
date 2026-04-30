@@ -24,5 +24,6 @@
 | Frontend | curl :80/ | 15s | 15s |
 
 ## Environment
-- `depends_on` uses `condition: service_healthy` for postgres-dependent services (keycloak, both APIs)
-- `OTEL_EXPORTER_OTLP_ENDPOINT: ""` on .NET APIs (no Jaeger in minimal Compose mode)
+- `depends_on` uses `condition: service_healthy` for postgres-dependent services (keycloak, both APIs, Kong)
+- `OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317` on .NET APIs for Jaeger tracing
+- `OTEL_SERVICE_NAME` set on each .NET API for trace identification

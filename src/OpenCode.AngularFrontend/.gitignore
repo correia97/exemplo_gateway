@@ -41,3 +41,22 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Repository root (not needed for Angular build)
+AGENTS.md
+README.md
+OpenCode.slnx
+Directory.Packages.props
+docker-compose.yml
+opencode-apis.postman_collection.json
+deploy/
+TestResults/
+tests/
+
+# Other API projects (not needed for Angular)
+src/OpenCode.Frontend/
+src/OpenCode.AppHost/
+src/OpenCode.Domain/
+src/OpenCode.DragonBall.Api/
+src/OpenCode.Music.Api/
+src/OpenCode.ServiceDefaults/

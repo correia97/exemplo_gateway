@@ -19,12 +19,10 @@ RUN dotnet publish src/OpenCode.DragonBall.Api/OpenCode.DragonBall.Api.csproj \
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
-# Create non-root user for security hardening
-RUN adduser --disabled-password --gecos '' appuser
-
+# Use the built-in app user for security hardening
 COPY --from=build /app .
 
-USER appuser
+USER app
 
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080

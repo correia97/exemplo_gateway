@@ -23,7 +23,7 @@ services:
       start_period: 30s
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.1.7
+    image: quay.io/keycloak/keycloak:26.6.1
     container_name: keycloak
     depends_on:
       postgres:
@@ -181,7 +181,7 @@ services:
       start_period: 30s
 
   jaeger:
-    image: jaegertracing/all-in-one:1.64.0
+    image: jaegertracing/all-in-one:1.76.0
     container_name: jaeger
     environment:
       COLLECTOR_OTLP_ENABLED: "true"
@@ -204,9 +204,9 @@ services:
     ports:
       - "3000:80"
     environment:
-      DRAGONBALL_API_URL: http://gateway:8000/api/dragonball
-      MUSIC_API_URL: http://gateway:8000/api/music
-      KEYCLOAK_URL: http://keycloak:8080
+      DRAGONBALL_API_URL: http://localhost:5000
+      MUSIC_API_URL: http://localhost:5002
+      KEYCLOAK_URL: http://localhost:8080
       TZ: America/Sao_Paulo
     networks:
       - opencode-net
@@ -228,9 +228,9 @@ services:
     ports:
       - "4200:80"
     environment:
-      DRAGONBALL_API_URL: http://gateway:8000/api/dragonball
-      MUSIC_API_URL: http://gateway:8000/api/music
-      KEYCLOAK_URL: http://keycloak:8080
+      DRAGONBALL_API_URL: http://localhost:5000
+      MUSIC_API_URL: http://localhost:5002
+      KEYCLOAK_URL: http://localhost:8080
       TZ: America/Sao_Paulo
     networks:
       - opencode-net

@@ -1,0 +1,115 @@
+# Build artifacts
+dist/
+build/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Node modules
+node_modules/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test results
+coverage/
+.nyc_output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# Git
+.git/
+.gitignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.azure-pipelines/
+
+# Misc
+*.tsbuildinfo
+.eslintcache
+.pnpm-store/
+
+# Repository root (not needed for frontend build)
+AGENTS.md
+README.md
+OpenCode.slnx
+Directory.Packages.props
+docker-compose.yml
+opencode-apis.postman_collection.json
+deploy/
+TestResults/
+tests/
+
+# Other API projects (not needed for frontend)
+src/OpenCode.AngularFrontend/
+src/OpenCode.AppHost/
+src/OpenCode.Domain/
+src/OpenCode.DragonBall.Api/
+src/OpenCode.Music.Api/
+src/OpenCode.ServiceDefaults/
+
+# Documentation
+*.md
+docs/
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test results
+TestResults/
+coverage/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# NuGet
+packages/
+*.nupkg
+
+# Development
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+
+# Git
+.git/
+.gitignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.azure-pipelines/
+
+# Documentation
+*.md
+docs/
