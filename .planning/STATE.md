@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Testing & Quality
 status: in_progress
 last_updated: "2026-04-29T21:00:00.000Z"
-last_activity: 2026-04-29 -- Phase 11 (Integration Tests) planned with 3 plans
+last_activity: 2026-04-29 -- Phase 10 extended coverage planning
 progress:
   total_phases: 11
   completed_phases: 10
-  total_plans: 40
+  total_plans: 43
   completed_plans: 34
-  percent: 85
+  percent: 79
 ---
 
 # Project State
@@ -24,18 +24,19 @@ See: .planning/PROJECT.md (updated 2026-04-24)
 
 ## Current Position
 
-Phase: 10 — Unit Tests — COMPLETED
+Phase: 10 — Unit Tests — EXTENDED COVERAGE (3 new plans added)
 Phase: 11 — TestContainers Integration — PLANNED (3 plans ready)
-Status: 10 of 11 phases complete
-Last activity: 2026-04-29 — Phase 11 (Integration Tests) planned with 3 plans ready to execute
+Status: 10 of 11 phases complete (Phase 10 extended)
+Last activity: 2026-04-29 — Phase 10 extended coverage (Moq migration, repo tests, validation pipeline)
 
-Progress: [█████████████████████████████████░░░] 85% — Phase 10 complete, Phase 11 planned
+Progress: [████████████████████████████████░░░░] 79% — Phase 10 extending, Phase 11 planned
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans executed: 34 (Phases 1-6: 4+4+4+4+4+3, Phase 7: 4, Phase 8: 3, Phase 9: 4, Phase 10: 4)
+- Total plans: 43 (Phases 1-6: 4+4+4+4+4+3, Phase 7: 4, Phase 8: 3, Phase 9: 4, Phase 10: 7, Phase 11: 3)
+- Total plans executed: 34
 - Average duration: ~5 min
 - Total execution time: ~110 min
 
@@ -52,7 +53,7 @@ Progress: [███████████████████████
 | 07-React Frontend | 4 | 4 | ~5 min |
 | 08-Docker Compose | 3 | 3 | ~5 min |
 | 09-Angular Frontend | 4 | 4 | ~5 min |
-| 10-Unit Tests | 4 | 4 | ~3 min |
+| 10-Unit Tests | 7 | 4 | ~3 min |
 
 ## Accumulated Context
 
@@ -64,6 +65,9 @@ Progress: [███████████████████████
 | 10-02 | Validator tests for all 10 validators (Character × 2, Genre × 2, Artist × 2, Album × 2, Track × 2) | ✅ |
 | 10-03 | DTO mapping tests (5 suites), service tests (CorrelationIdMiddleware, KeycloakRolesClaimsTransformation) | ✅ |
 | 10-04 | PagedResult edge case tests, solution file update | ✅ |
+| 10-05 | Package migration — replace NSubstitute with Moq, add EF Core InMemory | ○ Planned |
+| 10-06 | In-memory EF Core repository tests for all 5 repositories | ○ Planned |
+| 10-07 | FluentValidation auto-validation pipeline integration tests | ○ Planned |
 
 ### Phase 10 Files Created
 
@@ -124,11 +128,18 @@ None.
 
 ## Session Continuity
 
-Phase 10 (Unit Tests) complete. The project has 65 automated tests covering validators, DTO mappings, services, middleware, auth, and domain models. Phase 11 is planned for integration tests using TestContainers with PostgreSQL.
+Phase 10 (Unit Tests) is being extended with 3 additional plans: Moq migration (10-05), in-memory EF Core repository tests (10-06), and FluentValidation auto-validation pipeline (10-07). The project has 65 passing tests with ~48+ more planned. Phase 11 is planned for integration tests using TestContainers with PostgreSQL.
 
 ### Next Steps
 
-1. **Execute Phase 11** — Integration Tests with TestContainers:
+1. **Execute Phase 10 extended plans** (Wave 1 first):
+   - 10-05 (Wave 1): Package migration — NSubstitute→Moq + EF Core InMemory
+   - 10-06 (Wave 2): In-memory EF Core repository tests (5 repos)
+   - 10-07 (Wave 2): FluentValidation auto-validation pipeline tests
+
+   Run: `/gsd-execute-phase 10`
+
+2. **After Phase 10 extended plans complete**, execute Phase 11:
    - 11-01 (Wave 1): Scaffold project + PostgresFixture + IntegrationTestBase
    - 11-02 (Wave 2): Repository integration tests (5 repositories)
    - 11-03 (Wave 2): API E2E + schema isolation + correlation ID tests

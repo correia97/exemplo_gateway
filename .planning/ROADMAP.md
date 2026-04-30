@@ -180,7 +180,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 7. React Frontend | 4/4 | ✅ Complete | 2026-04-25 |
 | 8. Docker Compose & Production Deployment | 3/3 | ✅ Complete | 2026-04-25 |
 | 9. Angular Frontend | 4/4 | ✅ Complete | 2026-04-25 |
-| 10. Unit Tests | 4/4 | ✅ Complete | 2026-04-29 |
+| 10. Unit Tests | 7/4 | ◆ Extended Coverage | 2026-04-29 (initial) |
 | 11. TestContainers Integration | 3/3 | ◆ Planned | 2026-04-29 |
 
 ### Phase 9: Angular Frontend
@@ -196,24 +196,29 @@ Plans:
 - [x] 09-03: Implement Music catalog CRUD UI (artist list/detail, album detail, music form)
 - [x] 09-04: Add role-aware UI guards (HasRoleDirective, RoleGuard), error handling (toast queue, ErrorDisplay, GlobalErrorHandler)
 
-### Phase 10: Unit Tests (**COMPLETED**)
+### Phase 10: Unit Tests (**IN PROGRESS — Extended Coverage**)
 
-**Goal:** Comprehensive unit test coverage for validators, DTO mappings, services, middleware, and auth components across both APIs, plus edge-case tests for domain models
+**Goal:** Comprehensive unit test coverage for validators, DTO mappings, services, middleware, auth components, repository pattern, and validation pipeline across both APIs, plus edge-case tests for domain models
 **Requirements**: TEST-01, TEST-02, TEST-03, TEST-04
 **Depends on:** Phase 9 (all API code exists)
-**Plans:** 4 plans — **all executed**
+**Plans:** 7 plans — **4 executed, 3 planned**
 
 Plans:
 - [x] 10-01: Create OpenCode.Api.Tests project with FluentValidation.TestHelper, NSubstitute, Microsoft.AspNetCore.TestHost
 - [x] 10-02: Implement validator tests (10 validators: 2 Character + 2 Genre + 2 Artist + 2 Album + 2 Track)
 - [x] 10-03: Implement DTO mapping tests (5 entity mapping suites), service tests (CorrelationIdMiddleware, KeycloakRolesClaimsTransformation)
 - [x] 10-04: Add PagedResult edge case tests and update solution file
+- [ ] 10-05: Package migration — replace NSubstitute with Moq, add EF Core InMemory provider
+- [ ] 10-06: In-memory EF Core repository tests for all 5 repositories
+- [ ] 10-07: FluentValidation auto-validation pipeline integration tests
 
-**Test Summary:** 65 tests total (25 Domain + 40 API):
+**Test Summary:** 65 tests existing (25 Domain + 40 API), ~40+ repository tests and ~8+ validation pipeline tests planned:
 - 14 validator tests (CreateCharacter, UpdateCharacter, CreateGenre, UpdateGenre, CreateArtist, UpdateArtist, CreateAlbum, UpdateAlbum, CreateTrack, UpdateTrack)
 - 18 DTO mapping tests (Character, Planet, Transformation, Genre, Artist, Album, Track)
 - 9 service/auth/middleware tests (CorrelationIdMiddleware × 4, KeycloakRolesClaimsTransformation × 5)
 - 24 domain tests (PagedResult × 11, Entity properties × 8, Schema isolation × 4, Entity inheritance × 2)
+- Planned: 40+ repository tests (5 repos × 7-10 CRUD + filtering tests)
+- Planned: 8+ validation pipeline integration tests (auto-validation via TestHost)
 
 ### Phase 11: Integration Tests with TestContainers (**PLANNED**)
 
