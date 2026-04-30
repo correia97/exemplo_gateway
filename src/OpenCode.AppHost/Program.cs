@@ -19,7 +19,8 @@ var jaeger = builder.AddContainer("jaeger", "jaegertracing/all-in-one:1.66")
     .WithEnvironment("TZ", "America/Sao_Paulo")
     .WithEndpoint(port: 4317, targetPort: 4317, scheme: "http", name: "grpc")
     .WithEndpoint(port: 4318, targetPort: 4318, scheme: "http", name: "http")
-    .WithEndpoint(port: 16686, targetPort: 16686, scheme: "http", name: "ui");
+    .WithEndpoint(port: 16686, targetPort: 16686, scheme: "http", name: "ui")
+    .WithHealthCheck("http");
 
 var dragonballApi = builder.AddProject<Projects.OpenCode_DragonBall_Api>("dragonball-api")
     .WithReference(postgres)
@@ -54,7 +55,8 @@ var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak:26.2"
     .WithBindMount("../../deploy/keycloak/OpenCode-realm.json", "/opt/keycloak/data/import/OpenCode-realm.json", isReadOnly: false)
     .WithEndpoint(port: 8080, targetPort: 8080, scheme: "http", name: "http")
     .WithReference(postgres)
-    .WaitFor(postgres);
+    .WaitFor(postgres)
+    .WithHealthCheck("http");
 
 var kongInit = builder.AddContainer("gateway-init", "kong/kong", "3.9.1-ubuntu")
     .WithEnvironment("KONG_PG_HOST", "postgres")
@@ -86,7 +88,8 @@ var kong = builder.AddContainer("gateway", "kong/kong", "3.9.1-ubuntu")
     .WithEndpoint(port: 8001, targetPort: 8001, name: "admin", scheme: "http")
     .WithEndpoint(port: 8002, targetPort: 8002, name: "gui", scheme: "http")
     .WithReference(postgres)
-    .WaitFor(kongInit);
+    .WaitFor(kongInit)
+    .WithHealthCheck("proxy");
 
 var busybox = builder.AddContainer("busybox", "rootpublic/curl", "bookworm-slim_rootio")
     .WithBindMount("../../deploy/kong/init-routes.sh", "/init-routes.sh")
