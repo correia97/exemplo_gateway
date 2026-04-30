@@ -774,7 +774,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "z0ha560UlsBzE5jkufQU0xDO5Ske4ACb",
+      "secret": "${DRAGONBALL_API_SECRET}",
       "redirectUris": [
         ""
       ],
@@ -847,7 +847,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "b6ZmO3ykike5hwWYrl5tu3m4vAdSPajl",
+      "secret": "${FRONTEND_SECRET}",
       "redirectUris": [
         "http://localhost:3000/*",
         "http://localhost:4200/*",
@@ -949,7 +949,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "vN9206gfp08XJjyw5xjGqehsRNLgeVBv",
+      "secret": "${MUSIC_API_SECRET}",
       "redirectUris": [
         ""
       ],
