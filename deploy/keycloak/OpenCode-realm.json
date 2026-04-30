@@ -847,7 +847,6 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "${FRONTEND_SECRET}",
       "redirectUris": [
         "http://localhost:3000/*",
         "http://localhost:4200/*",
