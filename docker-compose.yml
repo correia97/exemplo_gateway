@@ -83,7 +83,7 @@ services:
     container_name: kong
     depends_on:
       kong-init-routes:
-        condition: service_started
+        condition: service_completed_successfully
     environment:
       KONG_DATABASE: postgres
       KONG_PG_HOST: postgres
