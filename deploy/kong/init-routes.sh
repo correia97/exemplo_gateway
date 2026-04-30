@@ -19,8 +19,7 @@ curl -s -X PUT "$ADMIN_API/services/dragonball-api" \
   -d "$(cat <<EOF
 {
   "name": "dragonball-api",
-  "url": "${UPSTREAM_DB}",
-  "path": "/api"
+  "url": "${UPSTREAM_DB}/api"
 }
 EOF
 )"
@@ -44,8 +43,7 @@ curl -s -X PUT "$ADMIN_API/services/music-api" \
   -d "$(cat <<EOF
 {
   "name": "music-api",
-  "url": "${UPSTREAM_MUSIC}",
-  "path": "/api"
+  "url": "${UPSTREAM_MUSIC}/api"
 }
 EOF
 )"
