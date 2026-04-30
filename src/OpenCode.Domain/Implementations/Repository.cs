@@ -44,6 +44,13 @@ public class Repository<T> : IRepository<T> where T : class
         return entry.Entity;
     }
 
+    /// <summary>
+    /// Updates all columns of the entity. This method marks the entire entity as
+    /// <see cref="EntityState.Modified"/>, generating an UPDATE statement that sets
+    /// every column — even those that haven't changed.
+    /// For partial updates, fetch the entity first and apply changes to the tracked
+    /// instance, or consider accepting a dictionary of changed properties.
+    /// </summary>
     public virtual async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
     {
         Context.Entry(entity).State = EntityState.Modified;
