@@ -12,6 +12,10 @@ class ApiClientError extends Error {
   }
 }
 
+function generateCorrelationId(): string {
+  return crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+}
+
 const env = (window as any).__ENV__ || {}
 
 export const APISIX_URL = import.meta.env.VITE_APISIX_URL as string | undefined
@@ -27,15 +31,17 @@ async function apiFetch<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const token = await getAccessToken()
+  const requestCorrelationId = generateCorrelationId()
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'X-Correlation-Id': requestCorrelationId,
     ...(options.headers as Record<string, string>),
   }
   if (token) headers['Authorization'] = `Bearer ${token}`
 
   const fullUrl = url.startsWith('http') ? url : `${APISIX_URL}${url}`
   const response = await fetch(fullUrl, { ...options, headers })
-  const correlationId = response.headers.get('X-Correlation-Id') ?? undefined
+  const correlationId = response.headers.get('X-Correlation-Id') ?? requestCorrelationId
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({}))
