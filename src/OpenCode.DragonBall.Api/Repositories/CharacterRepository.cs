@@ -35,21 +35,36 @@ public class CharacterRepository : Repository<Character>, ICharacterRepository
         if (!string.IsNullOrWhiteSpace(race))
             query = query.Where(c => c.Race == race);
 
-        if (!string.IsNullOrWhiteSpace(minKi))
-            query = query.Where(c => c.Ki.CompareTo(minKi) >= 0);
-
-        if (!string.IsNullOrWhiteSpace(maxKi))
-            query = query.Where(c => c.Ki.CompareTo(maxKi) <= 0);
-
         if (planetId.HasValue)
             query = query.Where(c => c.PlanetId == planetId);
 
-        var totalCount = await query.CountAsync(cancellationToken);
-        var data = await query
+        // Parse Ki filter values to numeric for correct comparison
+        var minKiNumeric = ParseKiToNumeric(minKi);
+        var maxKiNumeric = ParseKiToNumeric(maxKi);
+
+        var allData = await query.ToListAsync(cancellationToken);
+
+        // Apply Ki filter in-memory with numeric comparison
+        if (minKiNumeric.HasValue)
+            allData = allData.Where(c =>
+            {
+                var val = ParseKiToNumeric(c.Ki);
+                return val.HasValue && val.Value >= minKiNumeric.Value;
+            }).ToList();
+
+        if (maxKiNumeric.HasValue)
+            allData = allData.Where(c =>
+            {
+                var val = ParseKiToNumeric(c.Ki);
+                return val.HasValue && val.Value <= maxKiNumeric.Value;
+            }).ToList();
+
+        var totalCount = allData.Count;
+        var data = allData
             .OrderBy(c => c.Name)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .ToListAsync(cancellationToken);
+            .ToList();
 
         return new PagedResult<Character>
         {
@@ -58,6 +73,33 @@ public class CharacterRepository : Repository<Character>, ICharacterRepository
             Page = page,
             PageSize = pageSize
         };
+    }
+
+    private static decimal? ParseKiToNumeric(string? kiValue)
+    {
+        if (string.IsNullOrWhiteSpace(kiValue)) return null;
+        var cleaned = kiValue.TrimEnd('+').Trim();
+        var parts = cleaned.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (!decimal.TryParse(parts[0], System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture, out var value))
+            return null;
+        if (parts.Length > 1)
+        {
+            var magnitude = parts[1].ToLowerInvariant() switch
+            {
+                "thousand" => 1_000m,
+                "million" => 1_000_000m,
+                "billion" => 1_000_000_000m,
+                "trillion" => 1_000_000_000_000m,
+                "quadrillion" => 1_000_000_000_000_000m,
+                "quintillion" => 1_000_000_000_000_000_000m,
+                "sextillion" => 1_000_000_000_000_000_000_000m,
+                "septillion" => 1_000_000_000_000_000_000_000_000m,
+                _ => 1m
+            };
+            value *= magnitude;
+        }
+        return value;
     }
 
     public override async Task<Character?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
