@@ -26,6 +26,7 @@ export class MusicPageComponent {
   view: MusicView = 'artist-list';
   selectedArtist: Artist | null = null;
   selectedAlbum: Album | null = null;
+  selectedTrack: Track | null = null;
   isAuthenticated$ = this.auth.isAuthenticated$;
 
   showArtistList(): void { this.view = 'artist-list'; this.selectedArtist = null; this.selectedAlbum = null; }
@@ -39,9 +40,14 @@ export class MusicPageComponent {
 
   showAlbumDetail(id: number): void {
     this.musicService.getAlbum(id).subscribe({
-      next: (a) => { this.selectedAlbum = a; this.view = 'album-detail'; },
+      next: (a) => { this.selectedAlbum = a; this.selectedTrack = null; this.view = 'album-detail'; },
       error: (err) => this.toast.showError(err.message || 'Failed to load album'),
     });
+  }
+
+  showEditTrack(trackId: number): void {
+    this.selectedTrack = this.selectedAlbum?.tracks.find(t => t.id === trackId) ?? null;
+    this.view = 'edit-track';
   }
 
   goBack(): void {

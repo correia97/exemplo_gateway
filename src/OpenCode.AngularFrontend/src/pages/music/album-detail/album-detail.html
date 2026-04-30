@@ -26,6 +26,7 @@
               <th class="p-2 border-b-2 border-gray-300">#</th>
               <th class="p-2 border-b-2 border-gray-300">Title</th>
               <th class="p-2 border-b-2 border-gray-300">Duration</th>
+              <th class="p-2 border-b-2 border-gray-300">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -34,6 +35,12 @@
                 <td class="p-2 text-gray-400">{{ track.trackNumber ?? '—' }}</td>
                 <td class="p-2">{{ track.title }}</td>
                 <td class="p-2">{{ formatDuration(track.duration) }}</td>
+                <td class="p-2">
+                  <span *appHasRole="'editor'">
+                    <button (click)="editTrack.emit(track.id)" class="text-indigo-600 mr-2 cursor-pointer">Edit</button>
+                    <button (click)="deleteTrack.emit(track.id)" class="text-red-600 cursor-pointer">Delete</button>
+                  </span>
+                </td>
               </tr>
             }
           </tbody>

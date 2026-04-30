@@ -12,6 +12,8 @@ import type { Album } from '../../../api/types';
 export class AlbumDetailComponent {
   @Input({ required: true }) album!: Album;
   @Output() createTrack = new EventEmitter<void>();
+  @Output() editTrack = new EventEmitter<number>();
+  @Output() deleteTrack = new EventEmitter<number>();
   @Output() edit = new EventEmitter<void>();
   @Output() delete = new EventEmitter<void>();
   @Output() back = new EventEmitter<void>();

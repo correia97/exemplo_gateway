@@ -27,6 +27,8 @@
         <app-album-detail
           [album]="selectedAlbum"
           (createTrack)="view = 'create-track'"
+          (editTrack)="showEditTrack($event)"
+          (deleteTrack)="handleDeleteTrack($event)"
           (edit)="view = 'edit-album'"
           (delete)="handleDeleteAlbum(selectedAlbum.id)"
           (back)="goBack()"
@@ -53,8 +55,8 @@
       <app-music-form [mode]="'create-track'" [initial]="{ albumId: selectedAlbum?.id }" (saveTrack)="handleCreateTrack($event)" (cancel)="goBack()" />
     }
     @case ('edit-track') {
-      @if (selectedAlbum) {
-        <app-music-form [mode]="'edit-track'" [initial]="selectedAlbum.tracks[0]" (saveTrack)="handleUpdateTrack(selectedAlbum.tracks[0].id, $event)" (cancel)="goBack()" />
+      @if (selectedTrack && selectedAlbum) {
+        <app-music-form [mode]="'edit-track'" [initial]="selectedTrack" (saveTrack)="handleUpdateTrack(selectedTrack.id, $event)" (cancel)="goBack()" />
       }
     }
   }
