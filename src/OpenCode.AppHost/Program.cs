@@ -104,15 +104,4 @@ var frontend = builder.AddExecutable("frontend", "npm", "../OpenCode.Frontend", 
     .WithEndpoint(port: 5173, targetPort: 5173, scheme: "http", name: "http", isProxied: false)
     .WithExternalHttpEndpoints();
 
-var angularFrontend = builder.AddExecutable("angular-frontend", "npm", "../OpenCode.AngularFrontend", "run", "start")
-    
-    .WithReference(dragonballApi)
-    .WithReference(musicApi)
-    .WithEnvironment("DRAGONBALL_API_URL", "http://localhost:5000")
-    .WithEnvironment("MUSIC_API_URL", "http://localhost:5002")
-    .WithEnvironment("KEYCLOAK_URL", "http://localhost:8080")
-    .WithEnvironment("TZ", "America/Sao_Paulo")
-    .WithEndpoint(port: 4200, targetPort: 4200, scheme: "http", name: "http", isProxied: false)
-    .WithExternalHttpEndpoints();
-
 builder.Build().Run();
