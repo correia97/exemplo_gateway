@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -6,6 +7,13 @@ namespace OpenCode.Music.Api.Auth;
 
 public class KeycloakRolesClaimsTransformation : IClaimsTransformation
 {
+    private readonly ILogger<KeycloakRolesClaimsTransformation> _logger;
+
+    public KeycloakRolesClaimsTransformation(ILogger<KeycloakRolesClaimsTransformation> logger)
+    {
+        _logger = logger;
+    }
+
     public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
     {
         var realmAccessClaim = principal.FindFirst("realm_access");
@@ -30,8 +38,9 @@ public class KeycloakRolesClaimsTransformation : IClaimsTransformation
                 identity.AddClaim(new Claim(ClaimTypes.Role, role));
             }
         }
-        catch (JsonException)
+        catch (JsonException ex)
         {
+            _logger.LogWarning(ex, "Failed to parse realm_access claim from JWT token");
         }
 
         return Task.FromResult(clone);
