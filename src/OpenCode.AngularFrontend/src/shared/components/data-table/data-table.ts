@@ -22,7 +22,4 @@ export class DataTableComponent<T extends { [key: string]: any }> {
   @Input() rowClickable = false;
   @Output() rowClick = new EventEmitter<T>();
 
-  trackByKey(index: number): number {
-    return index;
-  }
 }
