@@ -54,7 +54,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.Audience = "dragonball-api";
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters.ValidateAudience = true;
-        options.TokenValidationParameters.ValidateIssuer = false;
+        options.TokenValidationParameters.ValidateIssuer = true;
+        options.TokenValidationParameters.ValidIssuer = "http://localhost:8080/realms/OpenCode";
     });
 
 
