@@ -71,9 +71,10 @@ builder.Services.AddTransient<IClaimsTransformation, KeycloakRolesClaimsTransfor
 var app = builder.Build();
 
 app.UseCorrelationId();
+app.UseCors(corsPolicy);
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors(corsPolicy);
 
 app.MapOpenApi();
 app.MapScalarApiReference(options =>
@@ -87,8 +88,6 @@ app.MapScalarApiReference(options =>
     options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     
 });
-
-app.UseHttpsRedirection();
 
 app.MapGroup("/api/characters")
    .MapCharacterEndpoints();
