@@ -117,7 +117,7 @@ services:
     command: ["/init-routes.sh"]
     depends_on:
       gateway:
-        condition: service_completed_successfully
+        condition: service_healthy
     volumes:
       - ./deploy/kong/init-routes.sh:/init-routes.sh:ro
     networks:
@@ -137,7 +137,7 @@ services:
       ConnectionStrings__dragonball: Host=postgres;Port=5432;Database=opencode;Username=dragonball_user;Password=dragonball_pass;SearchPath=dragonball;
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
     networks:
       - opencode-net
     # restart: unless-stopped
@@ -162,7 +162,7 @@ services:
       ConnectionStrings__music: Host=postgres;Port=5432;Database=opencode;Username=music_user;Password=music_pass;SearchPath=music;
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
       TZ: America/Sao_Paulo
     networks:
       - opencode-net
@@ -181,6 +181,7 @@ services:
       COLLECTOR_OTLP_ENABLED: "true"
       TZ: America/Sao_Paulo
     ports:
+      - "4317:4317"
       - "4318:4318"
       - "16686:16686"
     networks:
