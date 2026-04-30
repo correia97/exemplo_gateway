@@ -4,8 +4,8 @@ set -e
 sleep 90
 
 ADMIN_API="http://gateway:8001"
-UPSTREAM_DB="${UPSTREAM_DRAGONBALL_API:-http://192.168.3.4:5000}"
-UPSTREAM_MUSIC="${UPSTREAM_MUSIC_API:-http://192.168.3.4:5002}"
+UPSTREAM_DB="${UPSTREAM_DRAGONBALL_API:-http://dragonball-api:8080}"
+UPSTREAM_MUSIC="${UPSTREAM_MUSIC_API:-http://music-api:8080}"
 CORS_ORIGINS="${CORS_ORIGINS:-\"http://localhost:5173\",\"http://localhost:3000\",\"http://localhost:4200\"}"
 
 echo "Waiting for Kong Admin API..."

@@ -115,6 +115,10 @@ services:
     container_name: busybox
     entrypoint: ["/bin/sh"]
     command: ["/init-routes.sh"]
+    environment:
+      UPSTREAM_DRAGONBALL_API: http://dragonball-api:8080
+      UPSTREAM_MUSIC_API: http://music-api:8080
+      CORS_ORIGINS: '"http://localhost:5173","http://localhost:3000","http://localhost:4200"'
     depends_on:
       gateway:
         condition: service_healthy
@@ -143,7 +147,7 @@ services:
       - opencode-net
     # restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "http://localhost:8080/"]
+      test: ["CMD", "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "http://localhost:8080/health"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -170,7 +174,7 @@ services:
       - opencode-net
     # restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "http://localhost:8080/"]
+      test: ["CMD", "curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "http://localhost:8080/health"]
       interval: 15s
       timeout: 5s
       retries: 3
