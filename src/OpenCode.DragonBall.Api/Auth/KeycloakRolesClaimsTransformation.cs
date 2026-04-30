@@ -43,6 +43,35 @@ public class KeycloakRolesClaimsTransformation : IClaimsTransformation
             _logger.LogWarning(ex, "Failed to parse realm_access claim from JWT token");
         }
 
+        // Also parse client-level roles from resource_access claim
+        try
+        {
+            var resourceAccessClaim = principal.FindFirst("resource_access");
+            if (resourceAccessClaim is not null)
+            {
+                var resourceAccess = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(resourceAccessClaim.Value);
+                if (resourceAccess is not null)
+                {
+                    foreach (var (clientId, clientData) in resourceAccess)
+                    {
+                        if (clientData.TryGetProperty("roles", out var clientRolesElement))
+                        {
+                            var clientRoles = JsonSerializer.Deserialize<List<string>>(clientRolesElement.GetRawText());
+                            if (clientRoles is not null)
+                            {
+                                foreach (var role in clientRoles)
+                                    identity.AddClaim(new Claim(ClaimTypes.Role, role));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogWarning(ex, "Failed to parse resource_access claim from JWT token");
+        }
+
         return Task.FromResult(clone);
     }
 }
