@@ -10,8 +10,8 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./src/OpenCode.Domain/Data/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"    # Removed — database accessible only within the Docker network
     networks:
       - opencode-net
     # restart: unless-stopped
@@ -23,7 +23,7 @@ services:
       start_period: 30s
 
   keycloak:
-    image: quay.io/keycloak/keycloak:latest
+    image: quay.io/keycloak/keycloak:26.1.7
     container_name: keycloak
     depends_on:
       postgres:
@@ -99,7 +99,7 @@ services:
       TZ: America/Sao_Paulo
     ports:
       - "8000:8000"
-      - "8001:8001"
+      # Admin API accessible only within the Docker network (port 8001)
     networks:
       - opencode-net
     # restart: unless-stopped
@@ -181,7 +181,7 @@ services:
       start_period: 30s
 
   jaeger:
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/all-in-one:1.64.0
     container_name: jaeger
     environment:
       COLLECTOR_OTLP_ENABLED: "true"
@@ -204,9 +204,9 @@ services:
     ports:
       - "3000:80"
     environment:
-      DRAGONBALL_API_URL: http://gateway:8000/api/dragonball
-      MUSIC_API_URL: http://gateway:8000/api/music
-      KEYCLOAK_URL: http://keycloak:8080
+      DRAGONBALL_API_URL: http://localhost:8000/api/dragonball
+      MUSIC_API_URL: http://localhost:8000/api/music
+      KEYCLOAK_URL: http://localhost:8080
       TZ: America/Sao_Paulo
     networks:
       - opencode-net
@@ -228,9 +228,9 @@ services:
     ports:
       - "4200:80"
     environment:
-      DRAGONBALL_API_URL: http://gateway:8000/api/dragonball
-      MUSIC_API_URL: http://gateway:8000/api/music
-      KEYCLOAK_URL: http://keycloak:8080
+      DRAGONBALL_API_URL: http://localhost:8000/api/dragonball
+      MUSIC_API_URL: http://localhost:8000/api/music
+      KEYCLOAK_URL: http://localhost:8080
       TZ: America/Sao_Paulo
     networks:
       - opencode-net
