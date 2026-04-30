@@ -14,7 +14,9 @@ export type FormMode = 'create-artist' | 'edit-artist' | 'create-album' | 'edit-
 export class MusicFormComponent implements OnInit {
   @Input() mode: FormMode = 'create-artist';
   @Input() initial?: Partial<Artist | Album | Track> & { artistId?: number; albumId?: number };
-  @Output() save = new EventEmitter<ArtistCreatePayload | AlbumCreatePayload | TrackCreatePayload>();
+  @Output() saveArtist = new EventEmitter<ArtistCreatePayload>();
+  @Output() saveAlbum = new EventEmitter<AlbumCreatePayload>();
+  @Output() saveTrack = new EventEmitter<TrackCreatePayload>();
   @Output() cancel = new EventEmitter<void>();
 
   name = '';
@@ -25,7 +27,6 @@ export class MusicFormComponent implements OnInit {
   duration: number | undefined;
   trackNumber: number | undefined;
   lyrics = '';
-  submitting = false;
 
   get isArtistForm(): boolean { return this.mode === 'create-artist' || this.mode === 'edit-artist'; }
   get isAlbumForm(): boolean { return this.mode === 'create-album' || this.mode === 'edit-album'; }
@@ -51,28 +52,23 @@ export class MusicFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.submitting = true;
-    try {
-      if (this.isArtistForm) {
-        this.save.emit({ name: this.name.trim(), genre: this.genre.trim() || undefined, biography: this.biography.trim() || undefined });
-      } else if (this.isAlbumForm) {
-        this.save.emit({
-          title: this.title.trim(),
-          genre: this.genre.trim() || undefined,
-          releaseYear: this.releaseYear,
-          artistId: this.initial?.artistId ?? 0,
-        });
-      } else if (this.isTrackForm) {
-        this.save.emit({
-          title: this.title.trim(),
-          duration: this.duration,
-          trackNumber: this.trackNumber,
-          lyrics: this.lyrics.trim() || undefined,
-          albumId: this.initial?.albumId ?? 0,
-        });
-      }
-    } finally {
-      this.submitting = false;
+    if (this.isArtistForm) {
+      this.saveArtist.emit({ name: this.name.trim(), genre: this.genre.trim() || undefined, biography: this.biography.trim() || undefined });
+    } else if (this.isAlbumForm) {
+      this.saveAlbum.emit({
+        title: this.title.trim(),
+        genre: this.genre.trim() || undefined,
+        releaseYear: this.releaseYear,
+        artistId: this.initial?.artistId ?? 0,
+      });
+    } else if (this.isTrackForm) {
+      this.saveTrack.emit({
+        title: this.title.trim(),
+        duration: this.duration,
+        trackNumber: this.trackNumber,
+        lyrics: this.lyrics.trim() || undefined,
+        albumId: this.initial?.albumId ?? 0,
+      });
     }
   }
 }

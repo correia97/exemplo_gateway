@@ -34,27 +34,27 @@
       }
     }
     @case ('create-artist') {
-      <app-music-form [mode]="'create-artist'" (save)="handleCreateArtist($any($event))" (cancel)="showArtistList()" />
+      <app-music-form [mode]="'create-artist'" (saveArtist)="handleCreateArtist($event)" (cancel)="showArtistList()" />
     }
     @case ('edit-artist') {
       @if (selectedArtist) {
-        <app-music-form [mode]="'edit-artist'" [initial]="selectedArtist" (save)="handleUpdateArtist(selectedArtist.id, $any($event))" (cancel)="goBack()" />
+        <app-music-form [mode]="'edit-artist'" [initial]="selectedArtist" (saveArtist)="handleUpdateArtist(selectedArtist.id, $event)" (cancel)="goBack()" />
       }
     }
     @case ('create-album') {
-      <app-music-form [mode]="'create-album'" [initial]="{ artistId: selectedArtist?.id }" (save)="handleCreateAlbum($any($event))" (cancel)="goBack()" />
+      <app-music-form [mode]="'create-album'" [initial]="{ artistId: selectedArtist?.id }" (saveAlbum)="handleCreateAlbum($event)" (cancel)="goBack()" />
     }
     @case ('edit-album') {
       @if (selectedAlbum) {
-        <app-music-form [mode]="'edit-album'" [initial]="selectedAlbum" (save)="handleUpdateAlbum(selectedAlbum.id, $any($event))" (cancel)="goBack()" />
+        <app-music-form [mode]="'edit-album'" [initial]="selectedAlbum" (saveAlbum)="handleUpdateAlbum(selectedAlbum.id, $event)" (cancel)="goBack()" />
       }
     }
     @case ('create-track') {
-      <app-music-form [mode]="'create-track'" [initial]="{ albumId: selectedAlbum?.id }" (save)="handleCreateTrack($any($event))" (cancel)="goBack()" />
+      <app-music-form [mode]="'create-track'" [initial]="{ albumId: selectedAlbum?.id }" (saveTrack)="handleCreateTrack($event)" (cancel)="goBack()" />
     }
     @case ('edit-track') {
       @if (selectedAlbum) {
-        <app-music-form [mode]="'edit-track'" [initial]="selectedAlbum.tracks[0]" (save)="handleUpdateTrack(selectedAlbum.tracks[0].id, $any($event))" (cancel)="goBack()" />
+        <app-music-form [mode]="'edit-track'" [initial]="selectedAlbum.tracks[0]" (saveTrack)="handleUpdateTrack(selectedAlbum.tracks[0].id, $event)" (cancel)="goBack()" />
       }
     }
   }

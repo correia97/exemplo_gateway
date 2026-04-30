@@ -31,9 +31,9 @@
   }
 
   <div class="flex gap-2 mt-6">
-    <button type="submit" [disabled]="submitting"
-      class="px-6 py-2 rounded text-white border-none cursor-pointer" [class.bg-indigo-600]="!submitting" [class.bg-indigo-400]="submitting">
-      {{ submitting ? 'Saving...' : (isCreate ? 'Create' : 'Save Changes') }}
+    <button type="submit"
+      class="px-6 py-2 rounded text-white border-none cursor-pointer bg-indigo-600">
+      {{ isCreate ? 'Create' : 'Save Changes' }}
     </button>
     <button type="button" (click)="cancel.emit()"
       class="px-6 py-2 border border-gray-300 rounded cursor-pointer bg-white text-sm">Cancel</button>
