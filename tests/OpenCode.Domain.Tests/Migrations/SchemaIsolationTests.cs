@@ -2,8 +2,16 @@ namespace OpenCode.Domain.Tests.Migrations;
 
 public class SchemaIsolationTests
 {
-    private static readonly string ProjectDir = Path.GetFullPath(
-        Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "src", "OpenCode.Domain"));
+    private static readonly string ProjectDir = FindProjectRoot();
+
+    private static string FindProjectRoot()
+    {
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir != null && !dir.EnumerateFiles("*.slnx").Any())
+            dir = dir.Parent;
+        var solutionRoot = dir?.FullName ?? throw new InvalidOperationException("Solution root not found");
+        return Path.Combine(solutionRoot, "src", "OpenCode.Domain");
+    }
 
     [Fact]
     public void DragonBallMigration_OnlyReferencesDragonballSchema()
