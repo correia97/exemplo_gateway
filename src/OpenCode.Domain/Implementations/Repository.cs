@@ -44,10 +44,11 @@ public class Repository<T> : IRepository<T> where T : class
         return entry.Entity;
     }
 
-    public virtual async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
+    public virtual async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
     {
         Context.Entry(entity).State = EntityState.Modified;
         await Context.SaveChangesAsync(cancellationToken);
+        return entity;
     }
 
     public virtual async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
