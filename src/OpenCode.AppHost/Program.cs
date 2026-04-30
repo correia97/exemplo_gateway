@@ -85,7 +85,8 @@ var kong = builder.AddContainer("gateway", "kong/kong", "3.9.1-ubuntu")
     .WithEndpoint(port: 8000, targetPort: 8000, name: "proxy", scheme: "http")
     .WithEndpoint(port: 8001, targetPort: 8001, name: "admin", scheme: "http")
     .WithEndpoint(port: 8002, targetPort: 8002, name: "gui", scheme: "http")
-    .WithReference(postgres);
+    .WithReference(postgres)
+    .WaitFor(kongInit);
 
 var busybox = builder.AddContainer("busybox", "rootpublic/curl", "bookworm-slim_rootio")
     .WithBindMount("../../deploy/kong/init-routes.sh", "/init-routes.sh")
