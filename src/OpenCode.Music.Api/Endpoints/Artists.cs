@@ -77,7 +77,8 @@ public static class Artists
         }
 
         var created = await repository.AddAsync(artist);
-        return TypedResults.Created($"/api/artists/{created.Id}", created.ToResponse());
+        var fullArtist = await repository.GetByIdWithGenresAsync(created.Id);
+        return TypedResults.Created($"/api/artists/{created.Id}", fullArtist!.ToResponse());
     }
 
     private static async Task<Results<Ok<ArtistResponse>, NotFound, BadRequest>> UpdateAsync(
