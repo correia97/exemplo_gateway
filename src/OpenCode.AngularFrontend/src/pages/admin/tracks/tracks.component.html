@@ -1,0 +1,23 @@
+<h1 class="text-2xl font-bold mb-4">Tracks ({{ totalCount }})</h1>
+@if (message) {
+  <div class="mb-4 px-4 py-2 rounded"
+    [class.bg-green-100]="message.type === 'success'"
+    [class.bg-red-100]="message.type === 'error'"
+    [class.text-green-800]="message.type === 'success'"
+    [class.text-red-800]="message.type === 'error'">
+    {{ message.text }}
+    <button (click)="dismissMessage()" class="float-right font-bold">&times;</button>
+  </div>
+}
+<app-admin-table [columns]="columns" [data]="tracks"
+  [page]="page" [totalPages]="totalPages" [totalCount]="totalCount"
+  [isLoading]="isLoading" [keyExtractor]="keyExtractor"
+  (edit)="onEdit($event)" (delete)="onDelete($event)"
+  (pageChange)="onPageChange($event)">
+</app-admin-table>
+<app-confirm-dialog [isOpen]="!!deleteTarget" title="Delete Track"
+  message="Are you sure you want to delete this track?"
+  [entityName]="deleteTarget?.title ?? ''" entityType="Track"
+  (confirm)="confirmDelete()" (cancel)="cancelDelete()"
+  [isLoading]="isDeleting">
+</app-confirm-dialog>
