@@ -1,15 +1,17 @@
 -- PostgreSQL initialization script for OpenCode
 -- Runs on container first-start via /docker-entrypoint-initdb.d/
 --
--- Creates 3 schemas for schema-based isolation:
+-- Creates 4 schemas for schema-based isolation:
 --   dragonball   - Dragon Ball character data
 --   music        - Music catalog (genres, artists, albums, tracks)
 --   keycloak     - Keycloak authentication data
+--   portal       - Backstage developer portal data
 --
--- Creates 3 database users with schema-scoped permissions:
+-- Creates 4 database users with schema-scoped permissions:
 --   dragonball_user - CRUD on dragonball schema
 --   music_user      - CRUD on music schema
 --   keycloak_user   - CRUD on keycloak schema
+--   portal_user     - CRUD on portal schema
 
 -- ============================================================
 -- SCHEMAS
@@ -18,6 +20,7 @@
 CREATE SCHEMA IF NOT EXISTS dragonball;
 CREATE SCHEMA IF NOT EXISTS music;
 CREATE SCHEMA IF NOT EXISTS keycloak;
+CREATE SCHEMA IF NOT EXISTS portal;
 
 -- ============================================================
 -- USERS
@@ -36,6 +39,9 @@ BEGIN
     END IF;
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'kong_user') THEN
         CREATE USER kong_user WITH PASSWORD 'kong_pass';
+    END IF;
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'portal_user') THEN
+        CREATE USER portal_user WITH PASSWORD 'portal_pass';
     END IF;
 END;
 $$;
@@ -77,6 +83,18 @@ GRANT CONNECT ON DATABASE opencode TO dragonball_user;
 GRANT CONNECT ON DATABASE opencode TO music_user;
 GRANT CONNECT ON DATABASE opencode TO keycloak_user;
 GRANT CONNECT ON DATABASE opencode TO kong_user;
+GRANT CONNECT ON DATABASE opencode TO portal_user;
+
+-- ============================================================
+-- GRANTS -- Portal schema
+-- ============================================================
+
+GRANT USAGE ON SCHEMA portal TO portal_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA portal TO portal_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA portal TO portal_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA portal GRANT ALL ON TABLES TO portal_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA portal GRANT ALL ON SEQUENCES TO portal_user;
+GRANT ALL PRIVILEGES ON SCHEMA portal TO portal_user;
 
 -- ============================================================
 -- GRANTS -- Kong (uses public schema)
