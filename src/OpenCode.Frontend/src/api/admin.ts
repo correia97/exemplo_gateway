@@ -13,7 +13,7 @@ export interface AdminStats {
  * Reads totalCount from the paginated response. No dedicated stats endpoint.
  */
 export async function fetchDragonBallStats(): Promise<{ characters: number }> {
-  const res = await fetch(`${DRAGONBALL_API_URL}/api/characters?pageSize=1`)
+  const res = await fetch(`${DRAGONBALL_API_URL}/api/v1/characters?pageSize=1`)
   if (!res.ok) return { characters: 0 }
   const data = await res.json()
   return { characters: data.totalCount ?? 0 }
@@ -24,10 +24,10 @@ export async function fetchDragonBallStats(): Promise<{ characters: number }> {
  */
 export async function fetchMusicStats(): Promise<{ genres: number; artists: number; albums: number; tracks: number }> {
   const [genres, artists, albums, tracks] = await Promise.all([
-    apiFetch<any>(`${MUSIC_API_URL}/api/genres?pageSize=1`).then(d => d.totalCount ?? 0).catch(() => 0),
-    apiFetch<any>(`${MUSIC_API_URL}/api/artists?pageSize=1`).then(d => d.totalCount ?? 0).catch(() => 0),
-    apiFetch<any>(`${MUSIC_API_URL}/api/albums?pageSize=1`).then(d => d.totalCount ?? 0).catch(() => 0),
-    apiFetch<any>(`${MUSIC_API_URL}/api/tracks?pageSize=1`).then(d => d.totalCount ?? 0).catch(() => 0),
+    apiFetch<any>(`${MUSIC_API_URL}/api/v1/genres?pageSize=1`).then(d => d.totalCount ?? 0).catch(() => 0),
+    apiFetch<any>(`${MUSIC_API_URL}/api/v1/artists?pageSize=1`).then(d => d.totalCount ?? 0).catch(() => 0),
+    apiFetch<any>(`${MUSIC_API_URL}/api/v1/albums?pageSize=1`).then(d => d.totalCount ?? 0).catch(() => 0),
+    apiFetch<any>(`${MUSIC_API_URL}/api/v1/tracks?pageSize=1`).then(d => d.totalCount ?? 0).catch(() => 0),
   ])
   return { genres, artists, albums, tracks }
 }
