@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-05-01T02:59:13.026Z"
+last_updated: "2026-05-01T03:14:14.467Z"
 progress:
-  total_phases: 13
-  completed_phases: 12
-  total_plans: 48
-  completed_plans: 47
-  percent: 98
+  total_phases: 15
+  completed_phases: 13
+  total_plans: 44
+  completed_plans: 45
+  percent: 100
 ---
 
 # Project State — All Milestones Complete
@@ -24,9 +24,9 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 
 ## Current Position
 
-Phase 13 (Version Endpoints) in progress: 13-01 (API Versioning Infrastructure) ✅ complete. Plan 13-02 (Frontend & Test Updates) is remaining.
+Phase 13 (Version Endpoints) ✅ Complete — both plans executed. All endpoints migrated to `/api/v1/*`, version metadata endpoints created, versioned OpenAPI docs configured, Scalar version dropdown, both frontend API clients updated, integration tests migrated, and versioning-specific integration tests added.
 
-13 phases started, 12 completed.
+13 phases started, 13 completed.
 
 | Phase | Date | Plans | Status |
 |-------|------|-------|--------|
@@ -42,9 +42,9 @@ Phase 13 (Version Endpoints) in progress: 13-01 (API Versioning Infrastructure) 
 | 10 — Unit Tests | 2026-04-29 | 7/7 | ✅ Complete |
 | 11 — TestContainers Integration | 2026-04-29 | 3/3 | ✅ Complete |
 | 12 — Admin Panel | 2026-05-01 | 2/2 | ✅ Complete |
-| 13 — Version Endpoints | 2026-04-30 | 1/2 | 🟡 In Progress |
+| 13 — Version Endpoints | 2026-05-01 | 2/2 | ✅ Complete |
 
-Progress: [████████████████████] 98%
+Progress: [██████████] 100%
 
 ## Milestone v2.0 Summary — Testing & Quality
 
@@ -177,9 +177,9 @@ Key findings fixed across phases:
 **Velocity:**
 
 - Total plans: 48 (Phases 1-4: 4×4, 5: 4, 6: 3, 7: 4, 8: 3, 9: 4, 10: 7, 11: 3, 12: 2, 13: 2)
-- Total plans executed: 47 of 48
+- Total plans executed: 48 of 48
 - Average duration: ~5 min
-- Total execution time: ~220 min
+- Total execution time: ~235 min
 
 **By Phase:**
 
@@ -197,14 +197,19 @@ Key findings fixed across phases:
 | 10 — Unit Tests | 7 | 7 | ~6 min |
 | 11 — TestContainers | 3 | 3 | ~8 min |
 | 12 — Admin Panel | 2 | 2 | ~4 min |
-| 13 — Version Endpoints | 2 | 1 | ~15 min |
-| 13 — Version Endpoints | 1 | 1 | ~15 min |
+| 13 — Version Endpoints | 2 | 2 | ~15 min |
 
 ## Decisions
 
 ### Phase 13
+
 - **(13-01-01):** Use `HasApiVersion(1.0)` double literal instead of `"1.0"` string — Asp.Versioning.Http@10.0.0 overloads take double, int, or ApiVersion
 - **(13-01-02):** Use `AddDocument(name, title)` without `isDefault` — Scalar.AspNetCore 2.14.6 signature
+- **(13-02-01):** Use non-versioned MapGroup with /api/v1/ paths for endpoint tests — functional tests verify CRUD with versioned paths, not version resolution
+- **(13-02-02):** Add TestAuthHandler to bypass Keycloak auth in integration tests — required by RequireAuthorization on endpoints
+- **(13-02-03):** Unversioned request returns 404 (not 400) — only versioned routes registered, unmatched URLs return route-not-found
+- **(13-02-04):** Use apiVersion route constraint pattern `v{version:apiVersion}` in VersioningTests — required for UrlSegmentApiVersionReader
+- (13-02-01): Use non-versioned MapGroup with /api/v1/ paths for endpoint tests
 
 ### Architecture
 
@@ -309,15 +314,11 @@ The project validates that the full enterprise stack (.NET 10 + Aspire + Keycloa
 
 ## Next Steps
 
-### Phase 13 — Plan 02: Frontend & Test Updates (⬜ Planned)
+### Phase 13 — Version Endpoints ✅ COMPLETE
 
-Update both frontend API clients (React + Angular) to use `/api/v1/*` paths and update existing test suites to reflect the versioned endpoint paths. Add new tests for version endpoint verification.
+All endpoints migrated to `/api/v1/*` with Asp.Versioning v10, URL path versioning (`/api/v1/*`), versioned OpenAPI docs with per-version documents, Scalar version dropdown, version metadata endpoints (DBALL-14, MUSIC-19), both frontend API clients updated to use `/api/v1/*` paths, integration tests migrated to versioned routes, and versioning-specific integration tests added.
 
-### Phase 13 — Plan 01: API Versioning Infrastructure ✅ COMPLETE
-
-All endpoints migrated to `/api/v1/*`, version metadata endpoints created, versioned OpenAPI docs configured, Scalar version dropdown set up.
-
-### Completed: Phase 12 — Admin Panel ✅ COMPLETE
+### Completed: Phase 13 — Version Endpoints ✅ COMPLETE
 
 The project has delivered:
 
@@ -337,5 +338,5 @@ The project has delivered:
 - **v3.0 (Domain Expansion):** Character image upload (DBALL-13), full-text search (MUSIC-17)
 - **v3.0 (Code Quality):** Shared infrastructure library refactoring, consolidated auth abstractions
 
-**Completed Phase:** 12 (Admin Panel) — ✅ Complete.
-**Planned Phase:** 13 (Version Endpoints) — ⬜ Planned.
+**Completed Phase:** 13 (Version Endpoints) — ✅ Complete.
+**Future Milestones:** Infrastructure/DevOps (Kubernetes, CI/CD), Domain Expansion (image upload, full-text search), Code Quality (shared infrastructure library, consolidated auth).

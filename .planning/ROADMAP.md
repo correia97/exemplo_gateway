@@ -18,7 +18,7 @@ A .NET 10 proof-of-concept with two independent CRUD APIs (Dragon Ball character
 - [x] **Phase 10: Unit Tests** - Validator tests, DTO mapping tests, service tests, middleware tests, auth tests
 - [x] **Phase 11: Integration Tests with TestContainers** - PostgreSQL integration tests with TestContainers for repositories, full API E2E
 - [x] **Phase 12: Admin Panel — Full CRUD Management UI (Both Frontends)** - Comprehensive admin panel in React and Angular with full CRUD management for all entities, dashboard stats, delete confirmation, and dates-only audit (2/2 plans complete)
-- [/] **Phase 13: Version Endpoints** - Asp.Versioning v10 API versioning infrastructure with `/api/v1/*` paths, version metadata endpoints, and versioned OpenAPI docs (1/2 plans complete)
+- [x] **Phase 13: Version Endpoints** - Asp.Versioning v10 API versioning infrastructure with `/api/v1/*` paths, version metadata endpoints, versioned OpenAPI docs, both frontend API clients updated, integration tests migrated, and versioning-specific tests added (2/2 plans complete)
 
 ## Phase Details
 
@@ -273,3 +273,13 @@ Plans:
 - [ ] 13-01: Backend API versioning infrastructure — NuGet packages, AddApiVersioning + AddApiExplorer + AddOpenApi chain, NewVersionedApi() endpoint registrations, Scalar versioned docs, /api/v1/version metadata endpoints, Created() path updates
 - [ ] 13-02: Frontend + test updates — React API client paths, Angular API services, Angular admin component Kong paths, integration test versioned paths, new VersioningTests.cs with resolution + rejection tests
 
+
+### Phase 14: API Developer Portal with Backstage.io - developers register via Keycloak, create credentials, browse APIs organized as Product/Context/Sub-context/API hierarchy, consume through Kong. Uses new PostgreSQL schema.
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 13
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 14 to break down)
