@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -27,9 +28,21 @@ public class CharactersEndpointsTests : IntegrationTestBase
         builder.Services.AddDbContextPool<DragonBallContext>(options =>
             options.UseNpgsql(ConnectionString));
         builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
+
+        // Add Asp.Versioning for endpoint resolution
+        builder.Services.AddApiVersioning(options =>
+        {
+            options.ApiVersionReader = new UrlSegmentApiVersionReader();
+        });
+
         var app = builder.Build();
         app.UseCorrelationId();
-        app.MapGroup("/api/characters").MapCharacterEndpoints();
+
+        // Versioned group registration
+        var charactersApi = app.NewVersionedApi("Characters");
+        var charactersV1 = charactersApi.MapGroup("api/v1/characters").HasApiVersion(1.0);
+        charactersV1.MapCharacterEndpoints();
+
         await app.StartAsync();
         return app;
     }
@@ -39,7 +52,7 @@ public class CharactersEndpointsTests : IntegrationTestBase
     {
         using var host = await CreateTestHost();
         var client = host.GetTestClient();
-        var response = await client.GetAsync("/api/characters?Page=1&PageSize=10");
+        var response = await client.GetAsync("/api/v1/characters?Page=1&PageSize=10");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
@@ -55,7 +68,7 @@ public class CharactersEndpointsTests : IntegrationTestBase
         await ctx.SaveChangesAsync();
         using var host = await CreateTestHost();
         var client = host.GetTestClient();
-        var response = await client.GetAsync($"/api/characters/{c.Id}");
+        var response = await client.GetAsync($"/api/v1/characters/{c.Id}");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
@@ -65,7 +78,7 @@ public class CharactersEndpointsTests : IntegrationTestBase
         using var host = await CreateTestHost();
         var client = host.GetTestClient();
         var payload = new { Name = "NewChar", Race = "Saiyan", Ki = "5000" };
-        var response = await client.PostAsJsonAsync("/api/characters", payload);
+        var response = await client.PostAsJsonAsync("/api/v1/characters", payload);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 
@@ -74,7 +87,7 @@ public class CharactersEndpointsTests : IntegrationTestBase
     {
         using var host = await CreateTestHost();
         var client = host.GetTestClient();
-        var response = await client.DeleteAsync("/api/characters/99999");
+        var response = await client.DeleteAsync("/api/v1/characters/99999");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }
