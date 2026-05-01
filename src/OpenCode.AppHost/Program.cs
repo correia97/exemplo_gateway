@@ -23,7 +23,7 @@ var jaeger = builder.AddContainer("jaeger", "jaegertracing/all-in-one", "1.76.0"
 
 var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak", "26.6.1")
     .WithArgs("start-dev", 
-    //"--import-realm", 
+    "--import-realm", 
     "--verbose")
     .WithEnvironment("KC_DB", "postgres")
     .WithEnvironment("KC_DB_URL", "jdbc:postgresql://postgres:5432/opencode")
@@ -121,7 +121,7 @@ var frontendAngular = builder.AddExecutable("angular-frontend", "npm", "../OpenC
     .WithExternalHttpEndpoints();
 
 // Backstage Developer Portal -- self-service API discovery
-var backstage = builder.AddDockerfile("backstage", "../OpenCode.Backstage/backstage")
+var backstage = builder.AddDockerfile("backstage", "../OpenCode.Backstage")
     .WithEnvironment("POSTGRES_HOST", "postgres")
     .WithEnvironment("POSTGRES_PORT", "5432")
     .WithEnvironment("POSTGRES_USER", "portal_user")

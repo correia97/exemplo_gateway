@@ -198,7 +198,7 @@ services:
 
   backstage:
     build:
-      context: src/OpenCode.Backstage/backstage
+      context: src/OpenCode.Backstage
       dockerfile: Dockerfile
     image: backstage:latest
     container_name: backstage
