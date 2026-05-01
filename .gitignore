@@ -92,6 +92,7 @@ tslint.json
 **/.angular-cli.json
 **/angular.json
 **/tsconfig.json
+!src/OpenCode.Backstage/backstage/tsconfig.json
 **/tslint.json
 
 # Angular IDE
@@ -168,6 +169,7 @@ copilot/
 docker-compose.override.yml
 .dockerignore
 !backstage/.dockerignore
+!src/OpenCode.Backstage/backstage/.dockerignore
 
 # Container logs
 *.log

@@ -16,9 +16,8 @@ WORKDIR /app
 
 COPY --chown=node:node .yarn ./.yarn
 COPY --chown=node:node .yarnrc.yml backstage.json ./
-COPY --chown=node:node yarn.lock package.json ./
+COPY --chown=node:node yarn.lock package.json tsconfig.json app-config.yaml ./
 COPY --chown=node:node packages/ ./packages/
-COPY --chown=node:node plugins/ ./plugins/
 
 RUN yarn install --immutable
 RUN yarn tsc
