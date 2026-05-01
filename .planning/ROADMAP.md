@@ -186,7 +186,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 11. TestContainers Integration | 3/3 | ✅ Complete | 2026-04-29 |
 | 12. Admin Panel | 2/2 | ✅ Complete | 2026-05-01 |
 | 13. Version Endpoints | 2/2 | ✅ Complete | 2026-05-01 |
-| 14. API Developer Portal | 1/4 | 🔄 In Progress | 2026-05-01 |
+| 14. API Developer Portal | 2/4 | 🔄 In Progress | 2026-05-01 |
 
 ### Phase 9: Angular Frontend (**COMPLETED**)
 
@@ -297,5 +297,5 @@ Plans:
 Plans:
 - [x] 14-01: Infrastructure & Backstage Scaffold — Add portal schema/user to init.sql, add backstage-portal Keycloak OIDC client, scaffold Backstage app from `@backstage/create-app` template
 - [ ] 14-02: Backstage Configuration — Keycloak OIDC provider, PostgreSQL database config, production Dockerfile, sign-in page with Keycloak branding, OIDC backend module
-- [ ] 14-03: Catalog Entities & API Hierarchy — Create catalog YAML files for Domain/System/Component/API entities mapping Product/Context/Sub-context/API, wire entity relationships
+- [x] 14-03: Catalog Entities & API Hierarchy — Create catalog YAML files for Domain/System/Component/API entities mapping Product/Context/Sub-context/API, wire entity relationships
 - [ ] 14-04: Aspire & Docker Compose Wiring — Add Backstage container to AppHost Program.cs, add Backstage service to docker-compose.yml, full stack verification checkpoint

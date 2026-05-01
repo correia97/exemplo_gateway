@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-05-01T04:03:26.027Z"
+last_updated: "2026-05-01T04:12:20.525Z"
 progress:
   total_phases: 15
   completed_phases: 13
-  total_plans: 52
+  total_plans: 48
   completed_plans: 47
-  percent: 90
+  percent: 98
 ---
 
 # Project State — All Milestones Complete
@@ -24,9 +24,9 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 
 ## Current Position
 
-Phase 14 (API Developer Portal) 🔄 In Progress — Plan 14-01 complete. Portal PostgreSQL schema, backstage-portal Keycloak OIDC client, and Backstage 1.50.0 app scaffolded with base configuration. Plan 14-02 (Keycloak OIDC provider, PostgreSQL config, Dockerfile), 14-03 (catalog entities), and 14-04 (Aspire/Docker Compose wiring) remain.
+Phase 14 (API Developer Portal) 🔄 In Progress — Plans 14-01 and 14-03 complete. Portal PostgreSQL schema, backstage-portal Keycloak OIDC client, and Backstage 1.50.0 app scaffolded with base configuration. Catalog entity YAML files created with full API hierarchy (Domain/System/Component/API). Plans 14-02 (Keycloak OIDC provider, PostgreSQL config, Dockerfile) and 14-04 (Aspire/Docker Compose wiring) remain.
 
-13 phases completed, Phase 14 in progress (1/4 plans).
+13 phases completed, Phase 14 in progress (2/4 plans).
 
 | Phase | Date | Plans | Status |
 |-------|------|-------|--------|
@@ -43,9 +43,9 @@ Phase 14 (API Developer Portal) 🔄 In Progress — Plan 14-01 complete. Portal
 | 11 — TestContainers Integration | 2026-04-29 | 3/3 | ✅ Complete |
 | 12 — Admin Panel | 2026-05-01 | 2/2 | ✅ Complete |
 | 13 — Version Endpoints | 2026-05-01 | 2/2 | ✅ Complete |
-| 14 — API Developer Portal | 2026-05-01 | 1/4 | 🔄 In Progress |
+| 14 — API Developer Portal | 2026-05-01 | 2/4 | 🔄 In Progress |
 
-Progress: [████████████████░░] 90%
+Progress: [██████████] 98%
 
 ## Milestone v2.0 Summary — Testing & Quality
 
@@ -199,6 +199,7 @@ Key findings fixed across phases:
 | 11 — TestContainers | 3 | 3 | ~8 min |
 | 12 — Admin Panel | 2 | 2 | ~4 min |
 | 13 — Version Endpoints | 2 | 2 | ~15 min |
+| Phase 14 P03 | 5min | 2 tasks | 4 files |
 
 ## Decisions
 
@@ -211,6 +212,7 @@ Key findings fixed across phases:
 - **(13-02-03):** Unversioned request returns 404 (not 400) — only versioned routes registered, unmatched URLs return route-not-found
 - **(13-02-04):** Use apiVersion route constraint pattern `v{version:apiVersion}` in VersioningTests — required for UrlSegmentApiVersionReader
 - (13-02-01): Use non-versioned MapGroup with /api/v1/ paths for endpoint tests
+- (14-03-01): Use spec.domain/spec.system implicit relationships instead of explicit partOf/hasPart — Backstage catalog processor infers partOf relationships from these references automatically
 
 ### Architecture
 
@@ -324,8 +326,8 @@ All endpoints migrated to `/api/v1/*` with Asp.Versioning v10, URL path versioni
 **Plan 14-01 ✅ Complete:** Portal PostgreSQL schema (init.sql), backstage-portal Keycloak OIDC client, Backstage 1.50.0 scaffolded with base app-config.yaml
 
 **Remaining plans:**
+
 - **14-02:** Keycloak OIDC provider for Backstage, production Dockerfile
-- **14-03:** Catalog entity YAML files (Domain/System/Component/API hierarchy)
 - **14-04:** Aspire AppHost + Docker Compose Backstage container wiring, full stack verification
 
 ### Completed: Phase 13 — Version Endpoints ✅ COMPLETE
