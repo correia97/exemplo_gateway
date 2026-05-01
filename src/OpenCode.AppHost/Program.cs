@@ -120,4 +120,19 @@ var frontendAngular = builder.AddExecutable("angular-frontend", "npm", "../OpenC
     .WithEndpoint(port: 4200, targetPort: 4200, scheme: "http", name: "http", isProxied: false)
     .WithExternalHttpEndpoints();
 
+// Backstage Developer Portal — self-service API discovery
+var backstage = builder.AddContainer("backstage", "backstage", "latest")
+    .WithEnvironment("POSTGRES_HOST", "postgres")
+    .WithEnvironment("POSTGRES_PORT", "5432")
+    .WithEnvironment("POSTGRES_USER", "portal_user")
+    .WithEnvironment("POSTGRES_PASSWORD", "portal_pass")
+    .WithEnvironment("POSTGRES_DB", "opencode")
+    .WithEnvironment("AUTH_SESSION_SECRET", "backstage-session-secret-dev")
+    .WithEnvironment("AUTH_OIDC_CLIENT_SECRET", "backstage-oidc-client-secret-dev")
+    .WithEnvironment("TZ", "America/Sao_Paulo")
+    .WithEndpoint(port: 7007, targetPort: 7007, scheme: "http", name: "http")
+    .WithReference(postgres)
+    .WaitFor(postgres)
+    .WaitFor(keycloak);
+
 builder.Build().Run();
