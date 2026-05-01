@@ -20,6 +20,7 @@ obj/
 *.userprefs
 *.cache
 packages/
+!backstage/packages/
 ProjectAssemblies/
 [Bb]uild/
 [Dd]ebug/
