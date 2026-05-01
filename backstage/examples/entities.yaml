@@ -1,41 +1,897 @@
 ---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-domain
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: dragon-ball
+  description: Dragon Ball API ecosystem — characters, planets, transformations
+spec:
+  owner: api-developers
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-domain
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: music
+  description: Music API ecosystem — genres, artists, albums, tracks
+spec:
+  owner: api-developers
+---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
-  name: examples
+  name: dragon-ball-platform
+  description: Complete Dragon Ball character management platform with CRUD operations and versioned API
 spec:
-  owner: guests
+  owner: api-developers
+  domain: dragon-ball
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: music-platform
+  description: Complete music catalog platform managing genres, artists, albums, and tracks with versioned API
+spec:
+  owner: api-developers
+  domain: music
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: example-website
+  name: dragonball-character-service
+  description: Manages Dragon Ball characters with full CRUD, pagination, and filtering
 spec:
-  type: website
-  lifecycle: experimental
-  owner: guests
-  system: examples
-  providesApis: [example-grpc-api]
+  type: service
+  lifecycle: production
+  owner: api-developers
+  system: dragon-ball-platform
+  providesApis:
+    - characters-api-v1
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: dragonball-planet-service
+  description: Manages Dragon Ball planets with CRUD operations
+spec:
+  type: service
+  lifecycle: production
+  owner: api-developers
+  system: dragon-ball-platform
+  providesApis:
+    - planets-api-v1
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: dragonball-transformation-service
+  description: Manages Dragon Ball character transformations with CRUD operations
+spec:
+  type: service
+  lifecycle: production
+  owner: api-developers
+  system: dragon-ball-platform
+  providesApis:
+    - transformations-api-v1
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: music-catalog-service
+  description: Manages the complete music catalog — genres, artists, albums, and tracks with CRUD, pagination, and nested routes
+spec:
+  type: service
+  lifecycle: production
+  owner: api-developers
+  system: music-platform
+  providesApis:
+    - genres-api-v1
+    - artists-api-v1
+    - albums-api-v1
+    - tracks-api-v1
 ---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
-  name: example-grpc-api
+  name: characters-api-v1
+  description: Dragon Ball characters CRUD API with pagination and filtering by name, earthling status, and introduction phase
 spec:
-  type: grpc
-  lifecycle: experimental
-  owner: guests
-  system: examples
+  type: openapi
+  lifecycle: production
+  owner: api-developers
+  system: dragon-ball-platform
+  apiProvidedBy: dragonball-character-service
   definition: |
-    syntax = "proto3";
-
-    service Exampler {
-      rpc Example (ExampleMessage) returns (ExampleMessage) {};
-    }
-
-    message ExampleMessage {
-      string example = 1;
-    };
+    openapi: "3.0.0"
+    info:
+      version: 1.0.0
+      title: Characters API
+      description: Dragon Ball characters CRUD API
+    servers:
+      - url: http://localhost:8000/api/dragonball/v1
+    paths:
+      /characters:
+        get:
+          summary: List characters with pagination and filtering
+          parameters:
+            - name: page
+              in: query
+              schema:
+                type: integer
+            - name: pageSize
+              in: query
+              schema:
+                type: integer
+            - name: name
+              in: query
+              schema:
+                type: string
+          responses:
+            "200":
+              description: Paginated list of characters
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Character"
+        post:
+          summary: Create a new character
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CreateCharacterRequest"
+          responses:
+            "201":
+              description: Character created
+              content:
+                application/json:
+                  schema:
+                    $ref: "#/components/schemas/Character"
+      /characters/{id}:
+        get:
+          summary: Get a character by ID
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: A single character
+              content:
+                application/json:
+                  schema:
+                    $ref: "#/components/schemas/Character"
+        put:
+          summary: Update a character
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CreateCharacterRequest"
+          responses:
+            "200":
+              description: Character updated
+        delete:
+          summary: Delete a character
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "204":
+              description: Character deleted
+    components:
+      schemas:
+        Character:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            isEarthling:
+              type: boolean
+            introductionPhase:
+              type: string
+            pictureUrl:
+              type: string
+        CreateCharacterRequest:
+          type: object
+          properties:
+            name:
+              type: string
+            isEarthling:
+              type: boolean
+            introductionPhase:
+              type: string
+            pictureUrl:
+              type: string
+          required:
+            - name
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: planets-api-v1
+  description: Dragon Ball planets CRUD API
+spec:
+  type: openapi
+  lifecycle: production
+  owner: api-developers
+  system: dragon-ball-platform
+  apiProvidedBy: dragonball-planet-service
+  definition: |
+    openapi: "3.0.0"
+    info:
+      version: 1.0.0
+      title: Planets API
+      description: Dragon Ball planets CRUD API
+    servers:
+      - url: http://localhost:8000/api/dragonball/v1
+    paths:
+      /planets:
+        get:
+          summary: List all planets
+          parameters:
+            - name: page
+              in: query
+              schema:
+                type: integer
+            - name: pageSize
+              in: query
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: Paginated list of planets
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Planet"
+        post:
+          summary: Create a new planet
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CreatePlanetRequest"
+          responses:
+            "201":
+              description: Planet created
+      /planets/{id}:
+        get:
+          summary: Get a planet by ID
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: A single planet
+        put:
+          summary: Update a planet
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: Planet updated
+        delete:
+          summary: Delete a planet
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "204":
+              description: Planet deleted
+    components:
+      schemas:
+        Planet:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            description:
+              type: string
+        CreatePlanetRequest:
+          type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+          required:
+            - name
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: transformations-api-v1
+  description: Dragon Ball character transformations CRUD API
+spec:
+  type: openapi
+  lifecycle: production
+  owner: api-developers
+  system: dragon-ball-platform
+  apiProvidedBy: dragonball-transformation-service
+  definition: |
+    openapi: "3.0.0"
+    info:
+      version: 1.0.0
+      title: Transformations API
+      description: Dragon Ball character transformations CRUD API
+    servers:
+      - url: http://localhost:8000/api/dragonball/v1
+    paths:
+      /transformations:
+        get:
+          summary: List all transformations
+          parameters:
+            - name: page
+              in: query
+              schema:
+                type: integer
+            - name: pageSize
+              in: query
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: Paginated list of transformations
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Transformation"
+        post:
+          summary: Create a new transformation
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CreateTransformationRequest"
+          responses:
+            "201":
+              description: Transformation created
+      /transformations/{id}:
+        get:
+          summary: Get a transformation by ID
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: A single transformation
+        put:
+          summary: Update a transformation
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: Transformation updated
+        delete:
+          summary: Delete a transformation
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "204":
+              description: Transformation deleted
+    components:
+      schemas:
+        Transformation:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            description:
+              type: string
+            characterId:
+              type: integer
+        CreateTransformationRequest:
+          type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            characterId:
+              type: integer
+          required:
+            - name
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: genres-api-v1
+  description: Music genres CRUD API
+spec:
+  type: openapi
+  lifecycle: production
+  owner: api-developers
+  system: music-platform
+  apiProvidedBy: music-catalog-service
+  definition: |
+    openapi: "3.0.0"
+    info:
+      version: 1.0.0
+      title: Genres API
+      description: Music genres CRUD API
+    servers:
+      - url: http://localhost:8000/api/music/v1
+    paths:
+      /genres:
+        get:
+          summary: List all genres
+          parameters:
+            - name: page
+              in: query
+              schema:
+                type: integer
+            - name: pageSize
+              in: query
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: Paginated list of genres
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Genre"
+        post:
+          summary: Create a new genre
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CreateGenreRequest"
+          responses:
+            "201":
+              description: Genre created
+      /genres/{id}:
+        get:
+          summary: Get a genre by ID
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: A single genre
+        put:
+          summary: Update a genre
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: Genre updated
+        delete:
+          summary: Delete a genre
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "204":
+              description: Genre deleted
+    components:
+      schemas:
+        Genre:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        CreateGenreRequest:
+          type: object
+          properties:
+            name:
+              type: string
+          required:
+            - name
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: artists-api-v1
+  description: Music artists and bands CRUD API with genre association
+spec:
+  type: openapi
+  lifecycle: production
+  owner: api-developers
+  system: music-platform
+  apiProvidedBy: music-catalog-service
+  definition: |
+    openapi: "3.0.0"
+    info:
+      version: 1.0.0
+      title: Artists API
+      description: Music artists and bands CRUD API
+    servers:
+      - url: http://localhost:8000/api/music/v1
+    paths:
+      /artists:
+        get:
+          summary: List all artists
+          parameters:
+            - name: page
+              in: query
+              schema:
+                type: integer
+            - name: pageSize
+              in: query
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: Paginated list of artists
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Artist"
+        post:
+          summary: Create a new artist
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CreateArtistRequest"
+          responses:
+            "201":
+              description: Artist created
+      /artists/{id}:
+        get:
+          summary: Get an artist by ID
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: A single artist
+        put:
+          summary: Update an artist
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: Artist updated
+        delete:
+          summary: Delete an artist
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "204":
+              description: Artist deleted
+    components:
+      schemas:
+        Artist:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            genreId:
+              type: integer
+        CreateArtistRequest:
+          type: object
+          properties:
+            name:
+              type: string
+            genreId:
+              type: integer
+          required:
+            - name
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: albums-api-v1
+  description: Music albums CRUD API with artist association
+spec:
+  type: openapi
+  lifecycle: production
+  owner: api-developers
+  system: music-platform
+  apiProvidedBy: music-catalog-service
+  definition: |
+    openapi: "3.0.0"
+    info:
+      version: 1.0.0
+      title: Albums API
+      description: Music albums CRUD API
+    servers:
+      - url: http://localhost:8000/api/music/v1
+    paths:
+      /albums:
+        get:
+          summary: List all albums
+          parameters:
+            - name: page
+              in: query
+              schema:
+                type: integer
+            - name: pageSize
+              in: query
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: Paginated list of albums
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Album"
+        post:
+          summary: Create a new album
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CreateAlbumRequest"
+          responses:
+            "201":
+              description: Album created
+      /albums/{id}:
+        get:
+          summary: Get an album by ID
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: A single album
+        put:
+          summary: Update an album
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: Album updated
+        delete:
+          summary: Delete an album
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "204":
+              description: Album deleted
+    components:
+      schemas:
+        Album:
+          type: object
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+            releaseDate:
+              type: string
+              format: date
+            artistId:
+              type: integer
+        CreateAlbumRequest:
+          type: object
+          properties:
+            title:
+              type: string
+            releaseDate:
+              type: string
+              format: date
+            artistId:
+              type: integer
+          required:
+            - title
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: tracks-api-v1
+  description: Music tracks CRUD API with album association and singles support
+spec:
+  type: openapi
+  lifecycle: production
+  owner: api-developers
+  system: music-platform
+  apiProvidedBy: music-catalog-service
+  definition: |
+    openapi: "3.0.0"
+    info:
+      version: 1.0.0
+      title: Tracks API
+      description: Music tracks CRUD API
+    servers:
+      - url: http://localhost:8000/api/music/v1
+    paths:
+      /tracks:
+        get:
+          summary: List all tracks
+          parameters:
+            - name: page
+              in: query
+              schema:
+                type: integer
+            - name: pageSize
+              in: query
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: Paginated list of tracks
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Track"
+        post:
+          summary: Create a new track
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CreateTrackRequest"
+          responses:
+            "201":
+              description: Track created
+      /tracks/{id}:
+        get:
+          summary: Get a track by ID
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: A single track
+        put:
+          summary: Update a track
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "200":
+              description: Track updated
+        delete:
+          summary: Delete a track
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: integer
+          responses:
+            "204":
+              description: Track deleted
+    components:
+      schemas:
+        Track:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            trackNumber:
+              type: integer
+            duration:
+              type: string
+            lyrics:
+              type: string
+            albumId:
+              type: integer
+        CreateTrackRequest:
+          type: object
+          properties:
+            name:
+              type: string
+            trackNumber:
+              type: integer
+            duration:
+              type: string
+            lyrics:
+              type: string
+            albumId:
+              type: integer
+          required:
+            - name
