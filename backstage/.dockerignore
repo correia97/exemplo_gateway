@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# Yarn cache and state
+.yarn/cache
+.yarn/install-state.gz
+
+# Dependencies
+node_modules
+packages/*/node_modules
+
+# Source code (not needed in production image — pre-built bundles are copied)
+packages/*/src
+packages/*/dist-types
+
+# Plugins (not packaged in this build)
+plugins
+
+# Test and documentation
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+coverage
+e2e-test-report
+
+# Local configuration (contains secrets)
+*.local.yaml
+
+# Build output (we copy dist explicitly)
+dist
+dist-types

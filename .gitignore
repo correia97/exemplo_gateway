@@ -108,6 +108,7 @@ package-lock.json
 **/npm-debug.log
 **/yarn-error.log
 **/yarn.lock
+!backstage/yarn.lock
 package-lock.json
 
 # ------------------------------------------------------------
@@ -164,6 +165,7 @@ copilot/
 .docker/
 docker-compose.override.yml
 .dockerignore
+!backstage/.dockerignore
 
 # Container logs
 *.log
