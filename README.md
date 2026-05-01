@@ -114,7 +114,7 @@ Com o ambiente rodando, acesse a documentação interativa:
 
 As APIs também estão disponíveis através do Kong Gateway:
 
-- **Dragon Ball**: `http://localhost:8000/dragonball/api/characters`
+- **Dragon Ball**: `http://localhost:8000/api/dragonball/characters`
 - **Music**: `http://localhost:8000/music/api/songs`
 
 ### Rotas Principais

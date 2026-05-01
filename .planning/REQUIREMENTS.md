@@ -113,11 +113,13 @@
 
 - **DBALL-12**: Transformations, Planets, Fights entities and CRUD
 - **DBALL-13**: Character image upload (not just URL)
+- **DBALL-14**: Version endpoint returning API assembly version, runtime info, and status
 
 ### Music API
 
 - **MUSIC-17**: Full-text search across tracks and artists
 - **MUSIC-18**: Bulk import endpoints
+- **MUSIC-19**: Version endpoint returning API assembly version, runtime info, and status
 
 ### Frontend
 
@@ -214,6 +216,8 @@
 | TEST-06 | Phase 11 | ⬜ Planned |
 | TEST-07 | Phase 11 | ⬜ Planned |
 | TEST-08 | Phase 11 | ⬜ Planned |
+| DBALL-14 | Phase 13 | ⬜ Planned |
+| MUSIC-19 | Phase 13 | ⬜ Planned |
 
 **Coverage:**
 - v1 requirements: 63 total — all implemented ✅

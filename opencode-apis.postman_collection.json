@@ -27,7 +27,7 @@
                 "method": "GET",
                 "header": [{ "key": "Accept", "value": "application/json" }],
                 "url": {
-                  "raw": "{{gateway_url}}/dragonball/api/characters?Page=1&PageSize=10",
+                  "raw": "{{gateway_url}}/api/dragonball/characters?Page=1&PageSize=10",
                   "host": ["{{gateway_url}}"],
                   "path": ["dragonball", "api", "characters"],
                   "query": [
@@ -50,7 +50,7 @@
                 "method": "GET",
                 "header": [{ "key": "Accept", "value": "application/json" }],
                 "url": {
-                  "raw": "{{gateway_url}}/dragonball/api/characters/{{dragonball_character_id}}",
+                  "raw": "{{gateway_url}}/api/dragonball/characters/{{dragonball_character_id}}",
                   "host": ["{{gateway_url}}"],
                   "path": ["dragonball", "api", "characters", "{{dragonball_character_id}}"]
                 },
@@ -72,7 +72,7 @@
                   "options": { "raw": { "language": "json" } }
                 },
                 "url": {
-                  "raw": "{{gateway_url}}/dragonball/api/characters",
+                  "raw": "{{gateway_url}}/api/dragonball/characters",
                   "host": ["{{gateway_url}}"],
                   "path": ["dragonball", "api", "characters"]
                 },
@@ -94,7 +94,7 @@
                   "options": { "raw": { "language": "json" } }
                 },
                 "url": {
-                  "raw": "{{gateway_url}}/dragonball/api/characters/{{dragonball_character_id}}",
+                  "raw": "{{gateway_url}}/api/dragonball/characters/{{dragonball_character_id}}",
                   "host": ["{{gateway_url}}"],
                   "path": ["dragonball", "api", "characters", "{{dragonball_character_id}}"]
                 },
@@ -108,7 +108,7 @@
                 "method": "DELETE",
                 "header": [],
                 "url": {
-                  "raw": "{{gateway_url}}/dragonball/api/characters/{{dragonball_character_id}}",
+                  "raw": "{{gateway_url}}/api/dragonball/characters/{{dragonball_character_id}}",
                   "host": ["{{gateway_url}}"],
                   "path": ["dragonball", "api", "characters", "{{dragonball_character_id}}"]
                 },
@@ -127,7 +127,7 @@
                 "method": "POST",
                 "header": [{ "key": "Accept", "value": "application/json" }],
                 "url": {
-                  "raw": "{{gateway_url}}/dragonball/api/seed",
+                  "raw": "{{gateway_url}}/api/dragonball/seed",
                   "host": ["{{gateway_url}}"],
                   "path": ["dragonball", "api", "seed"]
                 },
