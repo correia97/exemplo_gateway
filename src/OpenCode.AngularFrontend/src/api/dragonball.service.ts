@@ -16,22 +16,22 @@ export class DragonballService {
     if (filters.race) params = params.set('race', filters.race);
     if (filters.minKi !== undefined) params = params.set('minKi', filters.minKi);
     if (filters.maxKi !== undefined) params = params.set('maxKi', filters.maxKi);
-    return this.http.get<PaginatedResponse<Character>>(`${DRAGONBALL_API_URL}/api/characters`, { params });
+    return this.http.get<PaginatedResponse<Character>>(`${DRAGONBALL_API_URL}/api/v1/characters`, { params });
   }
 
   getCharacter(id: number): Observable<Character> {
-    return this.http.get<Character>(`${DRAGONBALL_API_URL}/api/characters/${id}`);
+    return this.http.get<Character>(`${DRAGONBALL_API_URL}/api/v1/characters/${id}`);
   }
 
   createCharacter(data: CharacterCreatePayload): Observable<Character> {
-    return this.http.post<Character>(`${DRAGONBALL_API_URL}/api/characters`, data);
+    return this.http.post<Character>(`${DRAGONBALL_API_URL}/api/v1/characters`, data);
   }
 
   updateCharacter(id: number, data: Partial<CharacterCreatePayload>): Observable<Character> {
-    return this.http.put<Character>(`${DRAGONBALL_API_URL}/api/characters/${id}`, data);
+    return this.http.put<Character>(`${DRAGONBALL_API_URL}/api/v1/characters/${id}`, data);
   }
 
   deleteCharacter(id: number): Observable<void> {
-    return this.http.delete<void>(`${DRAGONBALL_API_URL}/api/characters/${id}`);
+    return this.http.delete<void>(`${DRAGONBALL_API_URL}/api/v1/characters/${id}`);
   }
 }

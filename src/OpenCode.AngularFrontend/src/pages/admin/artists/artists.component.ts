@@ -11,7 +11,7 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
 })
 export class ArtistsComponent implements OnInit {
   private http = inject(HttpClient);
-  baseUrl = 'http://localhost:8000/api/artists';
+  baseUrl = 'http://localhost:8000/api/music/v1/artists';
   page = 1; pageSize = 10;
   artists: any[] = [];
   totalCount = 0; totalPages = 1;

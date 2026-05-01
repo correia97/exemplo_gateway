@@ -19,18 +19,19 @@ export class AdminService {
    * Reads totalCount from the paginated response. No dedicated stats endpoint.
    */
   fetchStats(): Observable<AdminStats> {
-    const baseUrl = 'http://localhost:8000/api'; // through Kong gateway
+    const dbUrl = 'http://localhost:8000/api/dragonball/v1';
+    const musicUrl = 'http://localhost:8000/api/music/v1';
     const pageSize1 = '?pageSize=1';
 
-    const characters$ = this.http.get<any>(`${baseUrl}/characters${pageSize1}`)
+    const characters$ = this.http.get<any>(`${dbUrl}/characters${pageSize1}`)
       .pipe(map(r => r.totalCount ?? 0));
-    const genres$ = this.http.get<any>(`${baseUrl}/genres${pageSize1}`)
+    const genres$ = this.http.get<any>(`${musicUrl}/genres${pageSize1}`)
       .pipe(map(r => r.totalCount ?? 0));
-    const artists$ = this.http.get<any>(`${baseUrl}/artists${pageSize1}`)
+    const artists$ = this.http.get<any>(`${musicUrl}/artists${pageSize1}`)
       .pipe(map(r => r.totalCount ?? 0));
-    const albums$ = this.http.get<any>(`${baseUrl}/albums${pageSize1}`)
+    const albums$ = this.http.get<any>(`${musicUrl}/albums${pageSize1}`)
       .pipe(map(r => r.totalCount ?? 0));
-    const tracks$ = this.http.get<any>(`${baseUrl}/tracks${pageSize1}`)
+    const tracks$ = this.http.get<any>(`${musicUrl}/tracks${pageSize1}`)
       .pipe(map(r => r.totalCount ?? 0));
 
     return forkJoin({

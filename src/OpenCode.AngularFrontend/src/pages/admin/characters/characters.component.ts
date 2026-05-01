@@ -11,7 +11,7 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
 })
 export class CharactersComponent implements OnInit {
   private http = inject(HttpClient);
-  baseUrl = 'http://localhost:8000/api/characters';
+  baseUrl = 'http://localhost:8000/api/dragonball/v1/characters';
   page = 1; pageSize = 10;
   characters: any[] = [];
   totalCount = 0; totalPages = 1;
