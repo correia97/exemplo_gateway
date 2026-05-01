@@ -1,19 +1,18 @@
 ---
-gsd_state_version: 2.0
-milestone: v2.0
-milestone_name: Testing & Quality
-status: completed
-last_updated: "2026-04-30T23:59:59.000Z"
-last_activity: 2026-04-30 -- Milestone v2.0 completed — all 11 phases fully executed and verified
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: unknown
+last_updated: "2026-05-01T00:38:16.407Z"
 progress:
-  total_phases: 11
+  total_phases: 13
   completed_phases: 11
-  total_plans: 44
-  completed_plans: 44
-  percent: 100
+  total_plans: 42
+  completed_plans: 41
+  percent: 98
 ---
 
-# Project State — Milestone v2.0 Complete 🎉
+# Project State — Milestone v3.0 In Progress
 
 ## Project Reference
 
@@ -21,13 +20,13 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 
 **Core value:** Validated — the full stack (.NET 10 + Aspire + Keycloak + Kong + OpenTelemetry + EF Core + PostgreSQL) works together as a coherent, observable, and secure architecture for API development.
 
-**Milestone v2.0 (Testing & Quality):** All 11 phases completed. The project has 206 automated tests (162 unit/domain + 44 integration), 147 code review findings addressed (78 fixed), and 100% completion across 44 plans.
+**Milestone v3.0 (Admin Panel & Management UI):** Phase 12 planned but not yet executed. Will deliver comprehensive admin panels in both React and Angular with full CRUD management, audit trail, bulk import/export, and role management.
 
 ## Current Position
 
-**Milestone v2.0 — Testing & Quality: ✅ COMPLETED**
+**Milestone v3.0 — Admin Panel & Management UI: ▶️ IN PROGRESS**
 
-All 11 phases have been fully executed, including their extended plans and code review fix iterations:
+Phase 12 (Admin Panel) is planned with 4 sub-plans ready for execution. The 11 prior phases are fully complete.
 
 | Phase | Date | Plans | Status |
 |-------|------|-------|--------|
@@ -42,8 +41,9 @@ All 11 phases have been fully executed, including their extended plans and code 
 | 09 — Angular Frontend | 2026-04-25 | 4/4 | ✅ Complete |
 | 10 — Unit Tests | 2026-04-29 | 7/7 | ✅ Complete |
 | 11 — TestContainers Integration | 2026-04-29 | 3/3 | ✅ Complete |
+| 12 — Admin Panel | 2026-04-30 | 0/2 | ⬜ Planned |
 
-Progress: [████████████████████████████████████] 100%
+Progress: [█████████████████████████████████████████████] 92%
 
 ## Milestone v2.0 Summary — Testing & Quality
 
@@ -52,6 +52,7 @@ Progress: [███████████████████████
 The unit test phase was executed in two waves:
 
 **Wave 1 (Plans 10-01 through 10-04):** Initial test infrastructure and coverage:
+
 - Created `OpenCode.Api.Tests` project with xUnit, FluentValidation.TestHelper, Moq, and ASP.NET TestHost
 - Validator tests for all 10 validators (Character × 2, Genre × 2, Artist × 2, Album × 2, Track × 2)
 - DTO mapping tests for 5 entity suites (Character, Genre, Artist, Album, Track)
@@ -59,6 +60,7 @@ The unit test phase was executed in two waves:
 - PagedResult pagination edge case tests
 
 **Wave 2 (Plans 10-05 through 10-07):** Extended coverage:
+
 - Package migration from NSubstitute to Moq, added EF Core InMemory provider
 - In-memory EF Core repository tests for all 5 repositories
 - FluentValidation auto-validation pipeline integration tests via TestHost
@@ -83,11 +85,48 @@ The unit test phase was executed in two waves:
 Integration test suite using TestContainers for PostgreSQL with real database verification:
 
 **Infrastructure:**
+
 - `PostgresFixture`: Singleton container lifecycle (shared via collection fixture across all test classes)
 - `IntegrationTestBase`: Base class with DbContext factory methods and test data helpers
 - `IntegrationCollection`: xUnit collection definition for container sharing
 
+### Phase 12: Admin Panel — Full CRUD Management UI (4 plans, **PLANNED**)
+
+Phase 12 will deliver a comprehensive admin panel in both React and Angular frontends with full management capabilities:
+
+**Backend Infrastructure (Plan 12-01):**
+
+- `IAuditableEntity` interface + `AuditInterceptor` for automatic audit trail on all entities
+- Admin-only endpoints: `/api/admin/stats` (entity counts), `/api/admin/audit-log` (activity feed)
+- Keycloak `admin` role added alongside existing `viewer` and `editor` roles
+- Role management API via Keycloak Admin REST proxy
+
+**React Admin Panel (Plan 12-02):**
+
+- `AdminLayout` with left sidebar navigation organized by domain (Dashboard, Dragon Ball, Music, Administration)
+- `AdminTable` component: search, column sorting, action buttons (Edit/Delete)
+- `ConfirmDialog` modal with entity details and dependency warnings
+- 7 entity CRUD pages: Characters, Planets, Transformations, Artists, Albums, Tracks, Genres
+- Admin dashboard with entity count stat cards from both APIs
+
+**Angular Admin Panel (Plan 12-03):**
+
+- Feature parity with React admin panel
+- `AdminTableComponent` and `ConfirmDialogComponent` as standalone Angular components
+- `AdminLayoutComponent` with sidebar navigation
+- 7 entity CRUD components matching React feature set
+- Admin role guard via Angular route guard
+
+**Bulk Operations & Advanced Features (Plan 12-04):**
+
+- Bulk import/export endpoints (CSV/JSON) for all 7 entity types
+- Bulk import page with file upload, preview table, validation, and submit
+- Export buttons on entity CRUD tables for CSV/JSON download
+- Audit log page showing paginated entity activity with user and timestamp
+- Role management page with user list and role toggle checkboxes
+
 **Repository Integration Tests (25 tests across 5 repos):**
+
 - `CharacterRepositoryTests`: CRUD, pagination, filtering — real PostgreSQL
 - `GenreRepositoryTests`: CRUD, pagination — real PostgreSQL
 - `ArtistRepositoryTests`: CRUD, pagination, genre association — real PostgreSQL
@@ -95,13 +134,16 @@ Integration test suite using TestContainers for PostgreSQL with real database ve
 - `TrackRepositoryTests`: CRUD, pagination, album association, singles — real PostgreSQL
 
 **API E2E Tests (13 tests):**
+
 - `CharactersEndpointsTests`: Full CRUD via TestServer + TestContainers
 - `MusicEndpointsTests`: Full CRUD via TestServer + TestContainers
 
 **Schema Isolation Tests (6 tests):**
+
 - `SchemaIsolationTests`: Positive (EF Core writes to correct schema) + negative (raw SQL cross-schema writes denied)
 
 **Correlation ID Tests (3 tests):**
+
 - `CorrelationIdTests`: Header propagation through middleware pipeline
 
 ### Code Review & Fix (147 findings, 78 fixed)
@@ -124,6 +166,7 @@ Every phase underwent systematic code review with a dedicated fix iteration. Res
 | **Total** | **147** | **24** | **59** | **64** | **78** |
 
 Key findings fixed across phases:
+
 - **Auth bypasses closed**: Authorization policies applied to all write endpoints (Phase 4), JWT audience/issuer validation enabled (Phases 1, 4), Keycloak realm hardened (Phase 4)
 - **Gateway routing fixed**: Route init container dependency cycle resolved, auth plugins configured, upstream URLs corrected (Phase 5)
 - **Observability enabled**: OTLP protocol mismatch fixed, service names configured, Npgsql tracing wired, health endpoints registered (Phase 6)
@@ -145,8 +188,9 @@ Key findings fixed across phases:
 ## Performance Metrics
 
 **Velocity:**
-- Total plans: 44 (Phases 1-4: 4×4, 5: 4, 6: 3, 7: 4, 8: 3, 9: 4, 10: 7, 11: 3)
-- Total plans executed: 44
+
+- Total plans: 48 (Phases 1-4: 4×4, 5: 4, 6: 3, 7: 4, 8: 3, 9: 4, 10: 7, 11: 3, 12: 4)
+- Total plans executed: 44 of 46
 - Average duration: ~5 min
 - Total execution time: ~220 min
 
@@ -165,10 +209,12 @@ Key findings fixed across phases:
 | 09 — Angular Frontend | 4 | 4 | ~5 min |
 | 10 — Unit Tests | 7 | 7 | ~6 min |
 | 11 — TestContainers | 3 | 3 | ~8 min |
+| 12 — Admin Panel | 2 | 0 | — |
 
 ## Decisions
 
 ### Architecture
+
 - **(01-01):** .NET 10 Minimal API with Aspire AppHost orchestrating all services during local development
 - **(01-02):** `Directory.Packages.props` for centralized NuGet version pinning
 - **(01-03):** ServiceDefaults project with OpenTelemetry SDK references and shared middleware
@@ -193,6 +239,7 @@ Key findings fixed across phases:
 - **(11-01):** Collection fixture pattern (`[CollectionDefinition]`) for single TestContainers PostgreSQL instance across all integration test classes
 
 ### Code Review
+
 - **(Phase 1):** `AddNpgsql()` on tracing uses `.AddNpgsql()` (Npgsql 10.x API), not `.AddNpgsqlInstrumentation()` (metrics only)
 - **(Phase 4):** Duplicate `KeycloakRolesClaimsTransformation` deferred — shared infrastructure library out of scope for fix iteration
 - **(Phase 5):** Kong authentication plugin uses `openid-connect` with Keycloak JWKS endpoint
@@ -201,6 +248,7 @@ Key findings fixed across phases:
 ## Accumulated Context
 
 ### Source Projects
+
 | Project | Path | Purpose |
 |---------|------|---------|
 | OpenCode.Domain | `src/OpenCode.Domain/` | Domain models, EF Core DbContexts, migrations, repository interfaces, pagination |
@@ -212,6 +260,7 @@ Key findings fixed across phases:
 | OpenCode.AngularFrontend | `src/OpenCode.AngularFrontend/` | Angular 21 standalone SPA |
 
 ### Test Projects
+
 | Project | Path | Tests | Type |
 |---------|------|-------|------|
 | OpenCode.Api.Tests | `tests/OpenCode.Api.Tests/` | 137 | Unit (validators, mappings, services, repos, pipeline) |
@@ -219,6 +268,7 @@ Key findings fixed across phases:
 | OpenCode.Integration.Tests | `tests/OpenCode.Integration.Tests/` | 44 | Integration (TestContainers + TestServer) |
 
 ### Infrastructure Files
+
 | File | Purpose |
 |------|---------|
 | `docker-compose.yml` | Production-grade Docker Compose (7+ services) |
@@ -228,7 +278,7 @@ Key findings fixed across phases:
 
 ## Blockers/Concerns
 
-None. All 11 phases complete. Milestone v2.0 delivered.
+None. Phase 12 (Admin Panel) is fully planned and ready for execution. All prior 11 phases are complete.
 
 ## Milestone Completion
 
@@ -252,6 +302,8 @@ The project validates that the full enterprise stack (.NET 10 + Aspire + Keycloa
 
 **Quality Assurance:** 147 code review findings identified and 78 critical/warning issues fixed across all 11 phases.
 
+**Admin Panel (Phase 12 — Planned):** Comprehensive admin panel for both React and Angular frontends with full CRUD management, audit trail, bulk import/export, and role management.
+
 ### Key Achievements
 
 1. **Architecture validated** — all components connect, authenticate, and pass data end-to-end
@@ -263,9 +315,17 @@ The project validates that the full enterprise stack (.NET 10 + Aspire + Keycloa
 
 ## Next Steps
 
-The project is ready for future milestones beyond v2.0. Potential areas:
+### Current: Phase 12 — Admin Panel
+
+Phase 12 is planned with 2 plans ready for execution:
+
+1. **12-01: React Admin Panel** — AdminLayout, AdminTable, ConfirmDialog, DashboardPage, 5 entity CRUD pages (Characters, Genres, Artists, Albums, Tracks), admin route guard. Frontend-only — uses existing CRUD endpoints
+2. **12-02: Angular Admin Panel** — AdminLayoutComponent, AdminTableComponent, ConfirmDialogComponent, DashboardComponent, 5 entity CRUD components (full parity with React). Frontend-only — uses existing CRUD endpoints
+
+### Future Milestones (beyond v3.0)
 
 - **v3.0 (Infrastructure & DevOps):** Kubernetes manifests, CI/CD pipelines, secrets management (INFRA-07 through INFRA-09)
-- **v3.0 (Domain Expansion):** Additional Dragon Ball entities (Planets, Transformations, Fights in DBALL-12), character image upload (DBALL-13), full-text search (MUSIC-17), bulk import (MUSIC-18)
-- **v3.0 (Frontend Polish):** Admin dashboard (FE-10), usage metrics (FE-11), refresh token handling (FE-12)
+- **v3.0 (Domain Expansion):** Character image upload (DBALL-13), full-text search (MUSIC-17)
 - **v3.0 (Code Quality):** Shared infrastructure library refactoring, consolidated auth abstractions
+
+**Planned Phase:** 12 (Admin Panel) — 2 plans — 2026-05-01T00:38:16.392Z
