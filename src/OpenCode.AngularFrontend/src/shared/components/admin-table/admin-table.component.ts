@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '../pagination/pagination';
 
@@ -13,7 +12,7 @@ export interface AdminColumn {
 @Component({
   selector: 'app-admin-table',
   standalone: true,
-  imports: [NgFor, FormsModule, PaginationComponent],
+  imports: [FormsModule, PaginationComponent],
   templateUrl: './admin-table.component.html',
   styleUrl: './admin-table.component.css',
 })
