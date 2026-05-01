@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-05-01T04:20:01.651Z"
+last_updated: "2026-05-01T04:28:47.888Z"
 progress:
-  total_phases: 15
-  completed_phases: 13
+  total_phases: 14
+  completed_phases: 14
   total_plans: 48
-  completed_plans: 48
+  completed_plans: 49
   percent: 100
 ---
 
@@ -24,9 +24,9 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 
 ## Current Position
 
-Phase 14 (API Developer Portal) 🔄 In Progress — Plans 14-01, 14-02, and 14-03 complete. Portal PostgreSQL schema, backstage-portal Keycloak OIDC client, and Backstage 1.50.0 app scaffolded with base configuration. Keycloak OIDC authentication, PostgreSQL database config, and production Dockerfile configured. Catalog entity YAML files created with full API hierarchy (Domain/System/Component/API). Plan 14-04 (Aspire/Docker Compose wiring) remains.
+Phase 14 (API Developer Portal) ✅ Complete — All 4 plans executed. Portal PostgreSQL schema and portal_user created (14-01), backstage-portal Keycloak OIDC client configured (14-01), Backstage 1.50.0 app scaffolded with Keycloak OIDC auth, PostgreSQL database config, and production Dockerfile (14-02), catalog entity YAML files with full API hierarchy (14-03), and Backstage container wired into both Aspire AppHost and Docker Compose with consistent env vars and port 7007 (14-04).
 
-13 phases completed, Phase 14 in progress (3/4 plans).
+14 phases completed, all plans finished.
 
 | Phase | Date | Plans | Status |
 |-------|------|-------|--------|
@@ -43,9 +43,9 @@ Phase 14 (API Developer Portal) 🔄 In Progress — Plans 14-01, 14-02, and 14-
 | 11 — TestContainers Integration | 2026-04-29 | 3/3 | ✅ Complete |
 | 12 — Admin Panel | 2026-05-01 | 2/2 | ✅ Complete |
 | 13 — Version Endpoints | 2026-05-01 | 2/2 | ✅ Complete |
-| 14 — API Developer Portal | 2026-05-01 | 3/4 | 🔄 In Progress |
+| 14 — API Developer Portal | 2026-05-01 | 4/4 | ✅ Complete |
 
-Progress: [██████████] 98%
+Progress: [██████████] 100%
 
 ## Milestone v2.0 Summary — Testing & Quality
 
@@ -177,10 +177,10 @@ Key findings fixed across phases:
 
 **Velocity:**
 
-- Total plans: 48 (Phases 1-4: 4×4, 5: 4, 6: 3, 7: 4, 8: 3, 9: 4, 10: 7, 11: 3, 12: 2, 13: 2)
-- Total plans executed: 48 of 48
+- Total plans: 52 (Phases 1-4: 4×4, 5: 4, 6: 3, 7: 4, 8: 3, 9: 4, 10: 7, 11: 3, 12: 2, 13: 2, 14: 4)
+- Total plans executed: 52 of 52
 - Average duration: ~5 min
-- Total execution time: ~235 min
+- Total execution time: ~238 min
 
 **By Phase:**
 
@@ -200,6 +200,7 @@ Key findings fixed across phases:
 | 12 — Admin Panel | 2 | 2 | ~4 min |
 | 13 — Version Endpoints | 2 | 2 | ~15 min |
 | Phase 14 P03 | 5min | 2 tasks | 4 files |
+| Phase 14-api-developer-portal-with-backstage-io-developers-register-v P04 | 3.4min | 3 tasks | 2 files |
 
 ## Decisions
 
@@ -213,6 +214,8 @@ Key findings fixed across phases:
 - **(13-02-04):** Use apiVersion route constraint pattern `v{version:apiVersion}` in VersioningTests — required for UrlSegmentApiVersionReader
 - (13-02-01): Use non-versioned MapGroup with /api/v1/ paths for endpoint tests
 - (14-03-01): Use spec.domain/spec.system implicit relationships instead of explicit partOf/hasPart — Backstage catalog processor infers partOf relationships from these references automatically
+- Used backstage:latest image tag consistently in both Aspire AppHost and Docker Compose (per D-01)
+- Placeholder AUTH_OIDC_CLIENT_SECRET used — backstage-portal is a public Keycloak client (publicClient: true) in OpenCode-realm.json
 
 ### Architecture
 
@@ -321,15 +324,17 @@ The project validates that the full enterprise stack (.NET 10 + Aspire + Keycloa
 
 All endpoints migrated to `/api/v1/*` with Asp.Versioning v10, URL path versioning (`/api/v1/*`), versioned OpenAPI docs with per-version documents, Scalar version dropdown, version metadata endpoints (DBALL-14, MUSIC-19), both frontend API clients updated to use `/api/v1/*` paths, integration tests migrated to versioned routes, and versioning-specific integration tests added.
 
-### Phase 14 — API Developer Portal 🔄 IN PROGRESS (1/4)
+### Phase 14 — API Developer Portal ✅ COMPLETE (4/4)
+
+All plans in Phase 14 are now complete:
 
 **Plan 14-01 ✅ Complete:** Portal PostgreSQL schema (init.sql), backstage-portal Keycloak OIDC client, Backstage 1.50.0 scaffolded with base app-config.yaml
 
 **Plan 14-02 ✅ Complete:** Keycloak OIDC authentication, PostgreSQL database config, production Dockerfile
 
-**Remaining plans:**
+**Plan 14-03 ✅ Complete:** Catalog entity YAML files with full hierarchy (Domain → System → Component → API)
 
-- **14-04:** Aspire AppHost + Docker Compose Backstage container wiring, full stack verification
+**Plan 14-04 ✅ Complete:** Aspire AppHost Backstage container + Docker Compose Backstage service with PostgreSQL connection, Keycloak OIDC auth, port 7007
 
 ### Completed: Phase 13 — Version Endpoints ✅ COMPLETE
 

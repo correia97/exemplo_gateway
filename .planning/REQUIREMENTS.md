@@ -113,14 +113,12 @@
 
 - **DBALL-12**: Transformations, Planets, Fights entities and CRUD
 - **DBALL-13**: Character image upload (not just URL)
-- **DBALL-14**: Version endpoint returning API assembly version, runtime info, and status
-
+- **DBALL-14**: `/api/version` endpoint returning assembly metadata, runtime info, and health status
 ### Music API
 
 - **MUSIC-17**: Full-text search across tracks and artists
 - **MUSIC-18**: Bulk import endpoints
-- **MUSIC-19**: Version endpoint returning API assembly version, runtime info, and status
-
+- **MUSIC-19**: `/api/version` endpoint returning assembly metadata, runtime info, and health status
 ### Frontend
 
 - **FE-10**: Admin dashboard for Keycloak user management
@@ -219,6 +217,7 @@
 | DBALL-14 | Phase 13 | ⬜ Planned |
 | MUSIC-19 | Phase 13 | ⬜ Planned |
 
+
 **Coverage:**
 - v1 requirements: 63 total — all implemented ✅
 - v2 requirements: 12 total — 4 implemented, 8 planned
@@ -228,4 +227,4 @@
 ---
 
 *Requirements defined: 2026-04-24*
-*Last updated: 2026-04-29 — v1 all complete, v2 TEST requirements added*
+*Last updated: 2026-04-30 — v2 DBALL-14 and MUSIC-19 added for Phase 13*
