@@ -1,5 +1,5 @@
 import apiFetch, { MUSIC_API_URL } from './client'
-import type { PaginatedResponse, Artist, Album, Track, ArtistCreatePayload, AlbumCreatePayload, TrackCreatePayload, MusicFilters } from './types'
+import type { PaginatedResponse, Artist, Album, Track, Genre, ArtistCreatePayload, AlbumCreatePayload, TrackCreatePayload, GenreCreatePayload, MusicFilters, GenreFilters } from './types'
 
 export async function getArtists(filters: MusicFilters = {}): Promise<PaginatedResponse<Artist>> {
   const params = new URLSearchParams()
@@ -74,4 +74,30 @@ export async function updateTrack(id: number, data: Partial<TrackCreatePayload>)
 
 export async function deleteTrack(id: number): Promise<void> {
   return apiFetch<void>(`${MUSIC_API_URL}/api/tracks/${id}`, { method: 'DELETE' })
+}
+
+// --- Genre API ---
+export async function getGenres(filters: GenreFilters = {}): Promise<PaginatedResponse<Genre>> {
+  const params = new URLSearchParams()
+  if (filters.page) params.set('page', String(filters.page))
+  if (filters.pageSize) params.set('pageSize', String(filters.pageSize))
+  if (filters.name) params.set('name', filters.name)
+  const qs = params.toString()
+  return apiFetch<PaginatedResponse<Genre>>(`${MUSIC_API_URL}/api/genres${qs ? `?${qs}` : ''}`)
+}
+
+export async function getGenre(id: number): Promise<Genre> {
+  return apiFetch<Genre>(`${MUSIC_API_URL}/api/genres/${id}`)
+}
+
+export async function createGenre(data: GenreCreatePayload): Promise<Genre> {
+  return apiFetch<Genre>(`${MUSIC_API_URL}/api/genres`, { method: 'POST', body: JSON.stringify(data) })
+}
+
+export async function updateGenre(id: number, data: Partial<GenreCreatePayload>): Promise<Genre> {
+  return apiFetch<Genre>(`${MUSIC_API_URL}/api/genres/${id}`, { method: 'PUT', body: JSON.stringify(data) })
+}
+
+export async function deleteGenre(id: number): Promise<void> {
+  return apiFetch<void>(`${MUSIC_API_URL}/api/genres/${id}`, { method: 'DELETE' })
 }

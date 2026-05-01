@@ -121,3 +121,22 @@ export interface MusicFilters {
   page?: number
   pageSize?: number
 }
+
+export interface Genre {
+  id: number
+  name: string
+  description?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface GenreCreatePayload {
+  name: string
+  description?: string
+}
+
+export interface GenreFilters {
+  name?: string
+  page?: number
+  pageSize?: number
+}
