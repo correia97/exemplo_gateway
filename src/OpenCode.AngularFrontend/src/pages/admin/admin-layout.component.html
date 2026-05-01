@@ -1,0 +1,22 @@
+<div class="flex min-h-[calc(100vh-4rem)]">
+  <aside class="w-64 bg-gray-900 text-white p-4 shrink-0">
+    <h2 class="text-lg font-bold mb-4 px-2">Admin Panel</h2>
+    <nav class="space-y-1">
+      @for (item of navItems; track item.label) {
+        @if (item.section) {
+          <div class="text-xs uppercase tracking-wider text-gray-400 mt-4 mb-1 px-2">
+            {{ item.label }}
+          </div>
+        } @else {
+          <a [routerLink]="item.path" routerLinkActive="bg-blue-600 text-white"
+            class="block px-3 py-2 rounded text-sm text-gray-300 hover:bg-gray-800 transition-colors">
+            {{ item.label }}
+          </a>
+        }
+      }
+    </nav>
+  </aside>
+  <main class="flex-1 p-6 bg-gray-50">
+    <router-outlet />
+  </main>
+</div>
