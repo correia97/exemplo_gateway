@@ -185,7 +185,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 10. Unit Tests | 7/7 | ✅ Complete | 2026-04-29 |
 | 11. TestContainers Integration | 3/3 | ✅ Complete | 2026-04-29 |
 | 12. Admin Panel | 2/2 | ✅ Complete | 2026-05-01 |
-| 13. Version Endpoints | 0/2 | ⬜ Planned | — |
+| 13. Version Endpoints | 2/2 | ✅ Complete | 2026-05-01 |
+| 14. API Developer Portal | 1/4 | 🔄 In Progress | 2026-05-01 |
 
 ### Phase 9: Angular Frontend (**COMPLETED**)
 
@@ -270,16 +271,31 @@ Plans:
 **Plans:** 2 plans — **all planned**
 
 Plans:
-- [ ] 13-01: Backend API versioning infrastructure — NuGet packages, AddApiVersioning + AddApiExplorer + AddOpenApi chain, NewVersionedApi() endpoint registrations, Scalar versioned docs, /api/v1/version metadata endpoints, Created() path updates
-- [ ] 13-02: Frontend + test updates — React API client paths, Angular API services, Angular admin component Kong paths, integration test versioned paths, new VersioningTests.cs with resolution + rejection tests
+- [x] 13-01: Backend API versioning infrastructure — NuGet packages, AddApiVersioning + AddApiExplorer + AddOpenApi chain, NewVersionedApi() endpoint registrations, Scalar versioned docs, /api/v1/version metadata endpoints, Created() path updates
+- [x] 13-02: Frontend + test updates — React API client paths, Angular API services, Angular admin component Kong paths, integration test versioned paths, new VersioningTests.cs with resolution + rejection tests
 
 
-### Phase 14: API Developer Portal with Backstage.io - developers register via Keycloak, create credentials, browse APIs organized as Product/Context/Sub-context/API hierarchy, consume through Kong. Uses new PostgreSQL schema.
+### Phase 14: API Developer Portal with Backstage.io (**IN PROGRESS**)
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** A working Backstage.io API Developer Portal where developers can sign in via Keycloak OIDC, browse the full API catalog organized in a Product/Context/Sub-context/API hierarchy, view OpenAPI documentation, and discover APIs to consume through Kong. Uses new `portal` PostgreSQL schema and a custom Backstage Docker image managed by both Aspire and Docker Compose.
+
+**Requirements:** PORTAL-01, PORTAL-02, PORTAL-03, PORTAL-04, PORTAL-05, PORTAL-06, PORTAL-07
+
 **Depends on:** Phase 13
-**Plans:** 0 plans
+
+**Success Criteria** (what must be TRUE):
+  1. Developer can open `http://localhost:7007` and see the Backstage portal UI
+  2. Developer can sign in using Keycloak credentials (OIDC Authorization Code + PKCE flow)
+  3. Backstage catalog shows the full API hierarchy: Dragon Ball Context → Dragon Ball Platform → Character Service → Characters API v1 (with equivalent for Music APIs)
+  4. Each API entity displays a valid OpenAPI 3.0 definition with Kong proxy server URL
+  5. Backstage connects to PostgreSQL using the `portal` schema and `portal_user` with schema-scoped permissions
+  6. Keycloak realm `OpenCode` has the `backstage-portal` OIDC client with correct redirect URIs
+  7. Backstage runs as a container in both Aspire AppHost (dev) and Docker Compose (production-like) using the same `backstage:latest` image
+
+**Plans:** 4 plans — **all planned**
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 14 to break down)
+- [x] 14-01: Infrastructure & Backstage Scaffold — Add portal schema/user to init.sql, add backstage-portal Keycloak OIDC client, scaffold Backstage app from `@backstage/create-app` template
+- [ ] 14-02: Backstage Configuration — Keycloak OIDC provider, PostgreSQL database config, production Dockerfile, sign-in page with Keycloak branding, OIDC backend module
+- [ ] 14-03: Catalog Entities & API Hierarchy — Create catalog YAML files for Domain/System/Component/API entities mapping Product/Context/Sub-context/API, wire entity relationships
+- [ ] 14-04: Aspire & Docker Compose Wiring — Add Backstage container to AppHost Program.cs, add Backstage service to docker-compose.yml, full stack verification checkpoint
