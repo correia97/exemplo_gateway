@@ -20,13 +20,13 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 
 **Core value:** Validated — the full stack (.NET 10 + Aspire + Keycloak + Kong + OpenTelemetry + EF Core + PostgreSQL) works together as a coherent, observable, and secure architecture for API development.
 
-**Milestone v3.0 (Admin Panel & Management UI):** Phase 12 planned but not yet executed. Will deliver comprehensive admin panels in both React and Angular with full CRUD management, audit trail, bulk import/export, and role management.
+**Milestone v3.0 (Admin Panel & Management UI):** Phase 12 planned but not yet executed. Will deliver admin panels in both React and Angular with entity CRUD management, dashboard stats, delete confirmation, and dates-only audit — all frontend-only using existing CRUD endpoints.
 
 ## Current Position
 
 **Milestone v3.0 — Admin Panel & Management UI: ▶️ IN PROGRESS**
 
-Phase 12 (Admin Panel) is planned with 4 sub-plans ready for execution. The 11 prior phases are fully complete.
+Phase 12 (Admin Panel) is planned with 2 plans ready for execution. The 11 prior phases are fully complete.
 
 | Phase | Date | Plans | Status |
 |-------|------|-------|--------|
@@ -43,7 +43,7 @@ Phase 12 (Admin Panel) is planned with 4 sub-plans ready for execution. The 11 p
 | 11 — TestContainers Integration | 2026-04-29 | 3/3 | ✅ Complete |
 | 12 — Admin Panel | 2026-04-30 | 0/2 | ⬜ Planned |
 
-Progress: [█████████████████████████████████████████████] 92%
+Progress: [███████████████████████████████████████████████] 96%
 
 ## Milestone v2.0 Summary — Testing & Quality
 
