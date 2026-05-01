@@ -21,6 +21,8 @@ obj/
 *.cache
 packages/
 !backstage/packages/
+!src/OpenCode.Backstage/packages/
+!src/OpenCode.Backstage/backstage/packages/
 ProjectAssemblies/
 [Bb]uild/
 [Dd]ebug/
