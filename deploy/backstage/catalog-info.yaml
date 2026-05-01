@@ -1,0 +1,140 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: opencode-platform
+  description: |
+    OpenCode API Platform - A proof-of-concept demonstrating .NET 10 + Aspire + Keycloak + Kong + OpenTelemetry.
+
+    ## How to Get API Credentials
+
+    API consumers authenticate via Keycloak OIDC. To obtain credentials:
+
+    1. **Login to Keycloak Admin Console** at http://localhost:8080 (admin/admin)
+    2. **Navigate to** Clients > Create Client
+    3. **Set Client Type** to "OpenID Connect"
+    4. **Enable** "Client authentication" (confidential client)
+    5. **Set Access Type** to "Service Account" (client_credentials grant)
+    6. **Save** and copy the Client ID and Client Secret from the Credentials tab
+    7. **Request a token:**
+       ```
+       POST http://localhost:8080/realms/OpenCode/protocol/openid-connect/token
+       Content-Type: application/x-www-form-urlencoded
+
+       grant_type=client_credentials&client_id=YOUR_CLIENT_ID&client_secret=YOUR_SECRET
+       ```
+    8. **Use the token** with Kong Gateway at http://localhost:8000:
+       ```
+       Authorization: Bearer <access_token>
+       ```
+
+    ## Available APIs
+
+    - **Dragon Ball API** - Character CRUD at `/api/v1/dragonball/characters`
+    - **Music API** - Genre/Artist/Album/Track CRUD at `/api/v1/music/*`
+
+    ## API Documentation
+
+    Interactive Scalar docs are available at each API's `/scalar` endpoint.
+  tags:
+    - dotnet
+    - rest
+    - poc
+spec:
+  owner: guests
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: dragonball-system
+  description: Dragon Ball character management API and service
+  tags:
+    - dotnet
+    - rest
+spec:
+  owner: guests
+  domain: opencode-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: music-system
+  description: Music catalog management API and service (genres, artists, albums, tracks)
+  tags:
+    - dotnet
+    - rest
+spec:
+  owner: guests
+  domain: opencode-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: opencode-dragonball-service
+  description: .NET 10 Minimal API serving Dragon Ball character CRUD operations
+  tags:
+    - dotnet
+    - minimal-api
+  links:
+    - url: http://localhost:5000/scalar
+      title: Scalar API Docs
+      icon: docs
+spec:
+  type: service
+  lifecycle: production
+  owner: guests
+  system: dragonball-system
+  providesApis:
+    - dragonball-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: opencode-music-service
+  description: .NET 10 Minimal API serving Music catalog CRUD operations (genres, artists, albums, tracks)
+  tags:
+    - dotnet
+    - minimal-api
+  links:
+    - url: http://localhost:5002/scalar
+      title: Scalar API Docs
+      icon: docs
+spec:
+  type: service
+  lifecycle: production
+  owner: guests
+  system: music-system
+  providesApis:
+    - music-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: dragonball-api
+  description: Dragon Ball Character REST API - CRUD operations for characters with pagination and filtering
+  tags:
+    - rest
+    - openapi
+spec:
+  type: openapi
+  lifecycle: production
+  owner: guests
+  system: dragonball-system
+  definition:
+    $text: http://gateway:8000/api/v1/dragonball/openapi/v1.json
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: music-api
+  description: Music Catalog REST API - CRUD operations for genres, artists, albums, and tracks
+  tags:
+    - rest
+    - openapi
+spec:
+  type: openapi
+  lifecycle: production
+  owner: guests
+  system: music-system
+  definition:
+    $text: http://gateway:8000/api/v1/music/openapi/v1.json
