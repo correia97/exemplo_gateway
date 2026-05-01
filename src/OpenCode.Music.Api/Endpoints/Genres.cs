@@ -53,7 +53,7 @@ public static class Genres
             Description = request.Description
         };
         var created = await repository.AddAsync(genre);
-        return TypedResults.Created($"/api/genres/{created.Id}", created.ToResponse());
+        return TypedResults.Created($"/api/v1/genres/{created.Id}", created.ToResponse());
     }
 
     private static async Task<Results<Ok<GenreResponse>, NotFound, BadRequest>> UpdateAsync(

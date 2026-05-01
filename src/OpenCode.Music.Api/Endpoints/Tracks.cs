@@ -57,7 +57,7 @@ public static class Tracks
             IsStandalone = request.IsStandalone
         };
         var created = await repository.AddAsync(track);
-        return TypedResults.Created($"/api/tracks/{created.Id}", created.ToResponse());
+        return TypedResults.Created($"/api/v1/tracks/{created.Id}", created.ToResponse());
     }
 
     private static async Task<Results<Ok<TrackResponse>, NotFound, BadRequest>> UpdateAsync(

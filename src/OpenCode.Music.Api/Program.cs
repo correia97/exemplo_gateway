@@ -1,8 +1,8 @@
+using Asp.Versioning;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi;
 using OpenCode.Domain.Data;
 using OpenCode.Domain.Interfaces;
 using OpenCode.Music.Api.Auth;
@@ -25,7 +25,15 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddOpenApi();
+builder.Services.AddApiVersioning(options =>
+{
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+})
+.AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+})
+.AddOpenApi();
 
 builder.Services.AddProblemDetails(options =>
 {
@@ -78,7 +86,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapOpenApi();
+app.MapOpenApi().WithDocumentPerVersion();
 app.MapScalarApiReference(options =>
 {
     options.WithTitle("Music API");
@@ -88,18 +96,36 @@ app.MapScalarApiReference(options =>
         PreferredSecuritySchemes = new List<string> { "BearerAuth" }
     };
     options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+
+    var descriptions = app.DescribeApiVersions();
+    foreach (var description in descriptions)
+    {
+        options.AddDocument(description.GroupName, description.GroupName);
+    }
 });
 
-app.MapGroup("/api/genres")
-   .MapGenreEndpoints();
-app.MapGroup("/api/artists")
-   .MapArtistEndpoints();
-app.MapGroup("/api/albums")
-   .MapAlbumEndpoints();
-app.MapGroup("/api/tracks")
-   .MapTrackEndpoints();
+var genresApi = app.NewVersionedApi("Genres");
+var genresV1 = genresApi.MapGroup("api/v1/genres").HasApiVersion(1.0);
+genresV1.MapGenreEndpoints();
 
-app.MapGroup("/api")
-   .MapSeedEndpoints();
+var artistsApi = app.NewVersionedApi("Artists");
+var artistsV1 = artistsApi.MapGroup("api/v1/artists").HasApiVersion(1.0);
+artistsV1.MapArtistEndpoints();
+
+var albumsApi = app.NewVersionedApi("Albums");
+var albumsV1 = albumsApi.MapGroup("api/v1/albums").HasApiVersion(1.0);
+albumsV1.MapAlbumEndpoints();
+
+var tracksApi = app.NewVersionedApi("Tracks");
+var tracksV1 = tracksApi.MapGroup("api/v1/tracks").HasApiVersion(1.0);
+tracksV1.MapTrackEndpoints();
+
+var seedApi = app.NewVersionedApi("Seed");
+var seedV1 = seedApi.MapGroup("api/v1").HasApiVersion(1.0);
+seedV1.MapSeedEndpoints();
+
+var versionApi = app.NewVersionedApi("Version");
+var versionV1 = versionApi.MapGroup("api/v1").HasApiVersion(1.0);
+versionV1.MapVersionEndpoints();
 
 app.Run();

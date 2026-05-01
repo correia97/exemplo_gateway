@@ -66,7 +66,7 @@ public static class Characters
 
         var created = await repository.AddAsync(character);
         var full = await repository.GetByIdAsync(created.Id);
-        return TypedResults.Created($"/api/characters/{created.Id}", full!.ToResponse());
+        return TypedResults.Created($"/api/v1/characters/{created.Id}", full!.ToResponse());
     }
 
     private static async Task<Results<Ok<CharacterResponse>, NotFound, BadRequest>> UpdateAsync(

@@ -1,8 +1,8 @@
+using Asp.Versioning;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi;
 using OpenCode.Domain.Data;
 using OpenCode.Domain.Interfaces;
 using OpenCode.DragonBall.Api.Auth;
@@ -25,7 +25,15 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddOpenApi();
+builder.Services.AddApiVersioning(options =>
+{
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+})
+.AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+})
+.AddOpenApi();
 
 builder.Services.AddProblemDetails(options =>
 {
@@ -76,7 +84,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapOpenApi();
+app.MapOpenApi().WithDocumentPerVersion();
 app.MapScalarApiReference(options =>
 {
     options.WithTitle("Dragon Ball API");
@@ -86,13 +94,24 @@ app.MapScalarApiReference(options =>
         PreferredSecuritySchemes = new List<string> { "BearerAuth" }
     };
     options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
-    
+
+    var descriptions = app.DescribeApiVersions();
+    foreach (var description in descriptions)
+    {
+        options.AddDocument(description.GroupName, description.GroupName);
+    }
 });
 
-app.MapGroup("/api/characters")
-   .MapCharacterEndpoints();
+var charactersApi = app.NewVersionedApi("Characters");
+var charactersV1 = charactersApi.MapGroup("api/v1/characters").HasApiVersion(1.0);
+charactersV1.MapCharacterEndpoints();
 
-app.MapGroup("/api")
-   .MapSeedEndpoints();
+var seedApi = app.NewVersionedApi("Seed");
+var seedV1 = seedApi.MapGroup("api/v1").HasApiVersion(1.0);
+seedV1.MapSeedEndpoints();
+
+var versionApi = app.NewVersionedApi("Version");
+var versionV1 = versionApi.MapGroup("api/v1").HasApiVersion(1.0);
+versionV1.MapVersionEndpoints();
 
 app.Run();

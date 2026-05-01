@@ -62,7 +62,7 @@ public static class Albums
         var created = await repository.AddAsync(album);
 
         var fullAlbum = await repository.GetByIdWithArtistAsync(created.Id);
-        return TypedResults.Created($"/api/albums/{created.Id}", fullAlbum?.ToResponse() ?? created.ToResponse());
+        return TypedResults.Created($"/api/v1/albums/{created.Id}", fullAlbum?.ToResponse() ?? created.ToResponse());
     }
 
     private static async Task<Results<Ok<AlbumResponse>, NotFound, BadRequest>> UpdateAsync(
