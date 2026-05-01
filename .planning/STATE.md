@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-30T12:00:00.000Z"
+last_updated: "2026-05-01T02:59:13.026Z"
 progress:
   total_phases: 13
   completed_phases: 12
   total_plans: 48
-  completed_plans: 46
-  percent: 92
+  completed_plans: 47
+  percent: 98
 ---
 
 # Project State — All Milestones Complete
@@ -22,13 +22,11 @@ See: .planning/PROJECT.md (updated 2026-04-30)
 
 **Milestone v3.0 (Admin Panel & Management UI):** ✅ COMPLETE — Phase 12 delivered admin panels in both React and Angular with entity CRUD management, dashboard stats, delete confirmation, and dates-only audit — all frontend-only using existing CRUD endpoints.
 
-
-
 ## Current Position
 
-Phase 12 (Admin Panel) completed with both plans: 12-01 (React Admin Panel) ✅ and 12-02 (Angular Admin Panel) ✅.
+Phase 13 (Version Endpoints) in progress: 13-01 (API Versioning Infrastructure) ✅ complete. Plan 13-02 (Frontend & Test Updates) is remaining.
 
-All 12 phases completed.
+13 phases started, 12 completed.
 
 | Phase | Date | Plans | Status |
 |-------|------|-------|--------|
@@ -44,9 +42,9 @@ All 12 phases completed.
 | 10 — Unit Tests | 2026-04-29 | 7/7 | ✅ Complete |
 | 11 — TestContainers Integration | 2026-04-29 | 3/3 | ✅ Complete |
 | 12 — Admin Panel | 2026-05-01 | 2/2 | ✅ Complete |
-| 13 — Version Endpoints | — | 0/2 | 🟡 In Progress |
+| 13 — Version Endpoints | 2026-04-30 | 1/2 | 🟡 In Progress |
 
-Progress: [██████████░░] 92%
+Progress: [████████████████████] 98%
 
 ## Milestone v2.0 Summary — Testing & Quality
 
@@ -179,7 +177,7 @@ Key findings fixed across phases:
 **Velocity:**
 
 - Total plans: 48 (Phases 1-4: 4×4, 5: 4, 6: 3, 7: 4, 8: 3, 9: 4, 10: 7, 11: 3, 12: 2, 13: 2)
-- Total plans executed: 46 of 48
+- Total plans executed: 47 of 48
 - Average duration: ~5 min
 - Total execution time: ~220 min
 
@@ -199,9 +197,14 @@ Key findings fixed across phases:
 | 10 — Unit Tests | 7 | 7 | ~6 min |
 | 11 — TestContainers | 3 | 3 | ~8 min |
 | 12 — Admin Panel | 2 | 2 | ~4 min |
-| 13 — Version Endpoints | 2 | 0 | — |
+| 13 — Version Endpoints | 2 | 1 | ~15 min |
+| 13 — Version Endpoints | 1 | 1 | ~15 min |
 
 ## Decisions
+
+### Phase 13
+- **(13-01-01):** Use `HasApiVersion(1.0)` double literal instead of `"1.0"` string — Asp.Versioning.Http@10.0.0 overloads take double, int, or ApiVersion
+- **(13-01-02):** Use `AddDocument(name, title)` without `isDefault` — Scalar.AspNetCore 2.14.6 signature
 
 ### Architecture
 
@@ -306,9 +309,13 @@ The project validates that the full enterprise stack (.NET 10 + Aspire + Keycloa
 
 ## Next Steps
 
-### Phase 13 — Version Endpoints (⬜ Planned)
+### Phase 13 — Plan 02: Frontend & Test Updates (⬜ Planned)
 
-Add `/api/version` endpoints to both DragonBall and Music APIs exposing assembly metadata, runtime info, and basic health/dependency status. Kong routes must passthrough as public GET. Documented via Scalar with unit and integration test coverage.
+Update both frontend API clients (React + Angular) to use `/api/v1/*` paths and update existing test suites to reflect the versioned endpoint paths. Add new tests for version endpoint verification.
+
+### Phase 13 — Plan 01: API Versioning Infrastructure ✅ COMPLETE
+
+All endpoints migrated to `/api/v1/*`, version metadata endpoints created, versioned OpenAPI docs configured, Scalar version dropdown set up.
 
 ### Completed: Phase 12 — Admin Panel ✅ COMPLETE
 

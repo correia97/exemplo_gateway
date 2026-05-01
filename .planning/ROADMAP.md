@@ -18,7 +18,7 @@ A .NET 10 proof-of-concept with two independent CRUD APIs (Dragon Ball character
 - [x] **Phase 10: Unit Tests** - Validator tests, DTO mapping tests, service tests, middleware tests, auth tests
 - [x] **Phase 11: Integration Tests with TestContainers** - PostgreSQL integration tests with TestContainers for repositories, full API E2E
 - [x] **Phase 12: Admin Panel — Full CRUD Management UI (Both Frontends)** - Comprehensive admin panel in React and Angular with full CRUD management for all entities, dashboard stats, delete confirmation, and dates-only audit (2/2 plans complete)
-- [ ] **Phase 13: Version Endpoints** - Add `/api/version` endpoints to both APIs revealing assembly version, runtime info, and dependency status, with Kong route passthrough and documentation updates
+- [/] **Phase 13: Version Endpoints** - Asp.Versioning v10 API versioning infrastructure with `/api/v1/*` paths, version metadata endpoints, and versioned OpenAPI docs (1/2 plans complete)
 
 ## Phase Details
 
