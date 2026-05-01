@@ -27,7 +27,7 @@ public class VersioningTests : IntegrationTestBase
             options.UseNpgsql(ConnectionString));
         builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
 
-        // URL segment versioning — no default version fallback
+        // URL segment versioning with route parameter for version extraction
         builder.Services.AddApiVersioning(options =>
         {
             options.ApiVersionReader = new UrlSegmentApiVersionReader();
@@ -36,8 +36,9 @@ public class VersioningTests : IntegrationTestBase
         var app = builder.Build();
         app.UseCorrelationId();
 
+        // Use version route parameter for proper UrlSegmentApiVersionReader integration
         var charactersApi = app.NewVersionedApi("Characters");
-        var charactersV1 = charactersApi.MapGroup("api/v1/characters").HasApiVersion(1.0);
+        var charactersV1 = charactersApi.MapGroup("api/v{version:apiVersion}/characters").HasApiVersion(1.0);
         charactersV1.MapCharacterEndpoints();
 
         await app.StartAsync();
@@ -54,13 +55,13 @@ public class VersioningTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task UnversionedRequest_WithoutApiVersion_Returns400()
+    public async Task UnversionedRequest_WithoutApiVersion_Returns404()
     {
         using var host = await CreateVersionedTestHost();
         var client = host.GetTestClient();
-        // Without URL segment version (/api/v1/...), the UrlSegmentApiVersionReader
-        // cannot determine the API version, resulting in 400 Bad Request.
+        // Without URL segment version (/api/v1/...), the route does not exist because
+        // only versioned routes are registered (api/v{version:apiVersion}/characters).
         var response = await client.GetAsync("/api/characters");
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }

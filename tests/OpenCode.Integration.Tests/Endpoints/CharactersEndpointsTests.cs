@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
-using Asp.Versioning;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -29,20 +30,24 @@ public class CharactersEndpointsTests : IntegrationTestBase
             options.UseNpgsql(ConnectionString));
         builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
 
-        // Add Asp.Versioning for endpoint resolution
-        builder.Services.AddApiVersioning(options =>
+        // Auth middleware required by endpoint RequireAuthorization("ApiPolicy")
+        builder.Services.AddAuthentication(TestAuthHandler.AuthenticationScheme)
+            .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
+                TestAuthHandler.AuthenticationScheme, null);
+        builder.Services.AddAuthorization(options =>
         {
-            options.ApiVersionReader = new UrlSegmentApiVersionReader();
+            options.AddPolicy("ApiPolicy", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole("editor");
+            });
         });
 
         var app = builder.Build();
         app.UseCorrelationId();
-
-        // Versioned group registration
-        var charactersApi = app.NewVersionedApi("Characters");
-        var charactersV1 = charactersApi.MapGroup("api/v1/characters").HasApiVersion(1.0);
-        charactersV1.MapCharacterEndpoints();
-
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.MapGroup("/api/v1/characters").MapCharacterEndpoints();
         await app.StartAsync();
         return app;
     }

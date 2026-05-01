@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
-using Asp.Versioning;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -32,30 +33,27 @@ public class MusicEndpointsTests : IntegrationTestBase
         builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
         builder.Services.AddScoped<ITrackRepository, TrackRepository>();
 
-        builder.Services.AddApiVersioning(options =>
+        // Auth middleware required by endpoint RequireAuthorization("ApiPolicy")
+        builder.Services.AddAuthentication(TestAuthHandler.AuthenticationScheme)
+            .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
+                TestAuthHandler.AuthenticationScheme, null);
+        builder.Services.AddAuthorization(options =>
         {
-            options.ApiVersionReader = new UrlSegmentApiVersionReader();
+            options.AddPolicy("ApiPolicy", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole("editor");
+            });
         });
 
         var app = builder.Build();
         app.UseCorrelationId();
-
-        var genresApi = app.NewVersionedApi("Genres");
-        var genresV1 = genresApi.MapGroup("api/v1/genres").HasApiVersion(1.0);
-        genresV1.MapGenreEndpoints();
-
-        var artistsApi = app.NewVersionedApi("Artists");
-        var artistsV1 = artistsApi.MapGroup("api/v1/artists").HasApiVersion(1.0);
-        artistsV1.MapArtistEndpoints();
-
-        var albumsApi = app.NewVersionedApi("Albums");
-        var albumsV1 = albumsApi.MapGroup("api/v1/albums").HasApiVersion(1.0);
-        albumsV1.MapAlbumEndpoints();
-
-        var tracksApi = app.NewVersionedApi("Tracks");
-        var tracksV1 = tracksApi.MapGroup("api/v1/tracks").HasApiVersion(1.0);
-        tracksV1.MapTrackEndpoints();
-
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.MapGroup("/api/v1/genres").MapGenreEndpoints();
+        app.MapGroup("/api/v1/artists").MapArtistEndpoints();
+        app.MapGroup("/api/v1/albums").MapAlbumEndpoints();
+        app.MapGroup("/api/v1/tracks").MapTrackEndpoints();
         await app.StartAsync();
         return app;
     }
