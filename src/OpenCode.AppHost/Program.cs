@@ -121,7 +121,7 @@ var frontendAngular = builder.AddExecutable("angular-frontend", "npm", "../OpenC
     .WithExternalHttpEndpoints();
 
 // Backstage Developer Portal -- self-service API discovery
-var backstage = builder.AddContainer("backstage", "backstage", "latest")
+var backstage = builder.AddDockerfile("backstage", "../OpenCode.Backstage/backstage")
     .WithEnvironment("POSTGRES_HOST", "postgres")
     .WithEnvironment("POSTGRES_PORT", "5432")
     .WithEnvironment("POSTGRES_USER", "portal_user")

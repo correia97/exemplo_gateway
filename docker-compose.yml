@@ -197,6 +197,9 @@ services:
     # restart: unless-stopped
 
   backstage:
+    build:
+      context: src/OpenCode.Backstage/backstage
+      dockerfile: Dockerfile
     image: backstage:latest
     container_name: backstage
     depends_on:
