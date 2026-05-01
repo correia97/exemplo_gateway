@@ -10,8 +10,8 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./deploy/db/:/docker-entrypoint-initdb.d/
-    # ports:
-    #   - "5432:5432"    # Removed — database accessible only within the Docker network
+    ports:
+      - "5432:5432"    # PostgreSQL for host connections
     networks:
       - opencode-net
     # restart: unless-stopped
@@ -204,6 +204,8 @@ services:
         condition: service_healthy
       keycloak:
         condition: service_started
+      gateway:
+        condition: service_healthy
     ports:
       - "7007:7007"
     environment:
@@ -212,9 +214,13 @@ services:
       POSTGRES_USER: portal_user
       POSTGRES_PASSWORD: portal_pass
       POSTGRES_DB: opencode
+      KEYCLOAK_ISSUER: http://keycloak:8080/realms/OpenCode
+      KEYCLOAK_CLIENT_ID: backstage-portal
       AUTH_SESSION_SECRET: backstage-session-secret-dev
-      AUTH_OIDC_CLIENT_SECRET: backstage-oidc-client-secret-dev
+      AUTH_OIDC_CLIENT_SECRET: placeholder-not-used
       TZ: America/Sao_Paulo
+    volumes:
+      - ./deploy/backstage:/app/catalog:ro
     networks:
       - opencode-net
     healthcheck:
