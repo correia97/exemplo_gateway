@@ -1,0 +1,52 @@
+@if (isLoading) {
+  <div class="p-8 text-center text-gray-400">Loading...</div>
+} @else {
+  <div class="mb-4">
+    <input type="text" [(ngModel)]="search" placeholder="Search..."
+      class="w-full p-2 border rounded text-sm" />
+  </div>
+  <table class="w-full border-collapse">
+    <thead>
+      <tr class="bg-gray-100 text-left">
+        @for (col of columns; track col.key) {
+          <th class="p-3 border-b-2 border-gray-300 text-sm font-semibold"
+            [class.cursor-pointer]="col.sortable"
+            [class.hover:bg-gray-200]="col.sortable"
+            (click)="col.sortable && toggleSort(col.key)">
+            {{ col.label }}
+            @if (sortKey === col.key) {
+              <span>{{ sortDir === 'asc' ? ' ▲' : ' ▼' }}</span>
+            }
+          </th>
+        }
+        <th class="p-3 border-b-2 border-gray-300 text-sm font-semibold">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of sortedData; track keyExtractor(item)) {
+        <tr class="border-b border-gray-200 hover:bg-gray-50">
+          @for (col of columns; track col.key) {
+            <td class="p-2.5 px-3 text-sm">
+              {{ col.render ? col.render(item) : item[col.key] ?? '' }}
+            </td>
+          }
+          <td class="p-2.5 px-3">
+            <div class="flex gap-2">
+              <button (click)="edit.emit(item)"
+                class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600">
+                Edit
+              </button>
+              <button (click)="delete.emit(item)"
+                class="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  <div class="mt-4">
+    <app-pagination [page]="page" [totalPages]="totalPages" (pageChange)="pageChange.emit($event)"></app-pagination>
+  </div>
+}
