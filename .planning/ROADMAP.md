@@ -19,6 +19,7 @@ A .NET 10 proof-of-concept with two independent CRUD APIs (Dragon Ball character
 - [x] **Phase 11: Integration Tests with TestContainers** - PostgreSQL integration tests with TestContainers for repositories, full API E2E
 - [x] **Phase 12: Admin Panel — Full CRUD Management UI (Both Frontends)** - Comprehensive admin panel in React and Angular with full CRUD management for all entities, dashboard stats, delete confirmation, and dates-only audit (2/2 plans complete)
 - [x] **Phase 13: Version Endpoints** - Asp.Versioning v10 API versioning infrastructure with `/api/v1/*` paths, version metadata endpoints, versioned OpenAPI docs, both frontend API clients updated, integration tests migrated, and versioning-specific tests added (2/2 plans complete)
+- [ ] **Phase 14: API Developer Portal with Backstage.io** - Keycloak OIDC auth replacing guest auth, real API catalog entities (Domain->System->Component->API), Aspire + Docker Compose wiring fixes, credentials guide
 
 ## Phase Details
 
@@ -169,7 +170,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → 14
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -186,6 +187,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 11. TestContainers Integration | 3/3 | ✅ Complete | 2014-04-29 |
 | 12. Admin Panel | 2/2 | ✅ Complete | 2014-05-01 |
 | 13. Version Endpoints | 2/2 | ✅ Complete | 2014-05-01 |
+| 14. API Developer Portal | 0/3 | In Progress | -- |
 
 ### Phase 9: Angular Frontend (**COMPLETED**)
 
@@ -249,7 +251,7 @@ Plans:
 - [x] 12-01: React admin panel — AdminLayout, AdminTable, ConfirmDialog, DashboardPage, 5 entity CRUD pages (Characters, Genres, Artists, Albums, Tracks), admin route guard. All using existing CRUD endpoints — no backend changes
 - [x] 12-02: Angular admin panel — AdminLayoutComponent, AdminTableComponent, ConfirmDialogComponent, DashboardComponent, 5 entity CRUD components (full parity with React). All using existing CRUD endpoints — no backend changes
 
-### Phase 13: Version Endpoints (**IN PROGRESS**)
+### Phase 13: Version Endpoints (**COMPLETED**)
 
 **Goal:** Implement .NET 10 API versioning across both APIs using Asp.Versioning v10 with URL path versioning (`/api/v1/*`). Migrate all existing endpoints, add version metadata endpoints, update Scalar for versioned OpenAPI docs, update both frontends and test suites. No Kong config changes needed (existing routes handle `/api/v1/*` naturally).
 
@@ -267,9 +269,26 @@ Plans:
   7. Both React and Angular frontend API clients use `/api/v1/*` paths
   8. Integration tests verify versioned request resolution and unversioned rejection
 
-**Plans:** 2 plans — **all planned**
+**Plans:** 2 plans — **all executed**
 
 Plans:
 - [x] 13-01: Backend API versioning infrastructure — NuGet packages, AddApiVersioning + AddApiExplorer + AddOpenApi chain, NewVersionedApi() endpoint registrations, Scalar versioned docs, /api/v1/version metadata endpoints, Created() path updates
 - [x] 13-02: Frontend + test updates — React API client paths, Angular API services, Angular admin component Kong paths, integration test versioned paths, new VersioningTests.cs with resolution + rejection tests
 
+
+### Phase 14: API Developer Portal with Backstage.io
+
+**Goal:** Complete the Backstage.io developer portal with Keycloak OIDC authentication replacing guest auth, real API catalog entities (Domain->System->Component->API hierarchy) for DragonBall and Music APIs with live OpenAPI spec links, static credentials guide, and correct Aspire + Docker Compose wiring
+**Requirements**: PORTAL-01, PORTAL-02, PORTAL-03, PORTAL-04, PORTAL-05, PORTAL-06, PORTAL-07, PORTAL-08
+**Depends on:** Phase 13
+**Success Criteria** (what must be TRUE):
+  1. Backstage portal requires Keycloak OIDC login (no guest auth bypass)
+  2. Catalog shows Domain (opencode-platform), Systems (dragonball-system, music-system), Components, and APIs with live OpenAPI specs
+  3. Both Aspire AppHost and Docker Compose can start Backstage with correct OIDC auth and catalog configuration
+  4. Domain entity description contains "How to Get API Credentials" guide
+**Plans:** 3 plans
+
+Plans:
+- [ ] 14-01-PLAN.md -- OIDC auth config replacing guest auth, catalog rules with Domain, catalog locations for real entities
+- [ ] 14-02-PLAN.md -- Catalog entity YAML (Domain, Systems, Components, APIs) with credentials guide
+- [ ] 14-03-PLAN.md -- Aspire AppHost and Docker Compose wiring fixes (image tag, ports, env vars, volume mounts)
