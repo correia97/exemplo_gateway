@@ -22,7 +22,7 @@ interface AdminTableProps<T> {
   onPageChange: (page: number) => void
 }
 
-export default function AdminTable<T extends Record<string, unknown>>({
+export default function AdminTable<T extends object>({
   columns, data, keyExtractor, onEdit, onDelete,
   isLoading, page, totalPages, onPageChange,
 }: AdminTableProps<T>) {
@@ -35,7 +35,8 @@ export default function AdminTable<T extends Record<string, unknown>>({
     const q = search.toLowerCase()
     return data.filter(item =>
       columns.some(col => {
-        const val = item[col.key]
+        const record = item as Record<string, unknown>
+        const val = record[col.key]
         return val != null && String(val).toLowerCase().includes(q)
       })
     )
@@ -44,7 +45,9 @@ export default function AdminTable<T extends Record<string, unknown>>({
   const sorted = useMemo(() => {
     if (!sortKey) return filtered
     return [...filtered].sort((a, b) => {
-      const aVal = a[sortKey]; const bVal = b[sortKey]
+      const aRecord = a as Record<string, unknown>
+      const bRecord = b as Record<string, unknown>
+      const aVal = aRecord[sortKey]; const bVal = bRecord[sortKey]
       if (aVal == null) return 1; if (bVal == null) return -1
       const cmp = String(aVal).localeCompare(String(bVal))
       return sortDir === 'asc' ? cmp : -cmp
@@ -86,7 +89,7 @@ export default function AdminTable<T extends Record<string, unknown>>({
             <tr key={keyExtractor(item)} className="border-b border-gray-200 hover:bg-gray-50">
               {columns.map(col => (
                 <td key={col.key} className="p-2.5 px-3">
-                  {col.render ? col.render(item) : String(item[col.key] ?? '')}
+                  {col.render ? col.render(item) : String((item as Record<string, unknown>)[col.key] ?? '')}
                 </td>
               ))}
               {(onEdit || onDelete) && (
