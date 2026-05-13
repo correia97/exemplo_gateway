@@ -1135,12 +1135,10 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "http://localhost:7007/api/auth/oidc/handler/frame",
-        "http://localhost:3000/*"
+        "http://localhost:7007/api/auth/oidc/handler/frame"
       ],
       "webOrigins": [
-        "http://localhost:7007",
-        "http://localhost:3000"
+        "http://localhost:7007"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -1149,7 +1147,7 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
-      "publicClient": true,
+      "publicClient": false,
       "frontchannelLogout": true,
       "protocol": "openid-connect",
       "attributes": {
@@ -1225,7 +1223,8 @@
         "offline_access",
         "organization",
         "microprofile-jwt"
-      ]
+      ],
+      "secret": "9eFTrbaqxy9CTxaLkMmBClsthoL56ziQ"
     }
   ],
   "clientScopes": [

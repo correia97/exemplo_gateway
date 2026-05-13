@@ -46,7 +46,10 @@ services:
       KC_DB_PASSWORD: keycloak_pass
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_HOSTNAME: localhost   
+      KC_HOSTNAME: http://localhost:8080
+      # Hostname v2 (Keycloak 26+): dynamic backchannel uses the request host,
+      # so devportal -> keycloak:8080 works alongside the browser-facing localhost:8080.
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
       TZ: America/Sao_Paulo
     command:
       - "start-dev"
@@ -262,6 +265,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      keycloak:
+        condition: service_healthy
       gateway:
         condition: service_started
     ports:
@@ -275,6 +280,12 @@ services:
       POSTGRES_DB: opencode
       POSTGRES_USER: portal_user
       POSTGRES_PASSWORD: portal_pass
+      # Keycloak OIDC — frontchannel uses localhost:8080 (browser), backchannel
+      # uses keycloak:8080 (container). Requires KC_HOSTNAME_STRICT_BACKCHANNEL=false.
+      AUTH_OIDC_METADATA_URL: http://keycloak:8080/realms/OpenCode/.well-known/openid-configuration
+      AUTH_OIDC_CLIENT_ID: backstage-portal
+      AUTH_OIDC_CLIENT_SECRET: 9eFTrbaqxy9CTxaLkMmBClsthoL56ziQ
+      AUTH_SESSION_SECRET: dev-only-session-secret-change-in-prod
       TZ: America/Sao_Paulo
     networks:
       - opencode-net

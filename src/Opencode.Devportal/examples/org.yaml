@@ -7,6 +7,18 @@ metadata:
 spec:
   memberOf: [guests]
 ---
+# Matches the Keycloak `dev` user (email dev@opencode.local) so the
+# `emailLocalPartMatchingUserEntityName` resolver can sign them in.
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: dev
+spec:
+  profile:
+    displayName: Dev User
+    email: dev@opencode.local
+  memberOf: [guests]
+---
 # https://backstage.io/docs/features/software-catalog/descriptor-format#kind-group
 apiVersion: backstage.io/v1alpha1
 kind: Group

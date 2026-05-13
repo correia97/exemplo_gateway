@@ -23,12 +23,28 @@ backend:
       password: ${POSTGRES_PASSWORD}
       database: ${POSTGRES_DB}
 
+# Auth — see https://backstage.io/docs/getting-started/config/authentication
+# Keycloak via generic OIDC provider. metadataUrl uses the in-network keycloak hostname;
+# Keycloak's frontchannel URLs (auth endpoint) point at localhost:8080 (browser-reachable)
+# while backchannel URLs (token/jwks) match the request host so devportal can reach them
+# (KC_HOSTNAME_STRICT_BACKCHANNEL=false on the keycloak service).
 auth:
-  # Guest provider is enabled because this dev portal runs locally for development.
-  # Remove `dangerouslyAllowOutsideDevelopment` if deploying to a real environment.
+  # Explicit environment so the frontend and backend agree on which provider
+  # block to use (frontend's OAuth2 defaults to 'development' otherwise).
+  environment: production
+  session:
+    secret: ${AUTH_SESSION_SECRET}
   providers:
-    guest:
-      dangerouslyAllowOutsideDevelopment: true
+    oidc:
+      production:
+        metadataUrl: ${AUTH_OIDC_METADATA_URL}
+        clientId: ${AUTH_OIDC_CLIENT_ID}
+        clientSecret: ${AUTH_OIDC_CLIENT_SECRET}
+        prompt: auto
+        signIn:
+          resolvers:
+            - resolver: emailLocalPartMatchingUserEntityName
+            - resolver: emailMatchingUserEntityProfileEmail
 
 catalog:
   # Locations are resolved relative to the backend process working directory
