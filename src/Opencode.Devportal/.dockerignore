@@ -1,0 +1,13 @@
+.git
+.yarn/cache
+.yarn/install-state.gz
+node_modules
+packages/*/node_modules
+plugins/*/node_modules
+*.local.yaml
+packages/backend/dist
+packages/app/dist
+.next
+coverage
+playwright-report
+test-results
