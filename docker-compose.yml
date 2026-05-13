@@ -260,12 +260,21 @@ services:
       dockerfile: Dockerfile
     container_name: devportal
     depends_on:
-      - gateway
+      postgres:
+        condition: service_healthy
+      gateway:
+        condition: service_started
     ports:
       - "7007:7007"
     environment:
       BACKSTAGE_BASE_URL: http://localhost:7007
       NODE_ENV: production
+      # Postgres connection (see deploy/db/init.sql for schema and user provisioning)
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: opencode
+      POSTGRES_USER: portal_user
+      POSTGRES_PASSWORD: portal_pass
       TZ: America/Sao_Paulo
     networks:
       - opencode-net

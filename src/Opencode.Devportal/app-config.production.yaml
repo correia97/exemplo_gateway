@@ -9,11 +9,19 @@ backend:
     origin: ${BACKSTAGE_BASE_URL:-http://localhost:7007}
     methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
     credentials: true
-  # In-memory SQLite — keeps the container self-contained and stateless.
-  # Swap to `pg` (with POSTGRES_* env vars) for persistence.
+  # Backstage Postgres setup — see https://backstage.io/docs/getting-started/config/database
+  # `pluginDivisionMode: schema` puts each plugin in its own schema (catalog, auth, scaffolder, ...)
+  # inside the same `opencode` database. portal_user needs CREATE on the DB to provision them
+  # (see deploy/db/init.sql).
   database:
-    client: better-sqlite3
-    connection: ':memory:'
+    client: pg
+    pluginDivisionMode: schema
+    connection:
+      host: ${POSTGRES_HOST}
+      port: ${POSTGRES_PORT}
+      user: ${POSTGRES_USER}
+      password: ${POSTGRES_PASSWORD}
+      database: ${POSTGRES_DB}
 
 auth:
   # Guest provider is enabled because this dev portal runs locally for development.

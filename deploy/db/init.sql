@@ -86,7 +86,7 @@ GRANT CONNECT ON DATABASE opencode TO kong_user;
 GRANT CONNECT ON DATABASE opencode TO portal_user;
 
 -- ============================================================
--- GRANTS -- Portal schema
+-- GRANTS -- Portal schema (legacy / reserved for app-level data)
 -- ============================================================
 
 GRANT USAGE ON SCHEMA portal TO portal_user;
@@ -95,6 +95,11 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA portal TO portal_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA portal GRANT ALL ON TABLES TO portal_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA portal GRANT ALL ON SEQUENCES TO portal_user;
 GRANT ALL PRIVILEGES ON SCHEMA portal TO portal_user;
+
+-- Backstage uses `pluginDivisionMode: schema` and creates one schema per plugin
+-- (catalog, auth, scaffolder, search, techdocs, signals, app, ...).
+-- portal_user needs CREATE on the database to provision those schemas.
+GRANT CREATE ON DATABASE opencode TO portal_user;
 
 -- ============================================================
 -- GRANTS -- Kong (uses public schema)
