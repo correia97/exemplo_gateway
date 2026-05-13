@@ -1,0 +1,2553 @@
+---
+# OpenCode APIs exposed via Kong API Gateway
+# See deploy/kong/init-routes.sh for the upstream route definitions.
+# OpenAPI specs are inlined (regenerate via examples/inline-kong-apis.mjs).
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: opencode-platform
+  description: OpenCode backend services exposed through the Kong API Gateway.
+  tags:
+    - opencode
+    - kong
+  links:
+    - url: http://localhost:8002
+      title: Kong Manager
+    - url: http://localhost:8001
+      title: Kong Admin API
+spec:
+  owner: guests
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: kong-gateway
+  description: |
+    Kong API Gateway (3.9.1) — fronts the OpenCode backend APIs.
+    Routes /api/dragonball and /api/music with OIDC (Keycloak) + CORS plugins.
+  tags:
+    - gateway
+    - kong
+  links:
+    - url: http://localhost:8000
+      title: Proxy (public)
+    - url: http://localhost:8001
+      title: Admin API
+    - url: http://localhost:8002
+      title: Kong Manager UI
+spec:
+  type: api-gateway
+  owner: guests
+  system: opencode-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: dragonball-service
+  description: .NET 8 service that powers the DragonBall characters catalog.
+  tags:
+    - dotnet
+    - postgres
+  annotations:
+    backstage.io/source-location: url:https://github.com/opencode/opencodeDeepseek/tree/main/src/OpenCode.DragonBall.Api
+  links:
+    - url: http://localhost:5000/openapi/v1.json
+      title: OpenAPI spec (direct)
+    - url: http://localhost:8000/api/dragonball
+      title: Public endpoint (via Kong)
+spec:
+  type: service
+  lifecycle: production
+  owner: guests
+  system: opencode-platform
+  providesApis:
+    - dragonball-api
+  dependsOn:
+    - resource:kong-gateway
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: music-service
+  description: .NET 8 service that powers the Music catalog (genres, artists, albums).
+  tags:
+    - dotnet
+    - postgres
+  annotations:
+    backstage.io/source-location: url:https://github.com/opencode/opencodeDeepseek/tree/main/src/OpenCode.Music.Api
+  links:
+    - url: http://localhost:5002/openapi/v1.json
+      title: OpenAPI spec (direct)
+    - url: http://localhost:8000/api/music
+      title: Public endpoint (via Kong)
+spec:
+  type: service
+  lifecycle: production
+  owner: guests
+  system: opencode-platform
+  providesApis:
+    - music-api
+  dependsOn:
+    - resource:kong-gateway
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: dragonball-api
+  description: |
+    DragonBall Characters API — exposed publicly via Kong at /api/dragonball.
+    Authentication: Bearer token (Keycloak realm 'opencode', client 'kong-gateway').
+  tags:
+    - rest
+    - openapi
+    - kong
+  links:
+    - url: http://localhost:8000/api/dragonball
+      title: Public endpoint (via Kong)
+    - url: http://localhost:5000/openapi/v1.json
+      title: Raw OpenAPI JSON
+spec:
+  type: openapi
+  lifecycle: production
+  owner: guests
+  system: opencode-platform
+  definition: |
+    {
+      "openapi": "3.1.1",
+      "info": {
+        "title": "OpenCode.DragonBall.Api | v1",
+        "description": "",
+        "version": "1.0"
+      },
+      "servers": [
+        {
+          "url": "http://localhost:5000/"
+        }
+      ],
+      "paths": {
+        "/api/v1/characters": {
+          "get": {
+            "tags": [
+              "Characters"
+            ],
+            "parameters": [
+              {
+                "name": "Name",
+                "in": "query",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "Race",
+                "in": "query",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "MinKi",
+                "in": "query",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "MaxKi",
+                "in": "query",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "PlanetId",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32"
+                }
+              },
+              {
+                "name": "Page",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 1
+                }
+              },
+              {
+                "name": "PageSize",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 10
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/PagedResultOfCharacterResponse"
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          },
+          "post": {
+            "tags": [
+              "Characters"
+            ],
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CreateCharacterRequest"
+                  }
+                }
+              },
+              "required": true
+            },
+            "responses": {
+              "201": {
+                "description": "Created",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/CharacterResponse"
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          }
+        },
+        "/api/v1/characters/{id}": {
+          "get": {
+            "tags": [
+              "Characters"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/CharacterResponse"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found"
+              }
+            }
+          },
+          "put": {
+            "tags": [
+              "Characters"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UpdateCharacterRequest"
+                  }
+                }
+              },
+              "required": true
+            },
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/CharacterResponse"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found"
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          },
+          "delete": {
+            "tags": [
+              "Characters"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "responses": {
+              "204": {
+                "description": "No Content"
+              },
+              "404": {
+                "description": "Not Found"
+              }
+            }
+          }
+        },
+        "/api/v1/seed": {
+          "post": {
+            "tags": [
+              "Seed"
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Bad Request",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/api/v1/version": {
+          "get": {
+            "tags": [
+              "Version"
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/VersionResponse"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/health": {
+          "get": {
+            "tags": [
+              "OpenCode.DragonBall.Api"
+            ],
+            "responses": {
+              "200": {
+                "description": "OK"
+              }
+            }
+          }
+        }
+      },
+      "components": {
+        "schemas": {
+          "CharacterResponse": {
+            "required": [
+              "id",
+              "name",
+              "race",
+              "ki",
+              "maxKi",
+              "description",
+              "imageUrl",
+              "planet",
+              "transformations",
+              "isEarthling",
+              "introductionPhase",
+              "createdAt",
+              "updatedAt"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "name": {
+                "type": "string"
+              },
+              "race": {
+                "type": "string"
+              },
+              "ki": {
+                "type": "string"
+              },
+              "maxKi": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "description": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "imageUrl": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "planet": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PlanetResponse"
+                  }
+                ]
+              },
+              "transformations": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TransformationResponse"
+                }
+              },
+              "isEarthling": {
+                "type": "boolean"
+              },
+              "introductionPhase": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "CreateCharacterRequest": {
+            "required": [
+              "name",
+              "race",
+              "ki",
+              "maxKi",
+              "description",
+              "pictureUrl",
+              "planetId"
+            ],
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "race": {
+                "type": "string"
+              },
+              "ki": {
+                "type": "string"
+              },
+              "maxKi": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "description": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "pictureUrl": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "planetId": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "null",
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "isEarthling": {
+                "type": "boolean",
+                "default": false
+              },
+              "introductionPhase": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              }
+            }
+          },
+          "PagedResultOfCharacterResponse": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CharacterResponse"
+                }
+              },
+              "totalCount": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "page": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "pageSize": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "totalPages": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              }
+            }
+          },
+          "PlanetResponse": {
+            "required": [
+              "id",
+              "name"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "TransformationResponse": {
+            "required": [
+              "id",
+              "name",
+              "ki",
+              "description",
+              "imageUrl"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "name": {
+                "type": "string"
+              },
+              "ki": {
+                "type": "string"
+              },
+              "description": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "imageUrl": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              }
+            }
+          },
+          "UpdateCharacterRequest": {
+            "required": [
+              "name",
+              "race",
+              "ki",
+              "maxKi",
+              "description",
+              "pictureUrl",
+              "planetId"
+            ],
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "race": {
+                "type": "string"
+              },
+              "ki": {
+                "type": "string"
+              },
+              "maxKi": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "description": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "pictureUrl": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "planetId": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "null",
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "isEarthling": {
+                "type": "boolean",
+                "default": false
+              },
+              "introductionPhase": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              }
+            }
+          },
+          "VersionResponse": {
+            "required": [
+              "apiName",
+              "assemblyVersion",
+              "runtimeVersion",
+              "osDescription",
+              "processArchitecture",
+              "environmentName",
+              "status"
+            ],
+            "type": "object",
+            "properties": {
+              "apiName": {
+                "type": "string"
+              },
+              "assemblyVersion": {
+                "type": "string"
+              },
+              "runtimeVersion": {
+                "type": "string"
+              },
+              "osDescription": {
+                "type": "string"
+              },
+              "processArchitecture": {
+                "type": "string"
+              },
+              "environmentName": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "tags": [
+        {
+          "name": "Characters"
+        },
+        {
+          "name": "Seed"
+        },
+        {
+          "name": "Version"
+        },
+        {
+          "name": "OpenCode.DragonBall.Api"
+        }
+      ]
+    }
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: music-api
+  description: |
+    Music catalog API — exposed publicly via Kong at /api/music.
+    Authentication: Bearer token (Keycloak realm 'opencode', client 'kong-gateway').
+  tags:
+    - rest
+    - openapi
+    - kong
+  links:
+    - url: http://localhost:8000/api/music
+      title: Public endpoint (via Kong)
+    - url: http://localhost:5002/openapi/v1.json
+      title: Raw OpenAPI JSON
+spec:
+  type: openapi
+  lifecycle: production
+  owner: guests
+  system: opencode-platform
+  definition: |
+    {
+      "openapi": "3.1.1",
+      "info": {
+        "title": "OpenCode.Music.Api | v1",
+        "description": "",
+        "version": "1.0"
+      },
+      "servers": [
+        {
+          "url": "http://localhost:5002/"
+        }
+      ],
+      "paths": {
+        "/api/v1/genres": {
+          "get": {
+            "tags": [
+              "Genres"
+            ],
+            "parameters": [
+              {
+                "name": "Name",
+                "in": "query",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "Page",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 1
+                }
+              },
+              {
+                "name": "PageSize",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 10
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/PagedResultOfGenreResponse"
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          },
+          "post": {
+            "tags": [
+              "Genres"
+            ],
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CreateGenreRequest"
+                  }
+                }
+              },
+              "required": true
+            },
+            "responses": {
+              "201": {
+                "description": "Created",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/GenreResponse"
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          }
+        },
+        "/api/v1/genres/{id}": {
+          "get": {
+            "tags": [
+              "Genres"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/GenreResponse"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found"
+              }
+            }
+          },
+          "put": {
+            "tags": [
+              "Genres"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UpdateGenreRequest"
+                  }
+                }
+              },
+              "required": true
+            },
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/GenreResponse"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found"
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          },
+          "delete": {
+            "tags": [
+              "Genres"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "responses": {
+              "204": {
+                "description": "No Content"
+              },
+              "404": {
+                "description": "Not Found"
+              }
+            }
+          }
+        },
+        "/api/v1/artists": {
+          "get": {
+            "tags": [
+              "Artists"
+            ],
+            "parameters": [
+              {
+                "name": "Name",
+                "in": "query",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "GenreId",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32"
+                }
+              },
+              {
+                "name": "Page",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 1
+                }
+              },
+              {
+                "name": "PageSize",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 10
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/PagedResultOfArtistResponse"
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          },
+          "post": {
+            "tags": [
+              "Artists"
+            ],
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CreateArtistRequest"
+                  }
+                }
+              },
+              "required": true
+            },
+            "responses": {
+              "201": {
+                "description": "Created",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ArtistResponse"
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          }
+        },
+        "/api/v1/artists/{id}": {
+          "get": {
+            "tags": [
+              "Artists"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ArtistResponse"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found"
+              }
+            }
+          },
+          "put": {
+            "tags": [
+              "Artists"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UpdateArtistRequest"
+                  }
+                }
+              },
+              "required": true
+            },
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ArtistResponse"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found"
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          },
+          "delete": {
+            "tags": [
+              "Artists"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "responses": {
+              "204": {
+                "description": "No Content"
+              },
+              "404": {
+                "description": "Not Found"
+              }
+            }
+          }
+        },
+        "/api/v1/artists/{artistId}/albums": {
+          "get": {
+            "tags": [
+              "Artists"
+            ],
+            "parameters": [
+              {
+                "name": "artistId",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              {
+                "name": "page",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 1
+                }
+              },
+              {
+                "name": "pageSize",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 10
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/PagedResultOfAlbumResponse"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found"
+              }
+            }
+          }
+        },
+        "/api/v1/albums": {
+          "get": {
+            "tags": [
+              "Albums"
+            ],
+            "parameters": [
+              {
+                "name": "Title",
+                "in": "query",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "ArtistId",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32"
+                }
+              },
+              {
+                "name": "GenreId",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32"
+                }
+              },
+              {
+                "name": "ReleaseDateFrom",
+                "in": "query",
+                "schema": {
+                  "type": "string",
+                  "format": "date"
+                }
+              },
+              {
+                "name": "ReleaseDateTo",
+                "in": "query",
+                "schema": {
+                  "type": "string",
+                  "format": "date"
+                }
+              },
+              {
+                "name": "Page",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 1
+                }
+              },
+              {
+                "name": "PageSize",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 10
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/PagedResultOfAlbumResponse"
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          },
+          "post": {
+            "tags": [
+              "Albums"
+            ],
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CreateAlbumRequest"
+                  }
+                }
+              },
+              "required": true
+            },
+            "responses": {
+              "201": {
+                "description": "Created",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/AlbumResponse"
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          }
+        },
+        "/api/v1/albums/{id}": {
+          "get": {
+            "tags": [
+              "Albums"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/AlbumResponse"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found"
+              }
+            }
+          },
+          "put": {
+            "tags": [
+              "Albums"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UpdateAlbumRequest"
+                  }
+                }
+              },
+              "required": true
+            },
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/AlbumResponse"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found"
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          },
+          "delete": {
+            "tags": [
+              "Albums"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "responses": {
+              "204": {
+                "description": "No Content"
+              },
+              "404": {
+                "description": "Not Found"
+              }
+            }
+          }
+        },
+        "/api/v1/albums/{albumId}/tracks": {
+          "get": {
+            "tags": [
+              "Albums"
+            ],
+            "parameters": [
+              {
+                "name": "albumId",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              {
+                "name": "page",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 1
+                }
+              },
+              {
+                "name": "pageSize",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 10
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/PagedResultOfTrackResponse"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found"
+              }
+            }
+          }
+        },
+        "/api/v1/tracks": {
+          "get": {
+            "tags": [
+              "Tracks"
+            ],
+            "parameters": [
+              {
+                "name": "Name",
+                "in": "query",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "AlbumId",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32"
+                }
+              },
+              {
+                "name": "Page",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 1
+                }
+              },
+              {
+                "name": "PageSize",
+                "in": "query",
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32",
+                  "default": 10
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/PagedResultOfTrackResponse"
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          },
+          "post": {
+            "tags": [
+              "Tracks"
+            ],
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CreateTrackRequest"
+                  }
+                }
+              },
+              "required": true
+            },
+            "responses": {
+              "201": {
+                "description": "Created",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/TrackResponse"
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          }
+        },
+        "/api/v1/tracks/{id}": {
+          "get": {
+            "tags": [
+              "Tracks"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/TrackResponse"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found"
+              }
+            }
+          },
+          "put": {
+            "tags": [
+              "Tracks"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UpdateTrackRequest"
+                  }
+                }
+              },
+              "required": true
+            },
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/TrackResponse"
+                    }
+                  }
+                }
+              },
+              "404": {
+                "description": "Not Found"
+              },
+              "400": {
+                "description": "Bad Request"
+              }
+            }
+          },
+          "delete": {
+            "tags": [
+              "Tracks"
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            ],
+            "responses": {
+              "204": {
+                "description": "No Content"
+              },
+              "404": {
+                "description": "Not Found"
+              }
+            }
+          }
+        },
+        "/api/v1/seed": {
+          "post": {
+            "tags": [
+              "Seed"
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Bad Request",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/api/v1/version": {
+          "get": {
+            "tags": [
+              "Version"
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/VersionResponse"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/health": {
+          "get": {
+            "tags": [
+              "OpenCode.Music.Api"
+            ],
+            "responses": {
+              "200": {
+                "description": "OK"
+              }
+            }
+          }
+        }
+      },
+      "components": {
+        "schemas": {
+          "AlbumResponse": {
+            "required": [
+              "id",
+              "title",
+              "releaseDate",
+              "coverUrl",
+              "artistId",
+              "artistName",
+              "createdAt",
+              "updatedAt"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "title": {
+                "type": "string"
+              },
+              "releaseDate": {
+                "type": [
+                  "null",
+                  "string"
+                ],
+                "format": "date"
+              },
+              "coverUrl": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "artistId": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "artistName": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "ArtistResponse": {
+            "required": [
+              "id",
+              "name",
+              "biography",
+              "genres",
+              "createdAt",
+              "updatedAt"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "name": {
+                "type": "string"
+              },
+              "biography": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "genres": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GenreSummary"
+                }
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "CreateAlbumRequest": {
+            "required": [
+              "title",
+              "releaseDate",
+              "coverUrl",
+              "artistId"
+            ],
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "releaseDate": {
+                "type": [
+                  "null",
+                  "string"
+                ],
+                "format": "date"
+              },
+              "coverUrl": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "artistId": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              }
+            }
+          },
+          "CreateArtistRequest": {
+            "required": [
+              "name",
+              "biography",
+              "genreIds"
+            ],
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "biography": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "genreIds": {
+                "type": [
+                  "null",
+                  "array"
+                ],
+                "items": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32"
+                }
+              }
+            }
+          },
+          "CreateGenreRequest": {
+            "required": [
+              "name",
+              "description"
+            ],
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              }
+            }
+          },
+          "CreateTrackRequest": {
+            "required": [
+              "name",
+              "trackNumber",
+              "duration",
+              "lyrics",
+              "albumId",
+              "isStandalone"
+            ],
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "trackNumber": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "duration": {
+                "pattern": "^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$",
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "lyrics": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "albumId": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "null",
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "isStandalone": {
+                "type": "boolean"
+              }
+            }
+          },
+          "GenreResponse": {
+            "required": [
+              "id",
+              "name",
+              "description",
+              "createdAt",
+              "updatedAt"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "GenreSummary": {
+            "required": [
+              "id",
+              "name"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "PagedResultOfAlbumResponse": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AlbumResponse"
+                }
+              },
+              "totalCount": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "page": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "pageSize": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "totalPages": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              }
+            }
+          },
+          "PagedResultOfArtistResponse": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ArtistResponse"
+                }
+              },
+              "totalCount": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "page": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "pageSize": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "totalPages": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              }
+            }
+          },
+          "PagedResultOfGenreResponse": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GenreResponse"
+                }
+              },
+              "totalCount": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "page": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "pageSize": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "totalPages": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              }
+            }
+          },
+          "PagedResultOfTrackResponse": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TrackResponse"
+                }
+              },
+              "totalCount": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "page": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "pageSize": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "totalPages": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              }
+            }
+          },
+          "TrackResponse": {
+            "required": [
+              "id",
+              "name",
+              "trackNumber",
+              "duration",
+              "lyrics",
+              "albumId",
+              "albumTitle",
+              "isStandalone",
+              "createdAt",
+              "updatedAt"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "name": {
+                "type": "string"
+              },
+              "trackNumber": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "duration": {
+                "pattern": "^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$",
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "lyrics": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "albumId": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "null",
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "albumTitle": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "isStandalone": {
+                "type": "boolean"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "UpdateAlbumRequest": {
+            "required": [
+              "title",
+              "releaseDate",
+              "coverUrl"
+            ],
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "releaseDate": {
+                "type": [
+                  "null",
+                  "string"
+                ],
+                "format": "date"
+              },
+              "coverUrl": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              }
+            }
+          },
+          "UpdateArtistRequest": {
+            "required": [
+              "name",
+              "biography",
+              "genreIds"
+            ],
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "biography": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "genreIds": {
+                "type": [
+                  "null",
+                  "array"
+                ],
+                "items": {
+                  "pattern": "^-?(?:0|[1-9]\\d*)$",
+                  "type": [
+                    "integer",
+                    "string"
+                  ],
+                  "format": "int32"
+                }
+              }
+            }
+          },
+          "UpdateGenreRequest": {
+            "required": [
+              "name",
+              "description"
+            ],
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              }
+            }
+          },
+          "UpdateTrackRequest": {
+            "required": [
+              "name",
+              "trackNumber",
+              "duration",
+              "lyrics",
+              "albumId",
+              "isStandalone"
+            ],
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "trackNumber": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "duration": {
+                "pattern": "^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$",
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "lyrics": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "albumId": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": [
+                  "null",
+                  "integer",
+                  "string"
+                ],
+                "format": "int32"
+              },
+              "isStandalone": {
+                "type": "boolean"
+              }
+            }
+          },
+          "VersionResponse": {
+            "required": [
+              "apiName",
+              "assemblyVersion",
+              "runtimeVersion",
+              "osDescription",
+              "processArchitecture",
+              "environmentName",
+              "status"
+            ],
+            "type": "object",
+            "properties": {
+              "apiName": {
+                "type": "string"
+              },
+              "assemblyVersion": {
+                "type": "string"
+              },
+              "runtimeVersion": {
+                "type": "string"
+              },
+              "osDescription": {
+                "type": "string"
+              },
+              "processArchitecture": {
+                "type": "string"
+              },
+              "environmentName": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "tags": [
+        {
+          "name": "Genres"
+        },
+        {
+          "name": "Artists"
+        },
+        {
+          "name": "Albums"
+        },
+        {
+          "name": "Tracks"
+        },
+        {
+          "name": "Seed"
+        },
+        {
+          "name": "Version"
+        },
+        {
+          "name": "OpenCode.Music.Api"
+        }
+      ]
+    }

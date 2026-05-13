@@ -127,6 +127,10 @@ catalog:
       rules:
         - allow: [User, Group]
 
+    # OpenCode APIs exposed via Kong gateway
+    - type: file
+      target: ../../examples/kong-apis.yaml
+
     ## Uncomment these lines to add more example data
     # - type: url
     #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
