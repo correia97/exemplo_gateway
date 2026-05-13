@@ -8,10 +8,10 @@ tasks_total: 2
 self_check: PASSED
 key-files:
   created:
-    - src/OpenCode.Backstage/backstage/packages/backend/package.json
-    - src/OpenCode.Backstage/backstage/packages/backend/src/index.ts
-    - src/OpenCode.Backstage/backstage/app-config.yaml
-    - src/OpenCode.Backstage/backstage/app-config.production.yaml
+    - src/OpenCode.Backstage/packages/backend/package.json
+    - src/OpenCode.Backstage/packages/backend/src/index.ts
+    - src/OpenCode.Backstage/app-config.yaml
+    - src/OpenCode.Backstage/app-config.production.yaml
   modified: []
 commits:
   - "feat(14-01): replace guest auth with Keycloak OIDC in Backstage backend and config"

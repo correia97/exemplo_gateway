@@ -2,7 +2,9 @@ using Asp.Versioning;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 using OpenCode.Domain.Data;
 using OpenCode.Domain.Interfaces;
 using OpenCode.DragonBall.Api.Auth;
@@ -15,6 +17,37 @@ var builder = WebApplication.CreateBuilder(args);
 var corsPolicy = "frontCorsPolicy";
 
 builder.AddServiceDefaults();
+
+builder.Services.Configure<OpenApiOptions>(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        if (!document.Components.SecuritySchemes.ContainsKey("Keycloak"))
+        {
+            document.Components.SecuritySchemes["Keycloak"] = new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.OAuth2,
+                Description = "Keycloak OpenID Connect",
+                Flows = new OpenApiOAuthFlows
+                {
+                    AuthorizationCode = new OpenApiOAuthFlow
+                    {
+                        AuthorizationUrl = new Uri("http://localhost:8080/realms/OpenCode/protocol/openid-connect/auth"),
+                        TokenUrl = new Uri("http://localhost:8080/realms/OpenCode/protocol/openid-connect/token"),
+                        Scopes = new Dictionary<string, string>
+                        {
+                            ["openid"] = "OpenID Connect",
+                            ["profile"] = "User profile",
+                            ["email"] = "Email address",
+                            ["roles"] = "User roles"
+                        }
+                    }
+                }
+            };
+        }
+        return Task.CompletedTask;
+    });
+});
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(corsPolicy, policy =>
@@ -89,10 +122,19 @@ app.MapScalarApiReference(options =>
 {
     options.WithTitle("Dragon Ball API");
     options.WithTheme(ScalarTheme.Purple);
-    options.Authentication = new ScalarAuthenticationOptions
-    {
-        PreferredSecuritySchemes = new List<string> { "BearerAuth" }
-    };
+    options
+        .AddPreferredSecuritySchemes("BearerAuth")
+        .AddOAuth2Authentication("Keycloak", scheme =>
+        {
+            scheme.DefaultScopes = ["openid", "profile", "email", "roles"];
+        })
+        .AddAuthorizationCodeFlow("Keycloak", flow =>
+        {
+            flow.AuthorizationUrl = "http://localhost:8080/realms/OpenCode/protocol/openid-connect/auth";
+            flow.TokenUrl = "http://localhost:8080/realms/OpenCode/protocol/openid-connect/token";
+            flow.ClientId = "dragonball-api";
+            flow.Pkce = Pkce.Sha256;
+        });
     options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
 
     var descriptions = app.DescribeApiVersions();

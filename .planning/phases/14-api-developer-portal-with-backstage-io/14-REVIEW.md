@@ -7,10 +7,10 @@ files_reviewed_list:
   - deploy/backstage/catalog-info.yaml
   - docker-compose.yml
   - src/OpenCode.AppHost/Program.cs
-  - src/OpenCode.Backstage/backstage/app-config.yaml
-  - src/OpenCode.Backstage/backstage/app-config.production.yaml
-  - src/OpenCode.Backstage/backstage/packages/backend/package.json
-  - src/OpenCode.Backstage/backstage/packages/backend/src/index.ts
+  - src/OpenCode.Backstage/app-config.yaml
+  - src/OpenCode.Backstage/app-config.production.yaml
+  - src/OpenCode.Backstage/packages/backend/package.json
+  - src/OpenCode.Backstage/packages/backend/src/index.ts
 findings:
   critical: 5
   warning: 6
@@ -53,7 +53,7 @@ Add `.env` to `.gitignore` and document that operators must supply a `.env` befo
 
 ### CR-02: AUTH_OIDC_CLIENT_SECRET set to a placeholder in both development and production config
 
-**File:** `docker-compose.yml:220`, `src/OpenCode.AppHost/Program.cs:133`, `src/OpenCode.Backstage/backstage/app-config.yaml:99`
+**File:** `docker-compose.yml:220`, `src/OpenCode.AppHost/Program.cs:133`, `src/OpenCode.Backstage/app-config.yaml:99`
 
 **Issue:** The OIDC client secret is set to the string `"placeholder-not-used"` in both Compose and Aspire. `app-config.yaml` also defaults to `placeholder-not-used` via `${AUTH_OIDC_CLIENT_SECRET:placeholder-not-used}`. The comment `tokenEndpointAuthMethod: none` suggests a public (PKCE) client is intended, but the secret variable still flows into `app-config.production.yaml` line 39 where it is passed to the `clientSecret` field without any fallback. If Keycloak is ever configured as a confidential client, this placeholder is used silently. More critically, the presence of a non-empty string for `clientSecret` alongside `tokenEndpointAuthMethod: none` creates an ambiguous configuration that may confuse the OIDC library and skip validation.
 
@@ -84,7 +84,7 @@ ports:
 
 ### CR-04: `dangerouslyAllowSignInWithoutUserInCatalog: true` in production OIDC config
 
-**File:** `src/OpenCode.Backstage/backstage/app-config.yaml:105`, `src/OpenCode.Backstage/backstage/app-config.production.yaml:45`
+**File:** `src/OpenCode.Backstage/app-config.yaml:105`, `src/OpenCode.Backstage/app-config.production.yaml:45`
 
 **Issue:** `dangerouslyAllowSignInWithoutUserInCatalog: true` is present in both the development and production OIDC resolver configuration. This Backstage setting explicitly bypasses the requirement that a signing-in user must be represented as a `User` entity in the software catalog. The result is that any OIDC user valid at Keycloak level — including misconfigured or compromised accounts — can log in to Backstage and be granted whatever permissions the allow-all policy permits. This is particularly risky because the backend also registers `plugin-permission-backend-module-allow-all-policy` (index.ts line 44), making every authenticated user an unrestricted actor.
 
@@ -123,7 +123,7 @@ var busybox = builder.AddContainer("busybox", "rootpublic/curl", "bookworm-slim_
 
 ### WR-02: `app.baseUrl` mismatch between app-config.yaml and app-config.production.yaml
 
-**File:** `src/OpenCode.Backstage/backstage/app-config.yaml:3`, `src/OpenCode.Backstage/backstage/app-config.production.yaml:3`
+**File:** `src/OpenCode.Backstage/app-config.yaml:3`, `src/OpenCode.Backstage/app-config.production.yaml:3`
 
 **Issue:** `app-config.yaml` sets `app.baseUrl: http://localhost:3000` (line 3) while `app-config.production.yaml` sets it to `http://localhost:7007` (line 3). When both files are merged at startup (CMD in Dockerfile: `--config app-config.yaml --config app-config.production.yaml`), the production value wins. The value `http://localhost:7007` equals the backend URL, which means the Backstage frontend will send auth callbacks and API requests to the backend port directly — this is only correct if the app-backend plugin serves the frontend from the same port. If a separate frontend is deployed, cookie domain and CORS will break. The variable `backend.cors.origin` in `app-config.yaml` line 40 (`http://localhost:3000`) is not overridden in production config, creating a mismatch between the CORS allowed origin and the production app baseUrl.
 
@@ -133,7 +133,7 @@ var busybox = builder.AddContainer("busybox", "rootpublic/curl", "bookworm-slim_
 
 ### WR-03: `organization.name` left as scaffolded placeholder
 
-**File:** `src/OpenCode.Backstage/backstage/app-config.yaml:21`
+**File:** `src/OpenCode.Backstage/app-config.yaml:21`
 
 **Issue:** `organization.name: My Company` is the default scaffolded value from the Backstage CLI. This string appears in the Backstage UI header and in notifications. For a project-specific portal this should reflect the actual organization name.
 
@@ -157,7 +157,7 @@ var busybox = builder.AddContainer("busybox", "rootpublic/curl", "bookworm-slim_
 
 ### WR-05: `better-sqlite3` is a production dependency but the production image uses PostgreSQL
 
-**File:** `src/OpenCode.Backstage/backstage/packages/backend/package.json:48`
+**File:** `src/OpenCode.Backstage/packages/backend/package.json:48`
 
 **Issue:** `better-sqlite3` is listed in `dependencies` (not `devDependencies`), which means it is compiled during the Docker build (requiring `libsqlite3-dev` and native build tools). The production configuration uses PostgreSQL exclusively (`app-config.production.yaml` database client is `pg`). Carrying SQLite as a production dependency increases image size, build time, and attack surface unnecessarily.
 
@@ -175,7 +175,7 @@ var busybox = builder.AddContainer("busybox", "rootpublic/curl", "bookworm-slim_
 ```yaml
 backstage:
   build:
-    context: src/OpenCode.Backstage/backstage
+    context: src/OpenCode.Backstage
     dockerfile: ../../Dockerfile
 ```
 
@@ -185,7 +185,7 @@ backstage:
 
 ### IN-01: `github-provider` auth module registered but GitHub integration is optional
 
-**File:** `src/OpenCode.Backstage/backstage/packages/backend/src/index.ts:18`, `src/OpenCode.Backstage/backstage/app-config.yaml:63-66`
+**File:** `src/OpenCode.Backstage/packages/backend/src/index.ts:18`, `src/OpenCode.Backstage/app-config.yaml:63-66`
 
 **Issue:** `plugin-auth-backend-module-github-provider` and `plugin-scaffolder-backend-module-github` are loaded unconditionally at startup. The GitHub token is configured as `${GITHUB_TOKEN}` with no fallback. If `GITHUB_TOKEN` is not set, Backstage will fail to register the GitHub integration and may emit noisy startup errors or fail entirely. For a portal where GitHub is optional, this is unnecessary startup risk.
 
@@ -195,7 +195,7 @@ backstage:
 
 ### IN-02: `kubernetes` config section present but empty
 
-**File:** `src/OpenCode.Backstage/backstage/app-config.yaml:122-123`
+**File:** `src/OpenCode.Backstage/app-config.yaml:122-123`
 
 **Issue:** The `kubernetes:` key exists in `app-config.yaml` with no child configuration. The `plugin-kubernetes-backend` is also loaded in `index.ts` (line 59). An empty `kubernetes:` block with a loaded plugin will cause Backstage to start in a degraded state with Kubernetes features enabled but no clusters configured, generating periodic reconciliation errors in logs.
 
@@ -215,7 +215,7 @@ backstage:
 
 ### IN-04: CORS in app-config.yaml allows all HTTP and HTTPS origins
 
-**File:** `src/OpenCode.Backstage/backstage/app-config.yaml:36`
+**File:** `src/OpenCode.Backstage/app-config.yaml:36`
 
 **Issue:** The CSP `connect-src` directive is set to `["'self'", 'http:', 'https:']`. Allowing the bare `http:` and `https:` schemes permits connections to any origin over those protocols — this is equivalent to `*` for `connect-src`. Combined with `credentials: true` on the CORS config this is broadly permissive.
 

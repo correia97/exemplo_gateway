@@ -1,8 +1,0 @@
-apiVersion: backstage.io/v1alpha1
-kind: Location
-metadata:
-  name: opencode-api-hierarchy
-  description: OpenCode API Developer Portal — Product/Context/Sub-context/API hierarchy
-spec:
-  targets:
-    - ./examples/entities.yaml

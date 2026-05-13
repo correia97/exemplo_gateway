@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for d:*)",
+      "WebSearch",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(python3:*)",
+      "Bash(git:*)",
+      "Skill(gsd:code-review)",
+      "Bash(cd:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(awk:*)",
+      "Bash(docker compose:*)"
+    ]
+  }
+}

@@ -47,10 +47,10 @@ gaps: []
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `src/OpenCode.Backstage/backstage/app-config.yaml` | Dev OIDC auth config + catalog rules with Domain + real catalog location | VERIFIED | OIDC under `development:`, `tokenEndpointAuthMethod: none`, `Domain` in rules, path `../../deploy/backstage/catalog-info.yaml` |
-| `src/OpenCode.Backstage/backstage/app-config.production.yaml` | Production OIDC auth config + catalog rules with Domain + container path | VERIFIED | OIDC under `production:`, no env var defaults, `Domain` in rules, path `/app/catalog/catalog-info.yaml` |
-| `src/OpenCode.Backstage/backstage/packages/backend/src/index.ts` | OIDC provider module registration | VERIFIED | Line 29: `backend.add(import('@backstage/plugin-auth-backend-module-oidc-provider'))` |
-| `src/OpenCode.Backstage/backstage/packages/backend/package.json` | OIDC provider dependency | VERIFIED | Line 24: `"@backstage/plugin-auth-backend-module-oidc-provider": "^0.4.14"` |
+| `src/OpenCode.Backstage/app-config.yaml` | Dev OIDC auth config + catalog rules with Domain + real catalog location | VERIFIED | OIDC under `development:`, `tokenEndpointAuthMethod: none`, `Domain` in rules, path `../../deploy/backstage/catalog-info.yaml` |
+| `src/OpenCode.Backstage/app-config.production.yaml` | Production OIDC auth config + catalog rules with Domain + container path | VERIFIED | OIDC under `production:`, no env var defaults, `Domain` in rules, path `/app/catalog/catalog-info.yaml` |
+| `src/OpenCode.Backstage/packages/backend/src/index.ts` | OIDC provider module registration | VERIFIED | Line 29: `backend.add(import('@backstage/plugin-auth-backend-module-oidc-provider'))` |
+| `src/OpenCode.Backstage/packages/backend/package.json` | OIDC provider dependency | VERIFIED | Line 24: `"@backstage/plugin-auth-backend-module-oidc-provider": "^0.4.14"` |
 | `deploy/backstage/catalog-info.yaml` | Complete catalog entity hierarchy: Domain -> Systems -> Components -> APIs with credentials guide | VERIFIED | 7 entities, correct hierarchy, `$text` URLs, credentials guide in Domain description |
 | `src/OpenCode.AppHost/Program.cs` | Fixed Backstage container with correct image, single port 7007, OIDC env vars, catalog mount | VERIFIED | `"backstage", "latest"`, no cli tag, no port 3000, `KEYCLOAK_ISSUER`, `KEYCLOAK_CLIENT_ID`, `/app/catalog` bind mount |
 | `docker-compose.yml` | Fixed Backstage service with OIDC env vars, catalog volume mount, gateway dependency | VERIFIED | `KEYCLOAK_ISSUER`, `KEYCLOAK_CLIENT_ID`, `./deploy/backstage:/app/catalog:ro`, gateway in depends_on |
@@ -95,7 +95,7 @@ Step 7b: SKIPPED — Backstage requires Docker stack to start. No runnable entry
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
 | `deploy/backstage/catalog-info.yaml` | 232 | `$text: http://gateway:8000/...` hardcoded Docker-internal URL | Info | URL only works in Docker Compose/Aspire container context; will fail in local dev (Backstage outside Docker). This is intentional per design decision documented in PLAN 14-02: `$text` does not support `$env{}` substitution. |
-| `src/OpenCode.Backstage/backstage/app-config.yaml` | 1 | `app.baseUrl: http://localhost:3000` | Warning | baseUrl points to port 3000 but production image serves on port 7007. In dev (backend-serves-frontend), this is overridden by `app-config.production.yaml` `baseUrl: http://localhost:7007`. Verify the Backstage dev-mode startup path uses port 7007 correctly. |
+| `src/OpenCode.Backstage/app-config.yaml` | 1 | `app.baseUrl: http://localhost:3000` | Warning | baseUrl points to port 3000 but production image serves on port 7007. In dev (backend-serves-frontend), this is overridden by `app-config.production.yaml` `baseUrl: http://localhost:7007`. Verify the Backstage dev-mode startup path uses port 7007 correctly. |
 
 No TODO/FIXME/PLACEHOLDER patterns found in phase artifacts. No empty implementations or stub handlers found.
 

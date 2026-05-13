@@ -24,7 +24,7 @@ This phase delivers:
 ### Phase Scope
 - **D-01: Complete portal configuration** — Fix Keycloak OIDC auth, replace example catalog with real API entities, fix Aspire image reference, fix port/baseUrl config. Portal is functional and shows DragonBall + Music APIs to authenticated users.
 - **D-02: Both Docker Compose + Aspire** — Both deployment paths work. Consistent with how all other services in this project are handled (Aspire for local dev, Docker Compose for standalone deployment).
-- **D-03: Build backstage:latest image** — Run `yarn build-image` inside `src/OpenCode.Backstage/backstage/` to produce `backstage:latest`. Both Aspire AppHost and Docker Compose reference this image. Matches spike 002 validation.
+- **D-03: Build backstage:latest image** — Run `yarn build-image` inside `src/OpenCode.Backstage/` to produce `backstage:latest`. Both Aspire AppHost and Docker Compose reference this image. Matches spike 002 validation.
 
 ### Catalog Entity Model
 - **D-04: Domain→System→Component→API hierarchy** — Four-level entity hierarchy:
@@ -61,9 +61,9 @@ This phase delivers:
 **Downstream agents MUST read these before planning or implementing.**
 
 ### Existing Backstage Configuration
-- `src/OpenCode.Backstage/backstage/app-config.yaml` — Current dev Backstage config (database, CORS, catalog locations — needs OIDC added)
-- `src/OpenCode.Backstage/backstage/app-config.production.yaml` — Current production config (needs OIDC replacing guest auth, catalog locations for real entities)
-- `src/OpenCode.Backstage/backstage/package.json` — Backstage version and scripts including `build-image`
+- `src/OpenCode.Backstage/app-config.yaml` — Current dev Backstage config (database, CORS, catalog locations — needs OIDC added)
+- `src/OpenCode.Backstage/app-config.production.yaml` — Current production config (needs OIDC replacing guest auth, catalog locations for real entities)
+- `src/OpenCode.Backstage/package.json` — Backstage version and scripts including `build-image`
 
 ### Existing Infrastructure Integration
 - `docker-compose.yml` — Backstage service definition (lines ~199-220: image, env vars, ports, networks)
@@ -80,8 +80,8 @@ This phase delivers:
 ## Existing Code Insights
 
 ### Reusable Assets
-- `src/OpenCode.Backstage/backstage/` — Full scaffolded Backstage 1.x app (packages/app, packages/backend, yarn.lock, Dockerfile)
-- `src/OpenCode.Backstage/backstage/examples/` — Example catalog YAML files (structure reference for real catalog entities)
+- `src/OpenCode.Backstage/` — Full scaffolded Backstage 1.x app (packages/app, packages/backend, yarn.lock, Dockerfile)
+- `src/OpenCode.Backstage/examples/` — Example catalog YAML files (structure reference for real catalog entities)
 - `deploy/keycloak/OpenCode-realm.json` — Contains `backstage-portal` client config (redirect URIs, audience mappers already set)
 
 ### Established Patterns
@@ -101,7 +101,7 @@ This phase delivers:
 <specifics>
 ## Specific Ideas
 
-- `backstage:latest` image built with `yarn build-image` from `src/OpenCode.Backstage/backstage/`
+- `backstage:latest` image built with `yarn build-image` from `src/OpenCode.Backstage/`
 - Catalog YAML in `deploy/backstage/catalog-info.yaml` — single file with all entities (Domain, Systems, Components, APIs)
 - API spec URLs use env vars: `$env{DRAGONBALL_API_SPEC_URL}` → `http://localhost:8000/api/dragonball/openapi/v1.json` (local), Docker Compose/Aspire pass the env var
 - Credentials how-to: either as a Backstage "About" annotation on the catalog domain entity, or as a standalone TechDocs-free markdown page linked from the catalog

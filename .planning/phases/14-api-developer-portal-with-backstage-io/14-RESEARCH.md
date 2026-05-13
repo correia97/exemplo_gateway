@@ -6,7 +6,7 @@
 
 ## Summary
 
-Phase 14 completes the already-scaffolded Backstage.io developer portal by fixing authentication (replacing guest auth with Keycloak OIDC), creating real API catalog entities for the DragonBall and Music APIs, and wiring everything into both Aspire AppHost and Docker Compose. The Backstage app is scaffolded at `src/OpenCode.Backstage/backstage/` using the new backend system (Backstage 1.x with `@backstage/backend-defaults`), already has PostgreSQL configured, and already has a Dockerfile that builds a backend-serves-frontend image on port 7007.
+Phase 14 completes the already-scaffolded Backstage.io developer portal by fixing authentication (replacing guest auth with Keycloak OIDC), creating real API catalog entities for the DragonBall and Music APIs, and wiring everything into both Aspire AppHost and Docker Compose. The Backstage app is scaffolded at `src/OpenCode.Backstage/` using the new backend system (Backstage 1.x with `@backstage/backend-defaults`), already has PostgreSQL configured, and already has a Dockerfile that builds a backend-serves-frontend image on port 7007.
 
 The three main technical challenges are: (1) configuring the OIDC provider correctly with a public Keycloak client (requires `tokenEndpointAuthMethod: none` workaround since `clientSecret` is technically required in Backstage's schema), (2) creating catalog entity YAML with `$text` URL references for live OpenAPI specs (which only works with HTTP URLs, not local files), and (3) fixing several misconfigurations in the existing Aspire and Docker Compose definitions (wrong image tag, wrong ports, missing env vars, missing catalog rules for `Domain` kind).
 
@@ -18,7 +18,7 @@ The three main technical challenges are: (1) configuring the OIDC provider corre
 ### Locked Decisions
 - **D-01:** Fix Keycloak OIDC auth, replace example catalog with real API entities, fix Aspire image reference, fix port/baseUrl config
 - **D-02:** Both Docker Compose + Aspire deployment paths must work
-- **D-03:** Build backstage:latest image via `yarn build-image` in `src/OpenCode.Backstage/backstage/`
+- **D-03:** Build backstage:latest image via `yarn build-image` in `src/OpenCode.Backstage/`
 - **D-04:** Four-level entity hierarchy: Domain (opencode-platform) -> Systems (dragonball-system, music-system) -> Components (opencode-dragonball-service, opencode-music-service) -> APIs (dragonball-api, music-api)
 - **D-05:** Live OpenAPI spec via `$env` substitution for the spec URL
 - **D-06:** Catalog YAML files live at `deploy/backstage/catalog-info.yaml`
@@ -73,7 +73,7 @@ The three main technical challenges are: (1) configuring the OIDC provider corre
 
 **Installation (OIDC module only -- everything else is already installed):**
 ```bash
-cd src/OpenCode.Backstage/backstage
+cd src/OpenCode.Backstage
 yarn --cwd packages/backend add @backstage/plugin-auth-backend-module-oidc-provider
 ```
 
@@ -113,7 +113,7 @@ Browser (Developer)
 deploy/backstage/
     catalog-info.yaml          # All catalog entities (Domain, Systems, Components, APIs)
 
-src/OpenCode.Backstage/backstage/
+src/OpenCode.Backstage/
     app-config.yaml            # Dev config (OIDC + catalog pointing to ../../deploy/backstage/)
     app-config.production.yaml # Production config (OIDC + catalog pointing to /app/catalog/)
     packages/
@@ -510,10 +510,10 @@ Since both dev and Docker Compose access the APIs through Kong on port 8000, and
 ### Files to Modify
 | File | Changes |
 |------|---------|
-| `src/OpenCode.Backstage/backstage/packages/backend/package.json` | Add `@backstage/plugin-auth-backend-module-oidc-provider`, remove `@backstage/plugin-auth-backend-module-guest-provider` |
-| `src/OpenCode.Backstage/backstage/packages/backend/src/index.ts` | Replace guest provider import with OIDC provider import |
-| `src/OpenCode.Backstage/backstage/app-config.yaml` | Replace guest auth with OIDC config, update catalog rules (add Domain), update catalog locations to real entities |
-| `src/OpenCode.Backstage/backstage/app-config.production.yaml` | Replace guest auth with OIDC config, add catalog rules (add Domain), update catalog locations for container paths |
+| `src/OpenCode.Backstage/packages/backend/package.json` | Add `@backstage/plugin-auth-backend-module-oidc-provider`, remove `@backstage/plugin-auth-backend-module-guest-provider` |
+| `src/OpenCode.Backstage/packages/backend/src/index.ts` | Replace guest provider import with OIDC provider import |
+| `src/OpenCode.Backstage/app-config.yaml` | Replace guest auth with OIDC config, update catalog rules (add Domain), update catalog locations to real entities |
+| `src/OpenCode.Backstage/app-config.production.yaml` | Replace guest auth with OIDC config, add catalog rules (add Domain), update catalog locations for container paths |
 | `docker-compose.yml` | Add `KEYCLOAK_ISSUER`, `KEYCLOAK_CLIENT_ID` env vars, add volume mount for catalog YAML, add `depends_on` for gateway |
 | `src/OpenCode.AppHost/Program.cs` | Fix image tag from `backstage:cli` to `backstage`, remove port 3000 endpoint (keep only 7007), add `KEYCLOAK_ISSUER`, `KEYCLOAK_CLIENT_ID` env vars, add catalog volume mount |
 
@@ -522,8 +522,8 @@ Since both dev and Docker Compose access the APIs through Kong on port 8000, and
 |------|-----|
 | `deploy/keycloak/OpenCode-realm.json` | `backstage-portal` client already configured correctly (public, correct redirect URIs) |
 | `deploy/db/init.sql` | `portal` schema and `portal_user` already exist |
-| `src/OpenCode.Backstage/backstage/packages/backend/Dockerfile` | Already correct (backend-serves-frontend, port 7007) |
-| `src/OpenCode.Backstage/backstage/packages/app/package.json` | `@backstage/plugin-api-docs` already installed |
+| `src/OpenCode.Backstage/packages/backend/Dockerfile` | Already correct (backend-serves-frontend, port 7007) |
+| `src/OpenCode.Backstage/packages/app/package.json` | `@backstage/plugin-api-docs` already installed |
 
 ## Validation Architecture
 
@@ -538,7 +538,7 @@ Since both dev and Docker Compose access the APIs through Kong on port 8000, and
 | Req ID | Behavior | Test Type | Automated Command | File Exists? |
 |--------|----------|-----------|-------------------|-------------|
 | D-01 | Portal shows real APIs with OIDC login | manual | `curl http://localhost:7007/api/health` | N/A |
-| D-03 | Docker image builds | smoke | `cd src/OpenCode.Backstage/backstage && yarn build-image` | N/A |
+| D-03 | Docker image builds | smoke | `cd src/OpenCode.Backstage && yarn build-image` | N/A |
 | D-04 | Catalog shows Domain/System/Component/API hierarchy | manual | `curl http://localhost:7007/api/catalog/entities?filter=kind=Domain` | N/A |
 | D-09 | OIDC login works | manual | Browser test at http://localhost:7007 | N/A |
 

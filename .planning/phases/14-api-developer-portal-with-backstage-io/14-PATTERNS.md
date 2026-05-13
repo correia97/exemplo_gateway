@@ -8,11 +8,11 @@
 
 | New/Modified File | Role | Data Flow | Closest Analog | Match Quality |
 |-------------------|------|-----------|----------------|---------------|
-| `deploy/backstage/catalog-info.yaml` | config | static-data | `src/OpenCode.Backstage/backstage/examples/entities.yaml` | exact |
-| `src/OpenCode.Backstage/backstage/app-config.yaml` | config | request-response | self (modify in place) | exact |
-| `src/OpenCode.Backstage/backstage/app-config.production.yaml` | config | request-response | self (modify in place) | exact |
-| `src/OpenCode.Backstage/backstage/packages/backend/src/index.ts` | config | event-driven | self (modify in place) | exact |
-| `src/OpenCode.Backstage/backstage/packages/backend/package.json` | config | N/A | self (modify in place) | exact |
+| `deploy/backstage/catalog-info.yaml` | config | static-data | `src/OpenCode.Backstage/examples/entities.yaml` | exact |
+| `src/OpenCode.Backstage/app-config.yaml` | config | request-response | self (modify in place) | exact |
+| `src/OpenCode.Backstage/app-config.production.yaml` | config | request-response | self (modify in place) | exact |
+| `src/OpenCode.Backstage/packages/backend/src/index.ts` | config | event-driven | self (modify in place) | exact |
+| `src/OpenCode.Backstage/packages/backend/package.json` | config | N/A | self (modify in place) | exact |
 | `src/OpenCode.AppHost/Program.cs` | config | request-response | self -- keycloak container block (lines 24-41) | exact |
 | `docker-compose.yml` | config | request-response | self -- backstage service block (lines 199-225) | exact |
 
@@ -20,7 +20,7 @@
 
 ### `deploy/backstage/catalog-info.yaml` (config, static-data) -- CREATE
 
-**Analog:** `src/OpenCode.Backstage/backstage/examples/entities.yaml`
+**Analog:** `src/OpenCode.Backstage/examples/entities.yaml`
 
 **Entity structure pattern** (full file, lines 1-42):
 ```yaml
@@ -72,7 +72,7 @@ spec:
 
 ---
 
-### `src/OpenCode.Backstage/backstage/app-config.yaml` (config, request-response) -- MODIFY
+### `src/OpenCode.Backstage/app-config.yaml` (config, request-response) -- MODIFY
 
 **Analog:** Self (current file)
 
@@ -132,7 +132,7 @@ catalog:
 
 ---
 
-### `src/OpenCode.Backstage/backstage/app-config.production.yaml` (config, request-response) -- MODIFY
+### `src/OpenCode.Backstage/app-config.production.yaml` (config, request-response) -- MODIFY
 
 **Analog:** Self (current file)
 
@@ -169,7 +169,7 @@ catalog:
 
 ---
 
-### `src/OpenCode.Backstage/backstage/packages/backend/src/index.ts` (config, event-driven) -- MODIFY
+### `src/OpenCode.Backstage/packages/backend/src/index.ts` (config, event-driven) -- MODIFY
 
 **Analog:** Self (current file)
 
@@ -316,7 +316,7 @@ var backstage = builder.AddContainer("backstage", "backstage:cli", "latest")
 ## Shared Patterns
 
 ### Environment Variable Substitution in Backstage Config
-**Source:** `src/OpenCode.Backstage/backstage/app-config.yaml` lines 48-52
+**Source:** `src/OpenCode.Backstage/app-config.yaml` lines 48-52
 **Apply to:** Both `app-config.yaml` and `app-config.production.yaml`
 ```yaml
 # Pattern: ${ENV_VAR:default_value} for dev, ${ENV_VAR} (no default) for production
@@ -360,7 +360,7 @@ port: ${POSTGRES_PORT:5432}
 ```
 
 ### Backstage Plugin Registration
-**Source:** `src/OpenCode.Backstage/backstage/packages/backend/src/index.ts` lines 13-14
+**Source:** `src/OpenCode.Backstage/packages/backend/src/index.ts` lines 13-14
 **Apply to:** Backend index.ts auth plugin swap
 ```typescript
 // Pattern: backend.add(import('@backstage/plugin-<name>'));
@@ -368,7 +368,7 @@ backend.add(import('@backstage/plugin-app-backend'));
 ```
 
 ### Catalog Entity YAML Structure
-**Source:** `src/OpenCode.Backstage/backstage/examples/entities.yaml` lines 1-20
+**Source:** `src/OpenCode.Backstage/examples/entities.yaml` lines 1-20
 **Apply to:** `deploy/backstage/catalog-info.yaml`
 ```yaml
 # Pattern: multi-document YAML, each entity has apiVersion + kind + metadata + spec
@@ -397,6 +397,6 @@ Note: The OIDC auth configuration block format comes from RESEARCH.md (Backstage
 
 ## Metadata
 
-**Analog search scope:** `src/OpenCode.Backstage/backstage/`, `src/OpenCode.AppHost/`, `docker-compose.yml`, `deploy/`
+**Analog search scope:** `src/OpenCode.Backstage/`, `src/OpenCode.AppHost/`, `docker-compose.yml`, `deploy/`
 **Files scanned:** 7 source files read
 **Pattern extraction date:** 2026-05-01
