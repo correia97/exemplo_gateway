@@ -1,0 +1,26 @@
+# Local development overrides — not committed to git (see .gitignore)
+# This file is merged on top of app-config.yaml when you run `yarn start`
+
+backend:
+  database:
+    client: better-sqlite3
+    connection:
+      directory: .dev-data
+      filename: devportal.db
+
+auth:
+  environment: development
+  providers:
+    guest: {}
+    oidc:
+      development:
+        metadataUrl: ${AUTH_OIDC_METADATA_URL:-http://localhost:8080/realms/opencode/.well-known/openid-configuration}
+        clientId: ${AUTH_OIDC_CLIENT_ID:-devportal}
+        clientSecret: ${AUTH_OIDC_CLIENT_SECRET:-opencode-devportal-secret}
+        prompt: auto
+        signIn:
+          resolvers:
+            - resolver: emailLocalPartMatchingUserEntityName
+              dangerouslyAllowSignInWithoutUserInCatalog: true
+            - resolver: emailMatchingUserEntityProfileEmail
+              dangerouslyAllowSignInWithoutUserInCatalog: true
