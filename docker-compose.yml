@@ -44,12 +44,12 @@ services:
       KC_DB_SCHEMA: keycloak
       KC_DB_USERNAME: keycloak_user
       KC_DB_PASSWORD: keycloak_pass
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
       KC_HOSTNAME: http://localhost:8080
       # Hostname v2 (Keycloak 26+): dynamic backchannel uses the request host,
       # so devportal -> keycloak:8080 works alongside the browser-facing localhost:8080.
-      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
       TZ: America/Sao_Paulo
     command:
       - "start-dev"

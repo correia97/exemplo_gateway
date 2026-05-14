@@ -44,7 +44,9 @@ auth:
         signIn:
           resolvers:
             - resolver: emailLocalPartMatchingUserEntityName
+              dangerouslyAllowSignInWithoutUserInCatalog: true
             - resolver: emailMatchingUserEntityProfileEmail
+              dangerouslyAllowSignInWithoutUserInCatalog: true
 
 catalog:
   # Locations are resolved relative to the backend process working directory

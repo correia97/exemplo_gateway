@@ -42,10 +42,8 @@ backend.add(import('@backstage/plugin-catalog-backend-module-logs'));
 
 // permission plugin
 backend.add(import('@backstage/plugin-permission-backend'));
-// See https://backstage.io/docs/permissions/getting-started for how to create your own permission policy
-backend.add(
-  import('@backstage/plugin-permission-backend-module-allow-all-policy'),
-);
+// Custom RBAC policy: read=all, create=auth, update/delete=owner
+backend.add(import('./policies/module'));
 
 // search plugin
 backend.add(import('@backstage/plugin-search-backend'));
@@ -67,5 +65,8 @@ backend.add(import('@backstage/plugin-signals-backend'));
 
 // mcp actions plugin
 backend.add(import('@backstage/plugin-mcp-actions-backend'));
+
+// custom entity API for inline entity creation
+backend.add(import('./extensions/entityApiPlugin'));
 
 backend.start();

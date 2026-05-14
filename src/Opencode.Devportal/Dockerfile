@@ -19,6 +19,7 @@ COPY --chown=node:node .yarn ./.yarn
 COPY --chown=node:node .yarnrc.yml package.json yarn.lock backstage.json tsconfig.json ./
 COPY --chown=node:node packages/app/package.json ./packages/app/package.json
 COPY --chown=node:node packages/backend/package.json ./packages/backend/package.json
+COPY --chown=node:node plugins/opencode-api-registration/package.json ./plugins/opencode-api-registration/package.json
 
 RUN --mount=type=cache,target=/home/node/.cache/yarn,sharing=locked,uid=1000,gid=1000 \
     yarn install --immutable
